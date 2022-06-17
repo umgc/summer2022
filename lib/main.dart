@@ -1,4 +1,11 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'api.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +31,8 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(
+          title: 'USPS Informed Delivery App - Backend Features'),
     );
   }
 }
@@ -48,68 +56,90 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  File? _image;
+  Uint8List? _imageBytes;
+  String? _imageName;
+  CloudVisionApi? vision;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+  final picker = ImagePicker();
+  @override
+  void initState() {
+    super.initState();
+    rootBundle.loadString('assets/credentials.json').then((json) {
+      print("JSon: \n$json");
+
+      //api = CloudApi(json);
+      vision = CloudVisionApi();
     });
+  }
+
+  void _getImage() async {
+    final PickedFile = await picker.getImage(source: ImageSource.camera);
+    print(PickedFile!.path);
+
+    setState(() {
+      if (PickedFile != null) {
+        _image = File(PickedFile.path);
+
+        _imageBytes = _image!.readAsBytesSync();
+        _imageName = _image!.path.split('/').last;
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  void _processImageWithOCR() async {
+    print("inside processImageWithOCR\n");
+    var image = await rootBundle.load('assets/unnamed_3.jpg');
+    var buffer = image.buffer;
+    var a = base64.encode(Uint8List.view(buffer));
+    print("Image: $image\nBuffer: $buffer\na: $a\n");
+    await vision!.searchImageForText(a);
+    print("Exit ProcessImageWithOCR");
+  }
+
+  void _processImageForLogo() async {
+    print("Inside processImageForLogo\n");
+    var image = await rootBundle.load('assets/logo_combined.jpg');
+    var buffer = image.buffer;
+    var a = base64.encode(Uint8List.view(buffer));
+    print("Image: $image\nBuffer: $buffer\na: $a\n");
+    await vision!.searchImageForLogo(a);
+    print("Exit ProcessImageForLogo");
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _processImageWithOCR,
+                child: Text("Vision OCR Text Search"),
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _processImageForLogo,
+                child: Text("Vision Logo Search"),
+              ),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        onPressed: _getImage,
+        tooltip: 'Camera',
+        child: const Icon(Icons.add_a_photo),
+      ),
     );
   }
 }

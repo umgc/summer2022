@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/summer2022.iml" filepath="$PROJECT_DIR$/summer2022.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android/summer2022_android.iml" filepath="$PROJECT_DIR$/android/summer2022_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/usps_informed_delivery_backend.iml" filepath="$PROJECT_DIR$/usps_informed_delivery_backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/usps_informed_delivery_backend_android.iml" filepath="$PROJECT_DIR$/android/usps_informed_delivery_backend_android.iml" />
     </modules>
   </component>
 </project>
