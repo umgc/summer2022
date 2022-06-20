@@ -12,7 +12,7 @@ Cloud Vision Class – used to interface with Cloud Vision. It contains the Foll
 
 - 	Future<MailResponse> search(String image) – invokes cloud functions and consolidates objects for json response (In work)
 
-- 	  Future<List<AddressObject>> searchImageForText(String image) async – sends Text request and retrieves and parses response to get Sender and Recipient Addresses
+-   Future<List<AddressObject>> searchImageForText(String image) async – sends Text request and retrieves and parses response to get Sender and Recipient Addresses.
 
 -	List<AddressObject> parseBlocksForAddresses(List<Block> blocks, List<int> s) – Obtain both sender and recipient addresses and returns as a List of AddressObjects
 
