@@ -1,6 +1,6 @@
 SWEN 670 Capstone Course. Summer Cohort
 
-
+--------------------------------------------------------------------------------------------
 Google Vision Implementation Version 0.0.1
 Transferring Local Project to Github for visibility and testing.
 
@@ -24,5 +24,6 @@ Cloud Vision Class – used to interface with Cloud Vision. It contains the Foll
 Model classes – Response.dart -> AddressObject, LogoObject, CodeObject and MailResponse. Each of these classes contains functions to obtain a JSon Equivalent. These models allows search cloud search function to return a concise JSON file with is needed for Text-To-Speech.
 
 It also contains a main screen to add features and to test their functionality. Please add your functionalities to the main window as some sort of widget/button object for execution.
+-----------------------------------------------------------------------------------------------
 
 
