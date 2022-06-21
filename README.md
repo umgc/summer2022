@@ -1,9 +1,10 @@
 SWEN 670 Capstone Course. Summer Cohort
+
 Google Vision Implementation
 
 
 -----------------------------------------------------------------------------------------------
-Update 0.0.3
+v0.0.3 - June 21, 2022 Update 1 
 
 - Added additional logic to take into considerations different scenarios when parsing blocks
     - Additional Regular Expression Strings were used
@@ -13,14 +14,14 @@ Update 0.0.3
 
 -----------------------------------------------------------------------------------------------
 
-Update 0.0.2
+v0.0.2 - June 20, 2022
 
 - Added JSon Implementation.  search functions will return JSON objects.
 - Tested more mail images.  Found some discrepancies as some blocks did not contain all Address content.
 - Issues using WebCamera.  Does not focus; therefore, results were not accurate as different address placement/outcome arose   
 
 -----------------------------------------------------------------------------------------------
-Update 0.0.1
+v0.0.1 - June 17, 2022
 Transferring Local Project to Github for visibility and testing.
 
 This push contains the following features
