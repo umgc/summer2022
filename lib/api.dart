@@ -1,10 +1,10 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:flutter/services.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:googleapis/vision/v1.dart';
-import './models/Response.dart';
+import 'models/MailResponse.dart';
+import './models/Address.dart';
+import './models/Logo.dart';
+import 'dart:convert';
 
 class CredentialsProvider {
   CredentialsProvider();
@@ -67,13 +67,22 @@ class CloudVisionApi {
 
   //   return _bestGuessLabel;
   // }
+  //Combines Addresses and logos into a mailObject for UI to parse.
   Future<MailResponse> search(String image) async {
     List<AddressObject>? addresses = await searchImageForText(image);
+    //print(addresses[0].toJson());
+    //print(addresses[1].toJson());
     List<LogoObject>? logos = await searchImageForLogo(image);
+    //print(logos[0].toJson());
+    // if (logos.first == null) {
+    //   logos.add(LogoObject("none"));
+    // }
     MailResponse response = MailResponse(addresses: addresses, logos: logos);
+    print(response.toJson().toString());
     return response;
   }
 
+  //This function looks for text in image and returns a List of Addresses Found
   Future<List<AddressObject>> searchImageForText(String image) async {
     var _vision = VisionApi(await _client);
     var _api = _vision.images;
@@ -165,13 +174,13 @@ class CloudVisionApi {
       print("Image Text Search failed.");
     }
     print("Text Search done");
-    // for (int x = 0; x < blocks.length; x++) {
-    //   print("---------Block-----------");
-    //   for (int y = 0; y < blocks.elementAt(x).getList().length; y++) {
-    //     print(blocks.elementAt(x).getList().elementAt(y));
-    //   }
-    //   print("--------------------------");
-    // }
+    for (int x = 0; x < blocks.length; x++) {
+      print("---------Block $x---------");
+      for (int y = 0; y < blocks.elementAt(x).getList().length; y++) {
+        print(blocks.elementAt(x).getList().elementAt(y));
+      }
+      print("--------------------------");
+    }
     List<AddressObject> pB =
         parseBlocksForAddresses(blocks, findBlocksWithAddresses(blocks));
     pB.forEach((a) {
@@ -187,6 +196,7 @@ class CloudVisionApi {
     return pB;
   }
 
+  //This function goes through all blocks using the index provided to find all addresses and put them into a List of AddressObject
   List<AddressObject> parseBlocksForAddresses(List<Block> blocks, List<int> s) {
     List<AddressObject> addresses = [];
     print(s.length);
@@ -206,11 +216,24 @@ class CloudVisionApi {
             blocks.elementAt(s.elementAt(x)).getList().elementAt(2) +
             ', ' +
             blocks.elementAt(s.elementAt(x)).getList().elementAt(3);
+      } else if (blocks.elementAt(s.elementAt(x)).getList().length == 2) {
+        name1 = 'Name not Found ' +
+            blocks.elementAt(s.elementAt(x)).getList().length.toString();
+        address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0) +
+            ' ' +
+            blocks.elementAt(s.elementAt(x)).getList().elementAt(1);
+      } else if (blocks.elementAt(s.elementAt(x)).getList().length == 1) {
+        name1 = 'Name not found ' +
+            blocks.elementAt(s.elementAt(x)).getList().length.toString();
+        address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0);
       } else {
         print("did not fit into mail category");
       }
       AddressObject aO = AddressObject(
-          type: type1, name: name1, address: address1, validated: false);
+          type: (s.length == 1) ? 'recipient' : type1,
+          name: name1,
+          address: address1,
+          validated: false);
       addresses.add(aO);
     }
 
@@ -239,6 +262,7 @@ class CloudVisionApi {
     return s;
   }
 
+  //This function searches for Logos. If none are found, it returns a List of LogoObject with one Object with the 'None' value.
   Future<List<LogoObject>> searchImageForLogo(String image) async {
     List<LogoObject> logos = [];
     var _vision = VisionApi(await _client);

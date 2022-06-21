@@ -26,5 +26,3 @@ Model classes – Response.dart -> AddressObject, LogoObject, CodeObject and Mai
 It also contains a main screen to add features and to test their functionality. Please add your functionalities to the main window as some sort of widget/button object for execution.
 
 -----------------------------------------------------------------------------------------------
-
-

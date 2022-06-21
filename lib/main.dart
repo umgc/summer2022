@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'USPS Informed Delivery App - Backend Features',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -76,25 +76,31 @@ class _MyHomePageState extends State<MyHomePage> {
   void _getImage() async {
     final PickedFile = await picker.getImage(source: ImageSource.camera);
     print(PickedFile!.path);
+    if (PickedFile != null) {
+      _image = File(PickedFile.path);
 
-    setState(() {
-      if (PickedFile != null) {
-        _image = File(PickedFile.path);
-
-        _imageBytes = _image!.readAsBytesSync();
-        _imageName = _image!.path.split('/').last;
-      } else {
-        print('No image selected.');
-      }
-    });
+      _imageBytes = _image!.readAsBytesSync();
+      String a = base64.encode(_imageBytes!);
+      await vision!.search(a);
+      setState(() {
+        if (PickedFile != null) {
+          _image = File(PickedFile.path);
+          _imageBytes = _image!.readAsBytesSync();
+          _imageName = _image!.path.split('/').last;
+        } else {
+          print('No image selected.');
+        }
+      });
+    }
   }
 
   void _processImageWithOCR() async {
     print("inside processImageWithOCR\n");
-    var image = await rootBundle.load('assets/unnamed_3.jpg');
+    var image = await rootBundle.load('assets/unnamed_7.jpg');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     print("Image: $image\nBuffer: $buffer\na: $a\n");
+    //await vision!.searchImageForText(a);
     await vision!.searchImageForText(a);
     print("Exit ProcessImageWithOCR");
   }
@@ -107,6 +113,16 @@ class _MyHomePageState extends State<MyHomePage> {
     print("Image: $image\nBuffer: $buffer\na: $a\n");
     await vision!.searchImageForLogo(a);
     print("Exit ProcessImageForLogo");
+  }
+
+  void _processImage() async {
+    print("Inside processImageForLogo\n");
+    var image = await rootBundle.load('assets/unnamed_7.jpg');
+    var buffer = image.buffer;
+    var a = base64.encode(Uint8List.view(buffer));
+    print("Image: $image\nBuffer: $buffer\na: $a\n");
+    await vision!.search(a);
+    print("Exit ProcessImage (All Features)");
   }
 
   @override
@@ -130,6 +146,20 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ElevatedButton(
                 onPressed: _processImageForLogo,
                 child: Text("Vision Logo Search"),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _processImage,
+                child: Text("Vision (OCR & Logo)"),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _getImage,
+                child: Text("Process Mail Image using Camera"),
               ),
             ),
           ],
