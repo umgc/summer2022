@@ -205,10 +205,28 @@ class CloudVisionApi {
       String address1 = '';
       String type1 = x == 0 ? 'sender' : 'recipient';
       if (blocks.elementAt(s.elementAt(x)).getList().length == 3) {
+        int cityStateZipIndex =
+            findLineWithCityStateZip(blocks.elementAt(s.elementAt(x)));
+        int addy1 = findLineWithAddress1(blocks.elementAt(s.elementAt(x)));
+
+        print('cityStateZip: ' + cityStateZipIndex.toString());
+        print('addy1: ' + addy1.toString());
         name1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0);
-        address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(1) +
-            ', ' +
-            blocks.elementAt(s.elementAt(x)).getList().elementAt(2);
+
+        if (addy1 == 0 &&
+            RegExp(r'^[A-Z][A-Za-z]+\s\w+').hasMatch(
+                blocks.elementAt(s.elementAt(x) - 1).getList().last)) {
+          name1 = blocks.elementAt(s.elementAt(x) - 1).getList().last;
+        }
+        if (cityStateZipIndex != -1 || addy1 != -1) {
+          for (int z = addy1; z <= cityStateZipIndex; z++) {
+            address1 +=
+                blocks.elementAt(s.elementAt(x)).getList().elementAt(z) + ' ';
+          }
+        }
+        print('test: ' +
+            findLineWithCityStateZip(blocks.elementAt(s.elementAt(x)))
+                .toString());
       } else if (blocks.elementAt(s.elementAt(x)).getList().length == 4) {
         name1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0);
         address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(1) +
@@ -217,14 +235,32 @@ class CloudVisionApi {
             ', ' +
             blocks.elementAt(s.elementAt(x)).getList().elementAt(3);
       } else if (blocks.elementAt(s.elementAt(x)).getList().length == 2) {
-        name1 = 'Name not Found ' +
-            blocks.elementAt(s.elementAt(x)).getList().length.toString();
-        address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0) +
-            ' ' +
-            blocks.elementAt(s.elementAt(x)).getList().elementAt(1);
+        // name1 = 'Name not Found ' +
+        //     blocks.elementAt(s.elementAt(x)).getList().length.toString();
+
+        int cityStateZipIndex =
+            findLineWithCityStateZip(blocks.elementAt(s.elementAt(x)));
+        int addy1 = findLineWithAddress1(blocks.elementAt(s.elementAt(x)));
+        if (addy1 == 0 &&
+            RegExp(r'^[A-Z][A-Za-z]+\s\w+').hasMatch(
+                blocks.elementAt(s.elementAt(x) - 1).getList().last)) {
+          name1 = blocks.elementAt(s.elementAt(x) - 1).getList().last;
+        }
+        print("index" + x.toString());
+        print('cityStateZip: ' + cityStateZipIndex.toString());
+        print('addy1: ' + addy1.toString());
+        if (cityStateZipIndex != -1 || addy1 != -1) {
+          for (int z = addy1; z <= cityStateZipIndex; z++) {
+            address1 +=
+                blocks.elementAt(s.elementAt(x)).getList().elementAt(z) + ' ';
+          }
+        }
+        // address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0) +
+        //     ' ' +
+        //     blocks.elementAt(s.elementAt(x)).getList().elementAt(1);
       } else if (blocks.elementAt(s.elementAt(x)).getList().length == 1) {
-        name1 = 'Name not found ' +
-            blocks.elementAt(s.elementAt(x)).getList().length.toString();
+        // name1 = 'Name not found ' +
+        //     blocks.elementAt(s.elementAt(x)).getList().length.toString();
         address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0);
       } else {
         print("did not fit into mail category");
@@ -240,18 +276,49 @@ class CloudVisionApi {
     return addresses;
   }
 
+  int findLineWithCityStateZip(Block block) {
+    RegExp regExp1 = new RegExp(r'\w+\s\w+\s\d{5}$');
+    RegExp regExp2 = new RegExp(r'\w+\s\w+\s\d{5}-(\d{4})$');
+    RegExp regExp3 = new RegExp(r'\w+,\s\w+\s\d{5}$');
+    RegExp regExp4 = new RegExp(r'\w+,\s\w+\s\d{5}-(\d{4})$');
+
+    for (int x = 0; x < block.getList().length; x++) {
+      if (regExp1.hasMatch(block.getList().elementAt(x)) ||
+          regExp2.hasMatch(block.getList().elementAt(x)) ||
+          regExp3.hasMatch(block.getList().elementAt(x)) ||
+          regExp4.hasMatch(block.getList().elementAt(x))) {
+        return x;
+      }
+    }
+    return -1;
+  }
+
+  int findLineWithAddress1(Block block) {
+    RegExp regExp1 = new RegExp(r'^\d+\s\w+');
+    for (int x = 0; x < block.getList().length; x++) {
+      if (regExp1.hasMatch(block.getList().elementAt(x))) {
+        return x;
+      }
+    }
+    return -1;
+  }
+
   // This function checks and determines which blocks contains an address
   List<int> findBlocksWithAddresses(List<Block> blocks) {
-    RegExp regExp1 = new RegExp(r'\s\w{2}\s\d{5}$');
-    RegExp regExp2 =
-        new RegExp(r'\s\w{2}\s(\d{5})-(\d{4})$'); //ex MD 21144-1245
+    RegExp regExp1 = new RegExp(r'\w+\s\w+\s\d{5}$');
+    RegExp regExp2 = new RegExp(r'\w+\s\w+\s\d{5}-(\d{4})$'); //ex MD 21144-1245
+    RegExp regExp3 = new RegExp(r'\w+,\s\w+\s\d{5}$');
+    RegExp regExp4 = new RegExp(r'\w+,\s\w+\s\d{5}-(\d{4})$');
     List<int> s = [];
     for (int x = 0; x < blocks.length; x++) {
       // print("---------Block $x---------");
       bool zip = false;
+      int f = findLineWithCityStateZip(blocks.elementAt(x));
       for (int y = 0; y < blocks.elementAt(x).getList().length; y++) {
         if (regExp1.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
-            regExp2.hasMatch(blocks.elementAt(x).getList().elementAt(y))) {
+            regExp2.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
+            regExp3.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
+            regExp4.hasMatch(blocks.elementAt(x).getList().elementAt(y))) {
           zip = true;
         }
         //print('$y:' + blocks.elementAt(x).getList().elementAt(y) + ' $zip');

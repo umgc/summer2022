@@ -96,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _processImageWithOCR() async {
     print("inside processImageWithOCR\n");
-    var image = await rootBundle.load('assets/unnamed_7.jpg');
+    var image = await rootBundle.load('assets/unnamed_4.jpg');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     print("Image: $image\nBuffer: $buffer\na: $a\n");
@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _processImage() async {
     print("Inside processImageForLogo\n");
-    var image = await rootBundle.load('assets/unnamed_7.jpg');
+    var image = await rootBundle.load('assets/unnamed_1.jpg');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     print("Image: $image\nBuffer: $buffer\na: $a\n");

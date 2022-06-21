@@ -1,7 +1,26 @@
 SWEN 670 Capstone Course. Summer Cohort
+Google Vision Implementation
 
---------------------------------------------------------------------------------------------
-Google Vision Implementation Version 0.0.1
+
+-----------------------------------------------------------------------------------------------
+Update 0.0.3
+
+- Added additional logic to take into considerations different scenarios when parsing blocks
+    - Additional Regular Expression Strings were used
+    - Improved Block Parsing
+    - Added some functions for redundant code.
+    - All current images were parsed correctly.
+
+-----------------------------------------------------------------------------------------------
+
+Update 0.0.2
+
+- Added JSon Implementation.  search functions will return JSON objects.
+- Tested more mail images.  Found some discrepancies as some blocks did not contain all Address content.
+- Issues using WebCamera.  Does not focus; therefore, results were not accurate as different address placement/outcome arose   
+
+-----------------------------------------------------------------------------------------------
+Update 0.0.1
 Transferring Local Project to Github for visibility and testing.
 
 This push contains the following features
