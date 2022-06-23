@@ -33,6 +33,7 @@ migrate_working_dir/
 /build/
 credentials.json
 *.jpg
+*.png
 # Web related
 lib/generated_plugin_registrant.dart
 
