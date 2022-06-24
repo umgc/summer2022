@@ -116,8 +116,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _processImage() async {
-    print("Inside processImageForLogo\n");
-    var image = await rootBundle.load('assets/mail.53.png');
+    print("Inside process image\n");
+    var image = await rootBundle.load('assets/mail.60.png');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     print("Image: $image\nBuffer: $buffer\na: $a\n");
@@ -158,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _getImage,
+                onPressed: _processImage,
                 child: Text("Process Mail Image using Camera"),
               ),
             ),

@@ -2,9 +2,24 @@ SWEN 670 Capstone Course. Summer Cohort
 
 Google Vision Implementation
 
+---------------------------------------------------------------------------------------------
+v0.0.4 - June 23, 2022
+
+- Consolidated redundant regular expressions code into functions
+
+- Cleaned up block parsing function.
+
+- Experienced few issues with the first 15 samples - Mostly Not following Mail Guidelines
+
+- After sampling another 45. The issues resolve when blocks have 1 to 2 lines especially in png format(might be coincident)
+
+    - png versions ended up separating content blocks even when close compared to jpeg equivalent. (again  might be coincident)
+
+- Will need to parse by nesting into previous blocks to find what meets address guidelines.
+
 
 -----------------------------------------------------------------------------------------------
-v0.0.3 - June 21, 2022 Update 1 
+v0.0.3 - June 21, 2022 
 
 - Added additional logic to take into considerations different scenarios when parsing blocks
     - Additional Regular Expression Strings were used
