@@ -16,7 +16,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
   ImagePicker? _imagePicker;
   bool _canProcess = true;
   bool _isBusy = false;
-  String? _text;
+  String? _text = "Please pick an image to scan";
 
   @override
   void initState() {
@@ -42,6 +42,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
               icon: const Icon(Icons.document_scanner),
               tooltip: 'Image Barcode scan',
               onPressed: () => {processImage()}),
+          Text(_text ?? "No barcodes found")
         ],
       ),
     );
@@ -78,7 +79,10 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
           text += 'Barcode: ${barcode.rawValue}\n\n';
         }
         print(text);
-        _text = text;
+
+        setState(() {
+          _text = text;
+        });
       }
       _isBusy = false;
 
