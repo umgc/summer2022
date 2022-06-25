@@ -324,7 +324,9 @@ class CloudVisionApi {
         if (addy1 == 0 &&
             validateNameHasNoSpecialSymbols(
                 blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
-          name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
+          if (x > 0) {
+            name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
+          }
         }
         if (addy1 == -1 &&
             (validateAddress1(
@@ -400,13 +402,16 @@ class CloudVisionApi {
           for (int z = addy1; z <= cityStateZipIndex; z++) {
             address1 +=
                 blocks.elementAt(b.elementAt(x)).getList().elementAt(z) + ' ';
-          }
-          if (addy1 == 0 &&
-              validateNameHasNoSpecialSymbols(
+
+            if (addy1 == 0 && x > 0) {
+              if (validateNameHasNoSpecialSymbols(
                   blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
-            name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
+                name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
+              }
+            }
           }
         }
+        //need to look into
         //  else if (cityStateZipIndex > 0 && addy1 == -1) {
         //   for (int y = cityStateZipIndex; y >= 0; y--) {
         //     int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
@@ -507,7 +512,7 @@ class CloudVisionApi {
       } else {
         print("did not fit into mail category");
       }
-      if (name1.isNotEmpty && address1.isNotEmpty) {
+      if (name1.isNotEmpty || address1.isNotEmpty) {
         AddressObject aO = AddressObject(
             type: (b.length == 1) ? 'recipient' : type1,
             name: name1,
