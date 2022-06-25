@@ -386,20 +386,58 @@ class CloudVisionApi {
         //   }
         // }
       } else if (blocks.elementAt(b.elementAt(x)).getList().length == 2) {
-        bool nameVal = validateNameHasNoSpecialSymbols(
-            blocks.elementAt(b.elementAt(x) - 1).getList().last);
-        if (addy1 == 0 && nameVal) {
-          name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
-        } else if (addy1 == -1) {
-        } else if (nameVal) {
-          name1 = blocks.elementAt(b.elementAt(x)).getList().elementAt(0);
-        } else {}
+        // bool nameVal = validateNameHasNoSpecialSymbols(
+        //     blocks.elementAt(b.elementAt(x) - 1).getList().last);
+        // if (addy1 == 0 && validateNameHasNoSpecialSymbols(
+        //      blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
+        //   name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
+        // } else if (addy1 == -1) {
+        // } else if (nameVal) {
+        //   name1 = blocks.elementAt(b.elementAt(x)).getList().elementAt(0);
+        // } else {}
+
         if (cityStateZipIndex != -1 && addy1 != -1) {
           for (int z = addy1; z <= cityStateZipIndex; z++) {
             address1 +=
                 blocks.elementAt(b.elementAt(x)).getList().elementAt(z) + ' ';
           }
-        } else {}
+          if (addy1 == 0 &&
+              validateNameHasNoSpecialSymbols(
+                  blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
+            name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
+          }
+        }
+        //  else if (cityStateZipIndex > 0 && addy1 == -1) {
+        //   for (int y = cityStateZipIndex; y >= 0; y--) {
+        //     int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
+        //      address1 =
+        //           blocks.elementAt(b.elementAt(x)).getList().elementAt(y) +
+        //               ' ' +
+        //               address1;
+        //     if (validateAddress1(
+        //         blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
+        //       address1 =
+        //           blocks.elementAt(b.elementAt(x)).getList().elementAt(y) +
+        //               ' ' +
+        //               address1;
+        //     }
+        //   }
+        // }
+        else if (cityStateZipIndex == 0 && addy1 == -1) {
+          int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
+          address1 = blocks
+                  .elementAt(b.elementAt(x) - 1)
+                  .getList()
+                  .elementAt(size - 1) +
+              ' ' +
+              address1;
+          if (size == 1 &&
+              validateNameHasNoSpecialSymbols(
+                  blocks.elementAt(b.elementAt(x) - 2).getList().last)) {
+            name1 = blocks.elementAt(b.elementAt(x) - 2).getList().last;
+          }
+        }
+
         // address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0) +
         //     ' ' +
         //     blocks.elementAt(s.elementAt(x)).getList().elementAt(1);
@@ -577,12 +615,18 @@ class CloudVisionApi {
 
   // This function checks and determines which blocks contains zip
   List<int> findBlocksWithAddresses(List<Block> blocks) {
-    RegExp regExp1 = new RegExp(r'\w+\s\w+\s\d{5}$');
-    RegExp regExp2 = new RegExp(r'\w+\s\w+\s\d{5}-(\d{4})$'); //ex MD 21144-1245
-    RegExp regExp3 = new RegExp(r'\w+,\s\w+\s\d{5}$');
-    RegExp regExp4 = new RegExp(r'\w+,\s\w+\s\d{5}-(\d{4})$');
-    RegExp regExp5 = new RegExp(r'\w+,\s\w+\.\s\d{5}$');
-    RegExp regExp6 = new RegExp(r'\w+\s\w+\.\s\d{5}$');
+    // RegExp regExp1 = new RegExp(r'\w+\s\w+\s\d{5}$');
+    // RegExp regExp2 = new RegExp(r'\w+\s\w+\s\d{5}-(\d{4})$'); //ex MD 21144-1245
+    // RegExp regExp3 = new RegExp(r'\w+,\s\w+\s\d{5}$');
+    // RegExp regExp4 = new RegExp(r'\w+,\s\w+\s\d{5}-(\d{4})$');
+    // RegExp regExp5 = new RegExp(r'\w+,\s\w+\.\s\d{5}$');
+    // RegExp regExp6 = new RegExp(r'\w+\s\w+\.\s\d{5}$');
+    RegExp regExp1 = new RegExp(r'[A-z]+\s[A-z]+\s\d{5}$');
+    RegExp regExp2 = new RegExp(r'[A-z]+\s[A-z]+\s\d{5}-(\d{4})$');
+    RegExp regExp3 = new RegExp(r'[A-z]+,\s[A-z]+\s\d{5}$');
+    RegExp regExp4 = new RegExp(r'[A-z]+,\s[A-z]+\s\d{5}-(\d{4})$');
+    RegExp regExp5 = new RegExp(r'[A-z]+,\s[A-z]+\.\s\d{5}$');
+    RegExp regExp6 = new RegExp(r'[A-z]+\s[A-z]+\.\s\d{5}$');
     List<int> s = [];
     for (int x = 0; x < blocks.length; x++) {
       // print("---------Block $x---------");
