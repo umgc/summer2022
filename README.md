@@ -1,7 +1,13 @@
 SWEN 670 Capstone Course. Summer Cohort
 
 Google Vision Implementation
+v0.0.5 - June 24, 2022
 
+ - Added additional lines to block 1. It takes into consideration the previous 2 blocks to get the address and name if separated into three.
+
+ - Updated Regular Expressions used to validate address and zip
+
+ - Current on pic 62
 ---------------------------------------------------------------------------------------------
 v0.0.4 - June 23, 2022
 
@@ -9,13 +15,13 @@ v0.0.4 - June 23, 2022
 
 - Cleaned up block parsing function.
 
-- Experienced few issues with the first 15 samples - Mostly Not following Mail Guidelines
+- Experienced few issues with the first 15 samples - Mostly Mail guidelines not being followed.
 
-- After sampling another 45. The issues resolve when blocks have 1 to 2 lines especially in png format(might be coincident)
+- After sampling another 45. The issues revolved when blocks have 1 to 2 lines especially in png format(might be coincident)
 
-    - png versions ended up separating content blocks even when close compared to jpeg equivalent. (again  might be coincident)
+    - png versions ended up separating content into more blocks even when  compared to jpg equivalent. (again  might be coincident)
 
-- Will need to parse by nesting into previous blocks to find what meets address guidelines.
+- Will need to parse by nesting into previous blocks to find what meets address guidelines - mostly focused on block 1 and 2.
 
 
 -----------------------------------------------------------------------------------------------

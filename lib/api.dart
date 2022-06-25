@@ -333,11 +333,58 @@ class CloudVisionApi {
           address1 = blocks.elementAt(b.elementAt(x) - 1).getList().last +
               ' ' +
               blocks.elementAt(b.elementAt(x)).getList().last;
+          int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
+          if (size >= 2) {
+            name1 = blocks
+                .elementAt(b.elementAt(x) - 1)
+                .getList()
+                .elementAt(size - 2);
+          }
         }
-        if (addy1 == cityStateZipIndex) {
-          address1 =
-              blocks.elementAt(b.elementAt(x)).getList().elementAt(addy1);
+        if (addy1 == cityStateZipIndex &&
+            (addy1 != -1 || cityStateZipIndex != -1)) {
+          if (blocks.elementAt(b.elementAt(x)).getList().elementAt(addy1) ==
+              blocks
+                  .elementAt(b.elementAt(x))
+                  .getList()
+                  .elementAt(cityStateZipIndex))
+            address1 =
+                blocks.elementAt(b.elementAt(x)).getList().elementAt(addy1);
         }
+        if (cityStateZipIndex >= 0 && addy1 == -1) {
+          int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
+
+          address1 = blocks
+                  .elementAt(b.elementAt(x) - 1)
+                  .getList()
+                  .elementAt(size - 1) +
+              " " +
+              blocks
+                  .elementAt(b.elementAt(x))
+                  .getList()
+                  .elementAt(cityStateZipIndex);
+          if (size > 2 &&
+              validateNameHasNoSpecialSymbols(blocks
+                  .elementAt(b.elementAt(x) - 1)
+                  .getList()
+                  .elementAt(size - 2))) {
+            name1 = blocks
+                .elementAt(b.elementAt(x) - 1)
+                .getList()
+                .elementAt(size - 2);
+          }
+          if (size == 1 &&
+              validateNameHasNoSpecialSymbols(
+                  blocks.elementAt(b.elementAt(x) - 2).getList().last)) {
+            name1 = blocks.elementAt(b.elementAt(x) - 2).getList().last;
+          }
+        }
+        // if (cityStateZipIndex != -1 || addy1 != -1) {
+        //   for (int z = addy1; z <= cityStateZipIndex; z++) {
+        //     address1 +=
+        //         blocks.elementAt(b.elementAt(x)).getList().elementAt(z) + ' ';
+        //   }
+        // }
       } else if (blocks.elementAt(b.elementAt(x)).getList().length == 2) {
         bool nameVal = validateNameHasNoSpecialSymbols(
             blocks.elementAt(b.elementAt(x) - 1).getList().last);
@@ -422,12 +469,14 @@ class CloudVisionApi {
       } else {
         print("did not fit into mail category");
       }
-      AddressObject aO = AddressObject(
-          type: (b.length == 1) ? 'recipient' : type1,
-          name: name1,
-          address: address1,
-          validated: false);
-      addresses.add(aO);
+      if (name1.isNotEmpty && address1.isNotEmpty) {
+        AddressObject aO = AddressObject(
+            type: (b.length == 1) ? 'recipient' : type1,
+            name: name1,
+            address: address1,
+            validated: false);
+        addresses.add(aO);
+      }
     }
     if (addresses.length > 2) {
       for (int x = 0; x < addresses.length - 1; x++) {
@@ -439,13 +488,25 @@ class CloudVisionApi {
     return addresses;
   }
 
+  bool validateNameHasNoSpecialSymbols(String line) {
+    RegExp regExp1 = new RegExp(r'[a-zA-Z0-9]+$');
+    RegExp regExp3 = new RegExp(r'[\!\@\#\$\%\^\&\*\(\)\{\}\[\]\<\>\/\?\~\+]');
+    if (regExp3.hasMatch(line.toUpperCase())) {
+      return false;
+    }
+    if (regExp1.hasMatch(line)) {
+      return true;
+    }
+    return false;
+  }
+
   bool validateCityStateZip(String line) {
-    RegExp regExp1 = new RegExp(r'\w+\s\w+\s\d{5}$');
-    RegExp regExp2 = new RegExp(r'\w+\s\w+\s\d{5}-(\d{4})$');
-    RegExp regExp3 = new RegExp(r'\w+,\s\w+\s\d{5}$');
-    RegExp regExp4 = new RegExp(r'\w+,\s\w+\s\d{5}-(\d{4})$');
-    RegExp regExp5 = new RegExp(r'\w+,\s\w+\.\s\d{5}$');
-    RegExp regExp6 = new RegExp(r'\w+\s\w+\.\s\d{5}$');
+    RegExp regExp1 = new RegExp(r'\w+\s[A-z]+\s\d{5}$');
+    RegExp regExp2 = new RegExp(r'\w+\s[A-z]+\s\d{5}-(\d{4})$');
+    RegExp regExp3 = new RegExp(r'\w+,\s[A-z]+\s\d{5}$');
+    RegExp regExp4 = new RegExp(r'\w+,\s[A-z]+\s\d{5}-(\d{4})$');
+    RegExp regExp5 = new RegExp(r'\w+,\s[A-z]+\.\s\d{5}$');
+    RegExp regExp6 = new RegExp(r'\w+\s[A-z]+\.\s\d{5}$');
     if (regExp1.hasMatch(line) ||
         regExp2.hasMatch(line) ||
         regExp3.hasMatch(line) ||
@@ -480,7 +541,7 @@ class CloudVisionApi {
 
   bool validateAddress1(String line) {
     RegExp regExp1 = new RegExp(r'^\d+\s[a-zA-Z]+');
-    RegExp regExp2 = new RegExp(r'\sBOX\s\d+');
+    RegExp regExp2 = new RegExp(r'BOX\s\d+');
     RegExp regExp3 = new RegExp(r'[\!\@\#\$\%\^\&\*\(\)\{\}\[\]\<\>\/\?\~\+]');
     if (regExp3.hasMatch(line.toUpperCase())) {
       return false;
@@ -491,34 +552,27 @@ class CloudVisionApi {
       return false;
   }
 
-  bool validateNameHasNoSpecialSymbols(String line) {
-    RegExp regExp1 = new RegExp(r'[a-zA-Z0-9]+$');
-    RegExp regExp3 = new RegExp(r'[\!\@\#\$\%\^\&\*\(\)\{\}\[\]\<\>\/\?\~\+]');
-    if (regExp3.hasMatch(line.toUpperCase())) {
-      return false;
-    }
-    if (regExp1.hasMatch(line)) {
-      return true;
-    }
-    return false;
-  }
-
   int findLineWithAddress1(Block block) {
-    // RegExp regExp1 = new RegExp(r'^\d+\s\w+');
-    // RegExp regExp2 = new RegExp(r'\sBox\s\d+');
+    RegExp regExp1 = new RegExp(r'^\d+\s[a-zA-Z]+');
+    RegExp regExp2 = new RegExp(r'BOX\s\d+');
+    RegExp regExp3 = new RegExp(r'[\!\#\$\%\^\&\*\(\)\{\}\[\]\<\>\/\?\~\+]');
+
+    for (int x = 0; x < block.getList().length; x++) {
+      if (regExp1.hasMatch(block.getList().elementAt(x).toUpperCase()) ||
+          regExp2.hasMatch(block.getList().elementAt(x).toUpperCase())) {
+        return x;
+      }
+      // if (regExp3.hasMatch(block.getList().elementAt(x).toUpperCase())) {
+      //   return -1;
+      // }
+    }
+    return -1;
     // for (int x = 0; x < block.getList().length; x++) {
-    //   if (regExp1.hasMatch(block.getList().elementAt(x)) ||
-    //       regExp2.hasMatch(block.getList().elementAt(x))) {
+    //   if (validateAddress1(block.getList().elementAt(x))) {
     //     return x;
     //   }
     // }
     // return -1;
-    for (int x = 0; x < block.getList().length; x++) {
-      if (validateAddress1(block.getList().elementAt(x))) {
-        return x;
-      }
-    }
-    return -1;
   }
 
   // This function checks and determines which blocks contains zip
