@@ -78,7 +78,6 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
         for (final barcode in barcodes) {
           text += 'Barcode: ${barcode.rawValue}\n\n';
         }
-        print(text);
 
         setState(() {
           _text = text;
