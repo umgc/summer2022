@@ -181,9 +181,18 @@ class CloudVisionApi {
       }
       print("--------------------------");
     }
+    List<int> sB = findBlocksWithAddresses(blocks);
+    for (int sb = 0; sb < sB.length; sb++) {
+      int z = sB[sb];
+      if (blockHasPostage(blocks.elementAt(z))) {
+        sB.removeAt(sb);
+      }
+    }
+
     List<AddressObject> pB =
         // parseBlocksForAddresses(blocks, findBlocksWithAddresses(blocks));
-        parseBlocksForAddresses2(blocks, findBlocksWithAddresses(blocks));
+
+        parseBlocksForAddresses2(blocks, sB);
 
     pB.forEach((a) {
       print("--------Address----------");
@@ -429,18 +438,42 @@ class CloudVisionApi {
         //   }
         // }
         else if (cityStateZipIndex == 0 && addy1 == -1) {
-          int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
           address1 = blocks
+              .elementAt(b.elementAt(x))
+              .getList()
+              .elementAt(cityStateZipIndex);
+          int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
+          if (size == 2 &&
+              validateAddress1(blocks
                   .elementAt(b.elementAt(x) - 1)
                   .getList()
-                  .elementAt(size - 1) +
-              ' ' +
-              address1;
+                  .elementAt(size - 1))) {
+            address1 = blocks
+                    .elementAt(b.elementAt(x) - 1)
+                    .getList()
+                    .elementAt(size - 1) +
+                ' ' +
+                address1;
+            if (validateNameHasNoSpecialSymbols(blocks
+                .elementAt(b.elementAt(x) - 1)
+                .getList()
+                .elementAt(size - 1))) {
+              name1 = blocks
+                  .elementAt(b.elementAt(x) - 1)
+                  .getList()
+                  .elementAt(size - 2);
+            }
+          }
+
           if (size == 1 &&
               validateNameHasNoSpecialSymbols(
                   blocks.elementAt(b.elementAt(x) - 2).getList().last)) {
             name1 = blocks.elementAt(b.elementAt(x) - 2).getList().last;
           }
+          // if(size == 2 && validateNameHasNoSpecialSymbols(line))
+          // {
+
+          // }
         }
 
         // address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0) +
@@ -531,8 +564,23 @@ class CloudVisionApi {
     return addresses;
   }
 
+  bool blockHasPostage(Block block) {
+    RegExp regExp1 = new RegExp(r'U.S. POSTAGE');
+    RegExp regExp2 = new RegExp(r'US POSTAGE');
+    RegExp regExp3 = new RegExp(r'USPOSTAGE');
+
+    for (int y = 0; y < block.getList().length; y++) {
+      if (regExp1.hasMatch(block.getList().elementAt(y).toUpperCase()) ||
+          regExp2.hasMatch(block.getList().elementAt(y).toUpperCase()) ||
+          regExp3.hasMatch(block.getList().elementAt(y).toUpperCase())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   bool validateNameHasNoSpecialSymbols(String line) {
-    RegExp regExp1 = new RegExp(r'[a-zA-Z0-9]+$');
+    RegExp regExp1 = new RegExp(r'[a-zA-Z0-9.\ ]+$');
     RegExp regExp3 = new RegExp(r'[\!\@\#\$\%\^\&\*\(\)\{\}\[\]\<\>\/\?\~\+]');
     if (regExp3.hasMatch(line.toUpperCase())) {
       return false;
