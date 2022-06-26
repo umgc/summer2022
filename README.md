@@ -1,5 +1,25 @@
-SWEN 670 Capstone Course. Summer Cohort
+SWEN 670 Capstone Course. Summer Cohor
 
+---------------------------------------------------------------------------------------------
+v0.0.8 - June 26, 2022
+
+    - One line blocks for sender - Added special character detection and removed | and replaced with ;
+    - added '; ' to separate the address line with the city,state, zip
+    - Fixed bugs with Block two use case
+    - Fixed bugs with Block one use case
+    - Cleaned up code; removed old code comments.
+    - Included BOX exclusion to findcitystatezip logic
+    - Lots mores
+    - Ready for merging with TeamArch branch.
+
+---------------------------------------------------------------------------------------------
+v0.0.7 - June 25, 2022 rev2
+ - Fixed some bugs
+
+ ---------------------------------------------------------------------------------------------
+v0.0.6 - June 25, 2022
+- Fixed some bugs
+---------------------------------------------------------------------------------------------
 Google Vision Implementation
 v0.0.5 - June 24, 2022
 

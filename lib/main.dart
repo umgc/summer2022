@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _processImage() async {
     print("Inside process image\n");
-    var image = await rootBundle.load('assets/mail.04.jpg');
+    var image = await rootBundle.load('assets/mail.70.png');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     print("Image: $image\nBuffer: $buffer\na: $a\n");

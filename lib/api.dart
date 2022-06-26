@@ -70,13 +70,7 @@ class CloudVisionApi {
   //Combines Addresses and logos into a mailObject for UI to parse.
   Future<MailResponse> search(String image) async {
     List<AddressObject>? addresses = await searchImageForText(image);
-    //print(addresses[0].toJson());
-    //print(addresses[1].toJson());
     List<LogoObject>? logos = await searchImageForLogo(image);
-    //print(logos[0].toJson());
-    // if (logos.first == null) {
-    //   logos.add(LogoObject("none"));
-    // }
     MailResponse response = MailResponse(addresses: addresses, logos: logos);
     print(response.toJson().toString());
     return response;
@@ -189,10 +183,7 @@ class CloudVisionApi {
       }
     }
 
-    List<AddressObject> pB =
-        // parseBlocksForAddresses(blocks, findBlocksWithAddresses(blocks));
-
-        parseBlocksForAddresses2(blocks, sB);
+    List<AddressObject> pB = parseBlocksForAddresses2(blocks, sB);
 
     pB.forEach((a) {
       print("--------Address----------");
@@ -208,116 +199,6 @@ class CloudVisionApi {
   }
 
   // //This function goes through all blocks using the index provided to find all addresses and put them into a List of AddressObject
-  // List<AddressObject> parseBlocksForAddresses(List<Block> blocks, List<int> s) {
-  //   List<AddressObject> addresses = [];
-  //   print(s.length);
-  //   for (int x = 0; x < s.length; x++) {
-  //     String name1 = '';
-  //     String address1 = '';
-  //     String type1 = x == 0 ? 'sender' : 'recipient';
-  //     if (blocks.elementAt(s.elementAt(x)).getList().length == 3) {
-  //       int cityStateZipIndex =
-  //           findLineWithCityStateZip(blocks.elementAt(s.elementAt(x)));
-  //       int addy1 = findLineWithAddress1(blocks.elementAt(s.elementAt(x)));
-
-  //       // print('cityStateZip: ' + cityStateZipIndex.toString());
-  //       // print('addy1: ' + addy1.toString());
-  //       name1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0);
-  //       if (addy1 == 0 &&
-  //           RegExp(r'^[A-Z][A-Za-z]+\s\w+').hasMatch(
-  //               blocks.elementAt(s.elementAt(x) - 1).getList().last)) {
-  //         name1 = blocks.elementAt(s.elementAt(x) - 1).getList().last;
-  //       }
-  //       if (cityStateZipIndex != -1 || addy1 != -1) {
-  //         for (int z = addy1; z <= cityStateZipIndex; z++) {
-  //           address1 +=
-  //               blocks.elementAt(s.elementAt(x)).getList().elementAt(z) + ' ';
-  //         }
-  //       }
-  //       // print('test: ' +
-  //       //     findLineWithCityStateZip(blocks.elementAt(s.elementAt(x)))
-  //       //         .toString());
-  //     } else if (blocks.elementAt(s.elementAt(x)).getList().length == 4) {
-  //       name1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0);
-  //       address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(1) +
-  //           ' ' +
-  //           blocks.elementAt(s.elementAt(x)).getList().elementAt(2) +
-  //           ', ' +
-  //           blocks.elementAt(s.elementAt(x)).getList().elementAt(3);
-  //     } else if (blocks.elementAt(s.elementAt(x)).getList().length == 2) {
-  //       // name1 = 'Name not Found ' +
-  //       //     blocks.elementAt(s.elementAt(x)).getList().length.toString();
-
-  //       int cityStateZipIndex =
-  //           findLineWithCityStateZip(blocks.elementAt(s.elementAt(x)));
-  //       int addy1 = findLineWithAddress1(blocks.elementAt(s.elementAt(x)));
-  //       if (addy1 == 0 &&
-  //           RegExp(r'^[A-Z][A-Za-z]+\s\w+').hasMatch(
-  //               blocks.elementAt(s.elementAt(x) - 1).getList().last)) {
-  //         name1 = blocks.elementAt(s.elementAt(x) - 1).getList().last;
-  //       }
-  //       // print("index" + x.toString());
-  //       // print('cityStateZip: ' + cityStateZipIndex.toString());
-  //       // print('addy1: ' + addy1.toString());
-  //       if (cityStateZipIndex != -1 || addy1 != -1) {
-  //         for (int z = addy1; z <= cityStateZipIndex; z++) {
-  //           address1 +=
-  //               blocks.elementAt(s.elementAt(x)).getList().elementAt(z) + ' ';
-  //         }
-  //       }
-  //       // address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0) +
-  //       //     ' ' +
-  //       //     blocks.elementAt(s.elementAt(x)).getList().elementAt(1);
-  //     } else if (blocks.elementAt(s.elementAt(x)).getList().length == 1) {
-  //       // name1 = 'Name not found ' +
-  //       //     blocks.elementAt(s.elementAt(x)).getList().length.toString();
-  //       //address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0);
-  //       int cityStateZipIndex =
-  //           findLineWithCityStateZip(blocks.elementAt(s.elementAt(x)));
-  //       int addy1 = findLineWithAddress1(blocks.elementAt(s.elementAt(x)));
-  //       print("index" + x.toString());
-  //       print('cityStateZip: ' + cityStateZipIndex.toString());
-  //       print('addy1: ' + addy1.toString());
-  //       if (addy1 == 0 &&
-  //           RegExp(r'^[A-Z][A-Za-z]+\s\w+').hasMatch(
-  //               blocks.elementAt(s.elementAt(x) - 1).getList().last)) {
-  //         name1 = blocks.elementAt(s.elementAt(x) - 1).getList().last;
-  //       }
-  //       if (addy1 == -1 &&
-  //           RegExp(r'\sBOX\s\d{1,}').hasMatch(blocks
-  //               .elementAt(s.elementAt(x) - 1)
-  //               .getList()
-  //               .last
-  //               .toUpperCase()) &&
-  //           cityStateZipIndex != -1) {
-  //         address1 = blocks.elementAt(s.elementAt(x) - 1).getList().last +
-  //             ', ' +
-  //             blocks.elementAt(s.elementAt(x)).getList().last;
-  //       }
-  //       if (addy1 == cityStateZipIndex) {
-  //         address1 =
-  //             blocks.elementAt(s.elementAt(x)).getList().elementAt(addy1);
-  //       }
-  //     } else {
-  //       print("did not fit into mail category");
-  //     }
-  //     AddressObject aO = AddressObject(
-  //         type: (s.length == 1) ? 'recipient' : type1,
-  //         name: name1,
-  //         address: address1,
-  //         validated: false);
-  //     addresses.add(aO);
-  //   }
-  //   if (addresses.length > 2) {
-  //     for (int x = 0; x < addresses.length - 1; x++) {
-  //       addresses.elementAt(x).type = 'sender';
-  //     }
-  //     addresses.last.type = 'recipient';
-  //   }
-
-  //   return addresses;
-  // }
-
   List<AddressObject> parseBlocksForAddresses2(
       List<Block> blocks, List<int> b) {
     List<AddressObject> addresses = [];
@@ -358,10 +239,40 @@ class CloudVisionApi {
               blocks
                   .elementAt(b.elementAt(x))
                   .getList()
-                  .elementAt(cityStateZipIndex))
-            address1 =
+                  .elementAt(cityStateZipIndex)) {
+            if (blocks
+                .elementAt(b.elementAt(x))
+                .getList()
+                .elementAt(addy1)
+                .contains(" | ")) {
+              address1 = blocks
+                  .elementAt(b.elementAt(x))
+                  .getList()
+                  .elementAt(addy1)
+                  .replaceFirst(r' | ', '; ');
+            }
+          } else {
+            address1 = '; ' +
                 blocks.elementAt(b.elementAt(x)).getList().elementAt(addy1);
+          }
+
+          if (addy1 == 0 &&
+              validateNameHasNoSpecialSymbols(
+                  blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
+            name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
+          } else {
+            if (validateNameHasNoSpecialSymbols(blocks
+                .elementAt(b.elementAt(x))
+                .getList()
+                .elementAt(addy1 - 1))) {
+              name1 = blocks
+                  .elementAt(b.elementAt(x))
+                  .getList()
+                  .elementAt(addy1 - 1);
+            }
+          }
         }
+
         if (cityStateZipIndex >= 0 && addy1 == -1) {
           int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
 
@@ -369,7 +280,7 @@ class CloudVisionApi {
                   .elementAt(b.elementAt(x) - 1)
                   .getList()
                   .elementAt(size - 1) +
-              " " +
+              '; ' +
               blocks
                   .elementAt(b.elementAt(x))
                   .getList()
@@ -390,58 +301,66 @@ class CloudVisionApi {
             name1 = blocks.elementAt(b.elementAt(x) - 2).getList().last;
           }
         }
-        // if (cityStateZipIndex != -1 || addy1 != -1) {
-        //   for (int z = addy1; z <= cityStateZipIndex; z++) {
-        //     address1 +=
-        //         blocks.elementAt(b.elementAt(x)).getList().elementAt(z) + ' ';
-        //   }
-        // }
       } else if (blocks.elementAt(b.elementAt(x)).getList().length == 2) {
-        // bool nameVal = validateNameHasNoSpecialSymbols(
-        //     blocks.elementAt(b.elementAt(x) - 1).getList().last);
-        // if (addy1 == 0 && validateNameHasNoSpecialSymbols(
-        //      blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
-        //   name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
-        // } else if (addy1 == -1) {
-        // } else if (nameVal) {
-        //   name1 = blocks.elementAt(b.elementAt(x)).getList().elementAt(0);
-        // } else {}
-
         if (cityStateZipIndex != -1 && addy1 != -1) {
           for (int z = addy1; z <= cityStateZipIndex; z++) {
-            address1 +=
-                blocks.elementAt(b.elementAt(x)).getList().elementAt(z) + ' ';
+            if (z == cityStateZipIndex) {
+              address1 += "; " +
+                  blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
+            } else {
+              address1 +=
+                  blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
+            }
 
-            if (addy1 == 0 && b.elementAt(0) != 0) {
+            if (addy1 == 0 && b.elementAt(x) != 0) {
               if (validateNameHasNoSpecialSymbols(
                   blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
                 name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
               }
             }
           }
-        }
-        //need to look into
-        //  else if (cityStateZipIndex > 0 && addy1 == -1) {
-        //   for (int y = cityStateZipIndex; y >= 0; y--) {
-        //     int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
-        //      address1 =
-        //           blocks.elementAt(b.elementAt(x)).getList().elementAt(y) +
-        //               ' ' +
-        //               address1;
-        //     if (validateAddress1(
-        //         blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
-        //       address1 =
-        //           blocks.elementAt(b.elementAt(x)).getList().elementAt(y) +
-        //               ' ' +
-        //               address1;
-        //     }
-        //   }
-        // }
-        else if (cityStateZipIndex == 0 && addy1 == -1) {
-          address1 = blocks
-              .elementAt(b.elementAt(x))
-              .getList()
-              .elementAt(cityStateZipIndex);
+        } else if (cityStateZipIndex > 0 && addy1 == -1) {
+          for (int y = cityStateZipIndex; y >= 0; y--) {
+            if (y == cityStateZipIndex) {
+              address1 += "; " +
+                  blocks.elementAt(b.elementAt(x)).getList().elementAt(y);
+            } else {
+              address1 +=
+                  blocks.elementAt(b.elementAt(x)).getList().elementAt(y) +
+                      ' ' +
+                      address1;
+            }
+          }
+
+          int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
+          int prevAddrIndex =
+              findLineWithAddress1(blocks.elementAt(b.elementAt(x) - 1));
+          for (int z = prevAddrIndex; z <= size; z++) {
+            if (z == prevAddrIndex &&
+                validateAddress1(blocks
+                    .elementAt(b.elementAt(x) - 1)
+                    .getList()
+                    .elementAt(z))) {
+              address1 =
+                  blocks.elementAt(b.elementAt(x) - 1).getList().elementAt(z) +
+                      ', ' +
+                      address1;
+            }
+            if (prevAddrIndex == 0) {
+              name1 = blocks.elementAt(b.elementAt(x) - 2).getList().last;
+            } else if (prevAddrIndex == 1) {
+              name1 = blocks
+                  .elementAt(b.elementAt(x) - 1)
+                  .getList()
+                  .elementAt(prevAddrIndex - 1);
+            }
+          }
+        } else if (cityStateZipIndex == 0 && addy1 == -1) {
+          address1 = "; " +
+              blocks
+                  .elementAt(b.elementAt(x))
+                  .getList()
+                  .elementAt(cityStateZipIndex);
           int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
           if (size == 2 &&
               validateAddress1(blocks
@@ -452,7 +371,6 @@ class CloudVisionApi {
                     .elementAt(b.elementAt(x) - 1)
                     .getList()
                     .elementAt(size - 1) +
-                ' ' +
                 address1;
             if (validateNameHasNoSpecialSymbols(blocks
                 .elementAt(b.elementAt(x) - 1)
@@ -470,15 +388,7 @@ class CloudVisionApi {
                   blocks.elementAt(b.elementAt(x) - 2).getList().last)) {
             name1 = blocks.elementAt(b.elementAt(x) - 2).getList().last;
           }
-          // if(size == 2 && validateNameHasNoSpecialSymbols(line))
-          // {
-
-          // }
         }
-
-        // address1 = blocks.elementAt(s.elementAt(x)).getList().elementAt(0) +
-        //     ' ' +
-        //     blocks.elementAt(s.elementAt(x)).getList().elementAt(1);
       } else if (blocks.elementAt(b.elementAt(x)).getList().length == 3) {
         // print('cityStateZip: ' + cityStateZipIndex.toString());
         // print('addy1: ' + addy1.toString());
@@ -497,8 +407,13 @@ class CloudVisionApi {
         }
         if (cityStateZipIndex != -1 || addy1 != -1) {
           for (int z = addy1; z <= cityStateZipIndex; z++) {
-            address1 +=
-                blocks.elementAt(b.elementAt(x)).getList().elementAt(z) + ' ';
+            if (z == cityStateZipIndex) {
+              address1 += "; " +
+                  blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
+            } else {
+              address1 +=
+                  blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
+            }
           }
         }
         // print('test: ' +
@@ -519,8 +434,13 @@ class CloudVisionApi {
         }
         if (cityStateZipIndex != -1 || addy1 != -1) {
           for (int z = addy1; z <= cityStateZipIndex; z++) {
-            address1 +=
-                blocks.elementAt(b.elementAt(x)).getList().elementAt(z) + ' ';
+            if (z == cityStateZipIndex) {
+              address1 += "; " +
+                  blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
+            } else {
+              address1 +=
+                  blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
+            }
           }
         }
       } else if (blocks.elementAt(b.elementAt(x)).getList().length == 5) {
@@ -538,8 +458,13 @@ class CloudVisionApi {
         }
         if (cityStateZipIndex != -1 || addy1 != -1) {
           for (int z = addy1; z <= cityStateZipIndex; z++) {
-            address1 +=
-                blocks.elementAt(b.elementAt(x)).getList().elementAt(z) + ' ';
+            if (z == cityStateZipIndex) {
+              address1 += "; " +
+                  blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
+            } else {
+              address1 +=
+                  blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
+            }
           }
         }
       } else {
@@ -564,21 +489,25 @@ class CloudVisionApi {
     return addresses;
   }
 
+  // Validates whether a block contains a postage stamp
   bool blockHasPostage(Block block) {
     RegExp regExp1 = new RegExp(r'U.S. POSTAGE');
     RegExp regExp2 = new RegExp(r'US POSTAGE');
     RegExp regExp3 = new RegExp(r'USPOSTAGE');
+    RegExp regExp4 = new RegExp(r'MAILED FROM ZIP CODE\s\d{5}$');
 
     for (int y = 0; y < block.getList().length; y++) {
       if (regExp1.hasMatch(block.getList().elementAt(y).toUpperCase()) ||
           regExp2.hasMatch(block.getList().elementAt(y).toUpperCase()) ||
-          regExp3.hasMatch(block.getList().elementAt(y).toUpperCase())) {
+          regExp3.hasMatch(block.getList().elementAt(y).toUpperCase()) ||
+          regExp4.hasMatch(block.getList().elementAt(y).toUpperCase())) {
         return true;
       }
     }
     return false;
   }
 
+  // Validates name has no special Symbols
   bool validateNameHasNoSpecialSymbols(String line) {
     RegExp regExp1 = new RegExp(r'[a-zA-Z0-9.\ ]+$');
     RegExp regExp3 = new RegExp(r'[\!\@\#\$\%\^\&\*\(\)\{\}\[\]\<\>\/\?\~\+]');
@@ -591,6 +520,7 @@ class CloudVisionApi {
     return false;
   }
 
+  // Validates city follows city, state, zip guidelines
   bool validateCityStateZip(String line) {
     RegExp regExp1 = new RegExp(r'\w+\s[A-z]+\s\d{5}$');
     RegExp regExp2 = new RegExp(r'\w+\s[A-z]+\s\d{5}-(\d{4})$');
@@ -598,17 +528,22 @@ class CloudVisionApi {
     RegExp regExp4 = new RegExp(r'\w+,\s[A-z]+\s\d{5}-(\d{4})$');
     RegExp regExp5 = new RegExp(r'\w+,\s[A-z]+\.\s\d{5}$');
     RegExp regExp6 = new RegExp(r'\w+\s[A-z]+\.\s\d{5}$');
+    RegExp regExp7 = new RegExp(r'[A-z]+\,\s[A-z]+\,\s\d{5}-\d{4}$');
+    RegExp regExp8 = new RegExp(r'[A-z]+\,\s[A-z]+\,\s\d{5}$');
     if (regExp1.hasMatch(line) ||
         regExp2.hasMatch(line) ||
         regExp3.hasMatch(line) ||
         regExp4.hasMatch(line) ||
         regExp5.hasMatch(line) ||
-        regExp6.hasMatch(line)) {
+        regExp6.hasMatch(line) ||
+        regExp7.hasMatch(line) ||
+        regExp8.hasMatch(line)) {
       return true;
     }
     return false;
   }
 
+  // Find line that contains city state zip within a block and returns the line index
   int findLineWithCityStateZip(Block block) {
     RegExp regExp1 = new RegExp(r'[A-z]+\s[A-z]+\s\d{5}$');
     RegExp regExp2 = new RegExp(r'[A-z]+\s[A-z]+\s\d{5}-(\d{4})$');
@@ -616,20 +551,31 @@ class CloudVisionApi {
     RegExp regExp4 = new RegExp(r'[A-z]+,\s[A-z]+\s\d{5}-(\d{4})$');
     RegExp regExp5 = new RegExp(r'[A-z]+,\s[A-z]+\.\s\d{5}$');
     RegExp regExp6 = new RegExp(r'[A-z]+\s[A-z]+\.\s\d{5}$');
+    RegExp regExp7 = new RegExp(r'[A-z]+\,\s[A-z]+\,\s\d{5}-\d{4}$');
+    RegExp regExp8 = new RegExp(r'[A-z]+\,\s[A-z]+\,\s\d{5}$');
+    RegExp regExp9 = new RegExp(r'[A-z]+\.\s[A-z]+\s\d{5}$');
+    RegExp regExp10 = new RegExp(r'[A-z]+\.\s[A-z]+\s\d{5}-\d{4}$');
+    RegExp regExp11 = new RegExp(r'BOX');
 
     for (int x = 0; x < block.getList().length; x++) {
-      if (regExp1.hasMatch(block.getList().elementAt(x)) ||
-          regExp2.hasMatch(block.getList().elementAt(x)) ||
-          regExp3.hasMatch(block.getList().elementAt(x)) ||
-          regExp4.hasMatch(block.getList().elementAt(x)) ||
-          regExp5.hasMatch(block.getList().elementAt(x)) ||
-          regExp6.hasMatch(block.getList().elementAt(x))) {
+      if ((regExp1.hasMatch(block.getList().elementAt(x)) ||
+              regExp2.hasMatch(block.getList().elementAt(x)) ||
+              regExp3.hasMatch(block.getList().elementAt(x)) ||
+              regExp4.hasMatch(block.getList().elementAt(x)) ||
+              regExp5.hasMatch(block.getList().elementAt(x)) ||
+              regExp6.hasMatch(block.getList().elementAt(x)) ||
+              regExp7.hasMatch(block.getList().elementAt(x)) ||
+              regExp8.hasMatch(block.getList().elementAt(x)) ||
+              regExp9.hasMatch(block.getList().elementAt(x)) ||
+              regExp10.hasMatch(block.getList().elementAt(x))) &&
+          !regExp11.hasMatch(block.getList().elementAt(x).toUpperCase())) {
         return x;
       }
     }
     return -1;
   }
 
+  // Validates address has follows mail guidelines
   bool validateAddress1(String line) {
     RegExp regExp1 = new RegExp(r'^\d+\s[a-zA-Z]+');
     RegExp regExp2 = new RegExp(r'BOX\s\d+');
@@ -653,45 +599,38 @@ class CloudVisionApi {
           regExp2.hasMatch(block.getList().elementAt(x).toUpperCase())) {
         return x;
       }
-      // if (regExp3.hasMatch(block.getList().elementAt(x).toUpperCase())) {
-      //   return -1;
-      // }
     }
     return -1;
-    // for (int x = 0; x < block.getList().length; x++) {
-    //   if (validateAddress1(block.getList().elementAt(x))) {
-    //     return x;
-    //   }
-    // }
-    // return -1;
   }
 
-  // This function checks and determines which blocks contains zip
+  // This function checks and determines which blocks contains zip and returns a list of potential blocks with addresses.
   List<int> findBlocksWithAddresses(List<Block> blocks) {
-    // RegExp regExp1 = new RegExp(r'\w+\s\w+\s\d{5}$');
-    // RegExp regExp2 = new RegExp(r'\w+\s\w+\s\d{5}-(\d{4})$'); //ex MD 21144-1245
-    // RegExp regExp3 = new RegExp(r'\w+,\s\w+\s\d{5}$');
-    // RegExp regExp4 = new RegExp(r'\w+,\s\w+\s\d{5}-(\d{4})$');
-    // RegExp regExp5 = new RegExp(r'\w+,\s\w+\.\s\d{5}$');
-    // RegExp regExp6 = new RegExp(r'\w+\s\w+\.\s\d{5}$');
     RegExp regExp1 = new RegExp(r'[A-z]+\s[A-z]+\s\d{5}$');
     RegExp regExp2 = new RegExp(r'[A-z]+\s[A-z]+\s\d{5}-(\d{4})$');
     RegExp regExp3 = new RegExp(r'[A-z]+,\s[A-z]+\s\d{5}$');
     RegExp regExp4 = new RegExp(r'[A-z]+,\s[A-z]+\s\d{5}-(\d{4})$');
     RegExp regExp5 = new RegExp(r'[A-z]+,\s[A-z]+\.\s\d{5}$');
     RegExp regExp6 = new RegExp(r'[A-z]+\s[A-z]+\.\s\d{5}$');
+    RegExp regExp7 = new RegExp(r'[A-z]+\,\s[A-z]+\,\s\d{5}-\d{4}$');
+    RegExp regExp8 = new RegExp(r'[A-z]+\,\s[A-z]+\,\s\d{5}$');
+    RegExp regExp9 = new RegExp(r'[A-z]+\.\s[A-z]+\s\d{5}$');
+    RegExp regExp10 = new RegExp(r'[A-z]+\.\s[A-z]+\s\d{5}-\d{4}$');
+
     List<int> s = [];
     for (int x = 0; x < blocks.length; x++) {
       // print("---------Block $x---------");
       bool zip = false;
-      int f = findLineWithCityStateZip(blocks.elementAt(x));
       for (int y = 0; y < blocks.elementAt(x).getList().length; y++) {
         if (regExp1.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
             regExp2.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
             regExp3.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
             regExp4.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
             regExp5.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
-            regExp6.hasMatch(blocks.elementAt(x).getList().elementAt(y))) {
+            regExp6.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
+            regExp7.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
+            regExp8.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
+            regExp9.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
+            regExp10.hasMatch(blocks.elementAt(x).getList().elementAt(y))) {
           zip = true;
         }
         //print('$y:' + blocks.elementAt(x).getList().elementAt(y) + ' $zip');
@@ -702,6 +641,7 @@ class CloudVisionApi {
     return s;
   }
 
+  // This function checks and determines which blocks contains an address line and returns a list of potential blocks with addresses.
   List<int> findBlocksWithAddresses1(List<Block> blocks) {
     RegExp regExp1 = new RegExp(r'^\d+\s\w+');
     RegExp regExp2 = new RegExp(r'\BOX\s\d+');
@@ -709,7 +649,6 @@ class CloudVisionApi {
     for (int x = 0; x < blocks.length; x++) {
       // print("---------Block $x---------");
       bool zip = false;
-      int f = findLineWithCityStateZip(blocks.elementAt(x));
       for (int y = 0; y < blocks.elementAt(x).getList().length; y++) {
         if (regExp1.hasMatch(blocks.elementAt(x).getList().elementAt(y)) ||
             regExp2.hasMatch(
