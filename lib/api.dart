@@ -412,7 +412,7 @@ class CloudVisionApi {
             address1 +=
                 blocks.elementAt(b.elementAt(x)).getList().elementAt(z) + ' ';
 
-            if (addy1 == 0 && x > 0) {
+            if (addy1 == 0 && b.elementAt(0) != 0) {
               if (validateNameHasNoSpecialSymbols(
                   blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
                 name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
