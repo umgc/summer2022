@@ -28,6 +28,7 @@ class UspsAddressVerification {
 
     List<String> list = strAddr.split(';');
 
+    //determine street address information
     if(list.length == 3){
       //assume that the second line is address 2
       if(numericEnd.hasMatch(list[0])){
@@ -39,20 +40,6 @@ class UspsAddressVerification {
         //line 2 has the second address value
         strAddr2 = list[1].trim();
         strAddr1 = list[0].trim();
-      }
-      if (list[2].contains(',')) {
-        //address is well formatted and can assume that left of the comma is the city
-        strCity = list[2].trim().split(',')[0];
-        strState = findState(list[2].trim());
-        strZip5 = findZip5(list[2].trim());
-        strZip4 = findZip4(list[2].trim());
-      }
-      else{
-        //address is not well formatted and need to find the other components before we can assume city
-        strState = findState(list[2].trim());
-        strZip5 = findZip5(list[2].trim());
-        strZip4 = findZip4(list[2].trim());
-        strCity = list[2].split(strState)[0].trim();
       }
     }
     else if(list.length == 2) {
@@ -66,26 +53,26 @@ class UspsAddressVerification {
         //there is no address 2
         strAddr1 = list[0];
       }
-
-      if (list[1].contains(',')) {
-        //address is well formatted and can assume that left of the comma is the city
-        strCity = list[1].trim().split(',')[0];
-        strState = findState(list[1].trim());
-        strZip5 = findZip5(list[1].trim());
-        strZip4 = findZip4(list[1].trim());
-      }
-      else{
-        //address is not well formatted and need to find the other components before we can assume city
-        strState = findState(list[1].trim());
-        strZip5 = findZip5(list[1].trim());
-        strZip4 = findZip4(list[1].trim());
-        strCity = list[1].split(strState)[0].trim();
-      }
     }
     else{
       throw Exception('Address format not considered for validation');
     }
 
+    //City, State Zip will always be the last line of the list
+    if (list.last.contains(',')) {
+      //address is well formatted and can assume that left of the comma is the city
+      strCity = list.last.trim().split(',')[0];
+      strState = findState(list.last.trim());
+      strZip5 = findZip5(list.last.trim());
+      strZip4 = findZip4(list.last.trim());
+    }
+    else{
+      //address is not well formatted and need to find the other components before we can assume city
+      strState = findState(list.last.trim());
+      strZip5 = findZip5(list.last.trim());
+      strZip4 = findZip4(list.last.trim());
+      strCity = list.last.split(strState)[0].trim();
+    }
     xml.XmlDocument doc = buildAddressXml(strAddr1, strAddr2, strCity, strState, strZip5, strZip4);
     //according to documentation, append xml to the end of the url
     String strUri = strUrl + doc.outerXml;
