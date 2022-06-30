@@ -1,5 +1,12 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'barcode_scanner_view.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'api.dart';
 
 void main() {
   runApp(const MyApp());
@@ -50,6 +57,75 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  File? _image;
+  Uint8List? _imageBytes;
+  String? _imageName;
+  CloudVisionApi? vision;
+
+  final picker = ImagePicker();
+  @override
+  void initState() {
+    super.initState();
+    rootBundle.loadString('assets/credentials.json').then((json) {
+      print("JSon: \n$json");
+
+      //api = CloudApi(json);
+      vision = CloudVisionApi();
+    });
+  }
+
+  void _getImage() async {
+    final PickedFile = await picker.getImage(source: ImageSource.camera);
+    print(PickedFile!.path);
+    if (PickedFile != null) {
+      _image = File(PickedFile.path);
+
+      _imageBytes = _image!.readAsBytesSync();
+      String a = base64.encode(_imageBytes!);
+      await vision!.search(a);
+      setState(() {
+        if (PickedFile != null) {
+          _image = File(PickedFile.path);
+          _imageBytes = _image!.readAsBytesSync();
+          _imageName = _image!.path.split('/').last;
+        } else {
+          print('No image selected.');
+        }
+      });
+    }
+  }
+
+  void _processImageWithOCR() async {
+    print("inside processImageWithOCR\n");
+    var image = await rootBundle.load('assets/unnamed_4.jpg');
+    var buffer = image.buffer;
+    var a = base64.encode(Uint8List.view(buffer));
+    print("Image: $image\nBuffer: $buffer\na: $a\n");
+    //await vision!.searchImageForText(a);
+    await vision!.searchImageForText(a);
+    print("Exit ProcessImageWithOCR");
+  }
+
+  void _processImageForLogo() async {
+    print("Inside processImageForLogo\n");
+    var image = await rootBundle.load('assets/logo_combined.jpg');
+    var buffer = image.buffer;
+    var a = base64.encode(Uint8List.view(buffer));
+    print("Image: $image\nBuffer: $buffer\na: $a\n");
+    await vision!.searchImageForLogo(a);
+    print("Exit ProcessImageForLogo");
+  }
+
+  void _processImage() async {
+    print("Inside process image\n");
+    var image = await rootBundle.load('assets/mail.70.png');
+    var buffer = image.buffer;
+    var a = base64.encode(Uint8List.view(buffer));
+    print("Image: $image\nBuffer: $buffer\na: $a\n");
+    await vision!.search(a);
+    print("Exit ProcessImage (All Features)");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,10 +146,38 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                 },
                 child: const Text("Process QR Codes/Barcodes"),
+                onPressed: _processImageWithOCR,
+                child: Text("Vision OCR Text Search"),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _processImageForLogo,
+                child: Text("Vision Logo Search"),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _processImage,
+                child: Text("Vision (OCR & Logo)"),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _processImage,
+                child: Text("Process Mail Image using Camera"),
               ),
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _getImage,
+        tooltip: 'Camera',
+        child: const Icon(Icons.add_a_photo),
       ),
     );
   }
