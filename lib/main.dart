@@ -138,14 +138,6 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BarcodeScannerView()),
-                  );
-                },
-                child: const Text("Process QR Codes/Barcodes"),
                 onPressed: _processImageWithOCR,
                 child: Text("Vision OCR Text Search"),
               ),
@@ -169,6 +161,19 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ElevatedButton(
                 onPressed: _processImage,
                 child: Text("Process Mail Image using Camera"),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BarcodeScannerView()),
+                  );
+                },
+                child: const Text("Process QR Codes/Barcodes"),
               ),
             ),
           ],
