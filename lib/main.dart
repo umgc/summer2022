@@ -130,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _processBarcode() async {
     print("Inside process barcode\n");
-    _barcodeScannerApi!.setImageFile(_image!);
+    _barcodeScannerApi!.setImageFromFile(_image!);
     _barcodeScannerApi!.processImage();
     print("Exit ProcessBarcode");
   }

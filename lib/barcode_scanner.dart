@@ -9,15 +9,16 @@ class BarcodeScannerApi {
   File? _image;
   String? _path;
   ImagePicker? _imagePicker;
+  InputImage? inputImage;
   bool _canProcess = true;
   bool _isBusy = false;
 
-  void setImagePath(String path) {
-    _path = path;
+  void setImageFromPath(String path) {
+    inputImage = InputImage.fromFilePath(path);
   }
 
-  void setImageFile(File img) {
-    _image = img;
+  void setImageFromFile(File img) {
+    inputImage = InputImage.fromFile(img);
   }
 
   Future<List<codeObject>> processImage() async {
@@ -29,11 +30,9 @@ class BarcodeScannerApi {
     _isBusy = true;
 
     if (_path != null) {
-      //InputImage inputImage = InputImage.fromFilePath(_path!);
-      InputImage inputImage = InputImage.fromFile(_image!);
-      final barcodes = await _barcodeScanner.processImage(inputImage);
-      if (inputImage.inputImageData?.size != null &&
-          inputImage.inputImageData?.imageRotation != null) {
+      final barcodes = await _barcodeScanner.processImage(inputImage!);
+      if (inputImage!.inputImageData?.size != null &&
+          inputImage!.inputImageData?.imageRotation != null) {
       } else {
         for (final barcode in barcodes) {
           print(barcode);
