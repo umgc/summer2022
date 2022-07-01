@@ -10,7 +10,143 @@ class SettingWidgetState extends State<SettingsWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Container(
+        child: Column(
+          children: [
+            Container(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Container(
+                        child: Text(
+                          style: TextStyle(fontSize: 20),
+                          "Settings",
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(top: 200),
+            ),
+            Container(
+              color: Color.fromRGBO(228, 228, 228, 0.6),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          child: Text(
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            "Envelope Details",
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  buildSettingOptions(),
+                  Container(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text("Autoplay"),
+                        ),
+                        Container(
+                          child: ToggleSwitch(
+                            customWidths: [40.0, 40.0],
+                            cornerRadius: 20.0,
+                            activeBgColors: [
+                              [Colors.lightGreen],
+                              [Colors.grey]
+                            ],
+                            activeFgColor: Colors.white,
+                            inactiveBgColor: Colors.grey,
+                            inactiveFgColor: Colors.white,
+                            totalSwitches: 2,
+                            labels: ['|', 'O'],
+                            onToggle: (index) {
+                              print('switched to: $index');
+                            },
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(right: 10),
+                          child: Text("Next Command"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Widget buildSettingOptions() {
+  var stringList = [
+    "Sender:",
+    "Recipient: ",
+    "Logos:",
+    "Links:",
+    "Sender Address:"
+  ];
+
+  // Create a List<Text> (or List<MyWidget>) using each String from stringList
+
+  List<Widget> row_list = [];
+
+  for (var label in stringList) {
+    row_list.add(
+      Container(
+        padding: EdgeInsets.only(top: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: EdgeInsets.only(left: 10),
+              child: Text("$label"),
+            ),
+            Container(
+              padding: EdgeInsets.only(right: 50),
+              child: ToggleSwitch(
+                customWidths: [40.0, 40.0],
+                cornerRadius: 20.0,
+                activeBgColors: [
+                  [Colors.lightGreen],
+                  [Colors.grey]
+                ],
+                activeFgColor: Colors.white,
+                inactiveBgColor: Colors.grey,
+                inactiveFgColor: Colors.white,
+                totalSwitches: 2,
+                labels: ['|', 'O'],
+                onToggle: (index) {
+                  print('switched to: $index');
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // use that list however you want!
+  return Column(children: row_list);
+}
+
+        /*child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -219,11 +355,8 @@ class SettingWidgetState extends State<SettingsWidget> {
               )
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
+        ),*/
+
 
 // class SettingsWidget extends StatefulWidget {
 //   @override
@@ -458,6 +591,6 @@ class SettingWidgetState extends State<SettingsWidget> {
 //                     color: Color.fromRGBO(242, 242, 242, 1),
 //                     borderRadius: BorderRadius.all(Radius.elliptical(90, 90)),
 //                   ))),
-//         ]));
+//         ]));*/
 //   }
 // }

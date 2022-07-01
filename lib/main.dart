@@ -11,15 +11,17 @@ void main() {
 
 Widget buildScreen() {
   return Scaffold(
-    body: MainWidget(),
+    body: MailWidget(),
     bottomNavigationBar: BottomAppBar(
       child: Row(
         children: [
-          IconButton(icon: Icon(Icons.volume_mute), onPressed: () {}),
+          IconButton(icon: Icon(Icons.volume_mute, size: 30), onPressed: () {}),
           Spacer(),
-          IconButton(icon: Icon(Icons.search), onPressed: () {}),
+          IconButton(
+              icon: Icon(Icons.mic_external_on, size: 30), onPressed: () {}),
           Spacer(),
-          IconButton(icon: Icon(Icons.help_outline), onPressed: () {}),
+          IconButton(
+              icon: Icon(Icons.help_outline, size: 30), onPressed: () {}),
         ],
       ),
     ),

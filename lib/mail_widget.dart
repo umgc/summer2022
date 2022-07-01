@@ -11,7 +11,95 @@ class _MailWidgetState extends State<MailWidget> {
   Widget build(BuildContext context) {
     // Figma Flutter Generator MailWidget - FRAME
 
-    return Container(
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              child: Row(children: [
+                Expanded(
+                  child: Center(
+                    child: Container(
+                      child: Text(
+                        style: TextStyle(fontSize: 20),
+                        "Mail",
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
+            ),
+            Row(children: [
+              Expanded(
+                child: Center(
+                  child: Container(
+                      child: Image.asset(
+                          'assets/Image1.png')), //This will eventually be populated with the downloaded image from the digest
+                ),
+              ),
+            ]),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Center(
+                    //padding: EdgeInsets.only(left: 20),
+                    child: Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Links",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    //: EdgeInsets.only(right: 10),
+                    child: Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "All Details",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(bottom: 60),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Icon(Icons.skip_previous, size: 50),
+                    Text("1/6"),
+                    Icon(Icons.skip_next, size: 50)
+                  ]),
+            )
+          ],
+        ),
+      ),
+    );
+
+    /*Container(
         width: 375,
         height: 760,
         decoration: BoxDecoration(
@@ -254,6 +342,6 @@ class _MailWidgetState extends State<MailWidget> {
                     fontWeight: FontWeight.normal,
                     height: 1),
               )),
-        ]));
+        ]));*/
   }
 }
