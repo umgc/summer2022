@@ -7,13 +7,13 @@ void main() async {
     final uspsAddressValidator = UspsAddressVerification();
 
     group('USPS Address Verification Tests', () { 
-        test('Well Formated Address', () async {
+        test('Well Formatted Address', () async {
             const strAddress = r'1004 SPA RD, APT 202; ANNAPOLIS, MD 21403';
             result = await uspsAddressValidator.verifyAddressString(strAddress);
             print(result);
             expect(result, true);
         });
-        test('Well Formated Address, Without second Address', () async {
+        test('Well Formatted Address, Without second Address', () async {
             const strAddress = r'13001 VANDALIA DR; ROCKVILLE, MD 20853-3348';
             result = await uspsAddressValidator.verifyAddressString(strAddress);
             print(result);
