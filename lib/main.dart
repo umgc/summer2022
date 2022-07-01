@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'barcode_scanner_view.dart';
+import 'barcode_scanner.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'api.dart';
@@ -61,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Uint8List? _imageBytes;
   String? _imageName;
   CloudVisionApi? vision;
+  BarcodeScannerApi? _barcodeScannerApi;
 
   final picker = ImagePicker();
   @override
@@ -71,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       //api = CloudApi(json);
       vision = CloudVisionApi();
+      _barcodeScannerApi = BarcodeScannerApi();
     });
   }
 
@@ -126,6 +128,13 @@ class _MyHomePageState extends State<MyHomePage> {
     print("Exit ProcessImage (All Features)");
   }
 
+  void _processBarcode() async {
+    print("Inside process barcode\n");
+    _barcodeScannerApi!.setImageFile(_image!);
+    _barcodeScannerApi!.processImage();
+    print("Exit ProcessBarcode");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,40 +148,34 @@ class _MyHomePageState extends State<MyHomePage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _processImageWithOCR,
-                child: Text("Vision OCR Text Search"),
+                child: const Text("Vision OCR Text Search"),
               ),
             ),
             Container(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _processImageForLogo,
-                child: Text("Vision Logo Search"),
+                child: const Text("Vision Logo Search"),
               ),
             ),
             Container(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _processImage,
-                child: Text("Vision (OCR & Logo)"),
+                child: const Text("Vision (OCR & Logo)"),
               ),
             ),
             Container(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _processImage,
-                child: Text("Process Mail Image using Camera"),
+                child: const Text("Process Mail Image using Camera"),
               ),
             ),
             Container(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BarcodeScannerView()),
-                  );
-                },
+                onPressed: _processBarcode,
                 child: const Text("Process QR Codes/Barcodes"),
               ),
             ),
