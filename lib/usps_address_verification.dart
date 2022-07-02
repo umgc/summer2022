@@ -92,6 +92,7 @@ class UspsAddressVerification {
       strZip4 = findZip4(list.last.trim());
       strCity = list.last.split(strState)[0].trim();
     }
+
     xml.XmlDocument doc = buildAddressXml(strAddr1, strAddr2, strCity, strState, strZip5, strZip4);
     //according to documentation, append xml to the end of the url
     String strUri = getUrl() + doc.outerXml;
@@ -111,7 +112,7 @@ class UspsAddressVerification {
     }
   }
 
-  String findZip5(String str){
+  String findZip5(String str) {
     RegExp fiveAndFour = RegExp(r'[0-9]+-[0-9]+$');
     RegExp numericEnd = RegExp( r'[0-9]+$');
     if(fiveAndFour.hasMatch(str)){
@@ -126,7 +127,7 @@ class UspsAddressVerification {
     }
   }
 
-  String findZip4(String str){
+  String findZip4(String str) {
     RegExp fiveAndFour = RegExp(r'[0-9]+-[0-9]+$');
     if(fiveAndFour.hasMatch(str)){
       final strSplit = str.split(' ');
@@ -135,7 +136,7 @@ class UspsAddressVerification {
     return '';
   }
 
-  String findState(String str){
+  String findState(String str) {
     RegExp shortState = RegExp(r' [A-Z]{2} ');
     String strState = '';
     if(shortState.hasMatch(str)){
