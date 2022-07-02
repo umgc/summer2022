@@ -5,6 +5,7 @@ import 'package:summer2022/main_menu.dart';
 import 'package:summer2022/sign_in.dart';
 
 import 'RouteGenerator.dart';
+import 'bottom_app_bar.dart';
 import 'mail_widget.dart';
 import 'other_mail.dart';
 
@@ -19,18 +20,6 @@ void main() {
 Widget buildScreen() {
   return Scaffold(
     body: MainWidget(),
-    bottomNavigationBar: BottomAppBar(
-      child: Row(
-        children: [
-          IconButton(icon: Icon(Icons.volume_mute, size: 30), onPressed: () {}),
-          Spacer(),
-          IconButton(
-              icon: Icon(Icons.mic_external_on, size: 30), onPressed: () {}),
-          Spacer(),
-          IconButton(
-              icon: Icon(Icons.help_outline, size: 30), onPressed: () {}),
-        ],
-      ),
-    ),
+    bottomNavigationBar: BottomBar(),
   );
 }
