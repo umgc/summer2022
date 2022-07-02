@@ -14,22 +14,22 @@ class UspsAddressVerification {
   String strUserID = "974UNIVE7445";
   String strXmlVersion = '"version="1.0"';
 
-  UspsAddressVerification(){
+  UspsAddressVerification() {
     //Nothing to initialize but it makes me feel better having this here
   }
 
   //getter for strUrl
-  String getUrl(){
+  String getUrl() {
     return strUrl;
   }
 
   //getter for strUserID
-  String getUserID(){
+  String getUserID() {
     return strUserID;
   }
 
   //getter for strXmlVersion
-  String getXmlVersion(){
+  String getXmlVersion() {
     return strXmlVersion;
   }
 
