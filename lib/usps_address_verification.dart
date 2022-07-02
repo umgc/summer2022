@@ -86,71 +86,90 @@ class UspsAddressVerification {
   }
 
   String _findZip5(String str) {
-    RegExp fiveAndFour = RegExp(r'[0-9]+-[0-9]+$');
-    RegExp numericEnd = RegExp( r'[0-9]+$');
-    if(fiveAndFour.hasMatch(str)){
-      final strSplit = str.split(' ');
-      return strSplit.last.split('-')[0];
-    }
-    else if(numericEnd.hasMatch(str)){
-      return str.split(' ').last;
-    }
-    else {
-      return '';
+    try{
+      RegExp fiveAndFour = RegExp(r'[0-9]+-[0-9]+$');
+      RegExp numericEnd = RegExp( r'[0-9]+$');
+      if(fiveAndFour.hasMatch(str)){
+        final strSplit = str.split(' ');
+        return strSplit.last.split('-')[0];
+      }
+      else if(numericEnd.hasMatch(str)){
+        return str.split(' ').last;
+      }
+      else {
+        return '';
+      }
+    } catch(e) {
+      rethrow;
     }
   }
 
   String _findZip4(String str) {
-    RegExp fiveAndFour = RegExp(r'[0-9]+-[0-9]+$');
-    if(fiveAndFour.hasMatch(str)){
-      final strSplit = str.split(' ');
-      return strSplit.last.split('-')[1];
+    try {
+      RegExp fiveAndFour = RegExp(r'[0-9]+-[0-9]+$');
+      if(fiveAndFour.hasMatch(str)){
+        final strSplit = str.split(' ');
+        return strSplit.last.split('-')[1];
+      }
+      return '';
+    } catch(e) {
+      rethrow;
     }
-    return '';
+
   }
 
   String _findState(String str) {
-    RegExp shortState = RegExp(r' [A-Z]{2} ');
-    String strState = '';
-    if(shortState.hasMatch(str)){
-      str.split(' ').forEach((e) {
-        if(e.length == 2){
-          strState = e;
-        }
-      });
-    }
-    else{
-      //state value is not two characters so we must find zip as state is always before zip
-      final strSplit = str.split(' ');
-      for(int x = 0; x < strSplit.length; x++){
-        if(strSplit[x].contains('-') && int.tryParse(strSplit[x].split('-')[0]) != null){
-          strState = strSplit[x-1];
-          break;
-        } else if(int.tryParse(strSplit[x]) != null){
-          strState = strSplit[x-1];
-          break;
+    try {
+      RegExp shortState = RegExp(r' [A-Z]{2} ');
+      String strState = '';
+      if(shortState.hasMatch(str)){
+        str.split(' ').forEach((e) {
+          if(e.length == 2){
+            strState = e;
+          }
+        });
+      }
+      else{
+        //state value is not two characters so we must find zip as state is always before zip
+        final strSplit = str.split(' ');
+        for(int x = 0; x < strSplit.length; x++){
+          if(strSplit[x].contains('-') && int.tryParse(strSplit[x].split('-')[0]) != null){
+            strState = strSplit[x-1];
+            break;
+          } else if(int.tryParse(strSplit[x]) != null){
+            strState = strSplit[x-1];
+            break;
+          }
         }
       }
+      return strState;
+    } catch(e) {
+      rethrow;
     }
-    return strState;
+
   }
 
   xml.XmlDocument _buildAddressXml(String strAddr1, String strAddr2, String strCity, String strState, String strZip5, String strZip4) {
-    final builder = xml.XmlBuilder();
-    builder.processing('xml', getXmlVersion());
-    builder.element('AddressValidateRequest', nest:() {
-      builder.attribute('USERID', UspsWebApi().getUserID());
-      builder.element('Revision', nest: 1);
-      builder.element('Address', nest:() {
-        builder.attribute('ID', 0);
-        builder.element('Address1', nest: strAddr1);
-        builder.element('Address2', nest: strAddr2);
-        builder.element('City', nest: strCity);
-        builder.element('State', nest: strState); //works with both full state names and abbreviation
-        builder.element('Zip5', nest: strZip5);
-        builder.element('Zip4', nest: strZip4);
+    try {
+      final builder = xml.XmlBuilder();
+      builder.processing('xml', getXmlVersion());
+      builder.element('AddressValidateRequest', nest:() {
+        builder.attribute('USERID', UspsWebApi().getUserID());
+        builder.element('Revision', nest: 1);
+        builder.element('Address', nest:() {
+          builder.attribute('ID', 0);
+          builder.element('Address1', nest: strAddr1);
+          builder.element('Address2', nest: strAddr2);
+          builder.element('City', nest: strCity);
+          builder.element('State', nest: strState); //works with both full state names and abbreviation
+          builder.element('Zip5', nest: strZip5);
+          builder.element('Zip4', nest: strZip4);
+        });
       });
-    });
-    return builder.buildDocument();
+      return builder.buildDocument();
+    } catch(e) {
+      rethrow;
+    }
+
   }
 }
