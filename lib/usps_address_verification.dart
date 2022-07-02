@@ -1,31 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:http/retry.dart';
+import 'package:usps_informed_delivery_backend/usps_web_api.dart';
 import 'package:xml/xml.dart' as xml;
-import 'package:http/http.dart' as http;
-
 
 //xml documentation: https://pub.dev/packages/xml
-//http documentation: https://pub.dev/packages/http
-//usps documentation: https://www.usps.com/business/web-tools-apis/address-information-api.pdf
 
 class UspsAddressVerification {
 
-  String _strUrl = "https://secure.shippingapis.com/ShippingAPI.dll?API=Verify&XML=";
-  String _strUserID = "974UNIVE7445";
   String _strXmlVersion = '"version="1.0"';
 
   UspsAddressVerification() {
     //Nothing to initialize but it makes me feel better having this here
-  }
-
-  //getter for strUrl
-  String getUrl() {
-    return _strUrl;
-  }
-
-  //getter for strUserID
-  String getUserID() {
-    return _strUserID;
   }
 
   //getter for strXmlVersion
@@ -42,6 +25,7 @@ class UspsAddressVerification {
     String strAddr2 = "";
     String strZip4 = "";
     RegExp numericEnd = RegExp( r'[0-9]+$');
+    UspsWebApi webApi = UspsWebApi();
 
     try{
 
@@ -94,18 +78,7 @@ class UspsAddressVerification {
     }
 
     xml.XmlDocument doc = _buildAddressXml(strAddr1, strAddr2, strCity, strState, strZip5, strZip4);
-    //according to documentation, append xml to the end of the url
-    String strUri = getUrl() + doc.outerXml;
-    //create web client
-    final client = RetryClient(http.Client());
-    //download response string from api
-    String strResponse = await client.read(Uri.parse(strUri));
-
-    if(strResponse.contains('<DPVConfirmation>')){
-      final responseSplit = strResponse.split('<DPVConfirmation>');
-      return responseSplit[1].characters.elementAt(0) == 'Y';
-    }
-    return false;
+      return await webApi.verifyAddressXml(doc.outerXml);
     }
     catch(e){
       rethrow;
@@ -166,7 +139,7 @@ class UspsAddressVerification {
     final builder = xml.XmlBuilder();
     builder.processing('xml', getXmlVersion());
     builder.element('AddressValidateRequest', nest:() {
-      builder.attribute('USERID', getUserID());
+      builder.attribute('USERID', UspsWebApi().getUserID());
       builder.element('Revision', nest: 1);
       builder.element('Address', nest:() {
         builder.attribute('ID', 0);

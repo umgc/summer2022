@@ -1,10 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usps_informed_delivery_backend/usps_address_verification.dart';
-import 'package:xml/xml.dart' as xml;
+import 'package:usps_informed_delivery_backend/usps_web_api.dart';
 
 void main() async {
     bool result;
     final uspsAddressValidator = UspsAddressVerification();
+    final uspsWebApi = UspsWebApi();
 
     group('USPS Address Verification Tests', () { 
         test('Well Formatted Address', () async {
@@ -76,20 +77,24 @@ void main() async {
     });
 
     group('USPS Address Validation Function Tests', () {
-        test('Get URL', () {
-           String url = uspsAddressValidator.getUrl();
-           print(url);
-           expect(url, 'https://secure.shippingapis.com/ShippingAPI.dll?API=Verify&XML=');
-        });
         test('Get XML Version', () {
             String url = uspsAddressValidator.getXmlVersion();
             print(url);
             expect(url, '"version="1.0"');
         });
-        test('Get UserID', () {
-            String url = uspsAddressValidator.getUserID();
-            print(url);
-            expect(url, '974UNIVE7445');
+    });
+
+    group('USPS Web Api test', () {
+        test('Test Connection', () async {
+            bool isConnected = await uspsWebApi.testConnectionToUspsAPI();
+            print(isConnected);
+            expect(isConnected, true);
+        });
+        test('Test Failed Connection', () async {
+            TestWidgetsFlutterBinding.ensureInitialized(); //for some reason this breaks web connections so we can test for no internet
+            bool isConnected = await uspsWebApi.testConnectionToUspsAPI();
+            print(isConnected);
+            expect(isConnected, false);
         });
     });
 }
