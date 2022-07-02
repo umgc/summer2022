@@ -17,28 +17,46 @@ class _MailWidgetState extends State<MailWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              child: Row(children: [
-                Expanded(
-                  child: Center(
-                    child: Container(
-                      child: Text(
-                        style: TextStyle(fontSize: 20),
-                        "Mail",
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/');
+                    },
+                    icon: Icon(
+                      Icons.arrow_back,
+                      size: 30,
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Container(
+                        child: Text(
+                          style: TextStyle(fontSize: 20),
+                          "Mail",
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ]),
-            ),
-            Row(children: [
-              Expanded(
-                child: Center(
-                  child: Container(
-                      child: Image.asset(
-                          'assets/Image1.png')), //This will eventually be populated with the downloaded image from the digest
-                ),
+                  Icon(
+                    Icons.arrow_back,
+                    size: 50,
+                    color: Color.fromARGB(0, 255, 255, 1),
+                  ),
+                ],
               ),
-            ]),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Container(
+                        child: Image.asset(
+                            'assets/Image1.png')), //This will eventually be populated with the downloaded image from the digest
+                  ),
+                ),
+              ],
+            ),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

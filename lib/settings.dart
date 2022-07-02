@@ -15,6 +15,15 @@ class SettingWidgetState extends State<SettingsWidget> {
             Container(
               child: Row(
                 children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/');
+                    },
+                    icon: Icon(
+                      Icons.arrow_back,
+                      size: 30,
+                    ),
+                  ),
                   Expanded(
                     child: Center(
                       child: Container(
@@ -24,6 +33,11 @@ class SettingWidgetState extends State<SettingsWidget> {
                         ),
                       ),
                     ),
+                  ),
+                  Icon(
+                    Icons.arrow_back,
+                    size: 50,
+                    color: Color.fromARGB(0, 255, 255, 1),
                   ),
                 ],
               ),

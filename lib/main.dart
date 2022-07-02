@@ -2,16 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:summer2022/settings.dart';
 import 'package:summer2022/main_menu.dart';
+import 'package:summer2022/sign_in.dart';
 
+import 'RouteGenerator.dart';
 import 'mail_widget.dart';
+import 'other_mail.dart';
 
 void main() {
-  runApp(MaterialApp(home: buildScreen()));
+  runApp(MaterialApp(
+      title: "USPS Infromed Delivery Visual Assistance App",
+      initialRoute: '/',
+      onGenerateRoute: RouteGenerator.generateRoute,
+      home: buildScreen()));
 }
 
 Widget buildScreen() {
   return Scaffold(
-    body: MailWidget(),
+    body: MainWidget(),
     bottomNavigationBar: BottomAppBar(
       child: Row(
         children: [
