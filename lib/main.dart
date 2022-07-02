@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:usps_informed_delivery_backend/usps_address_verification.dart';
 import 'api.dart';
 
 void main() {
@@ -81,7 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
       _imageBytes = _image!.readAsBytesSync();
       String a = base64.encode(_imageBytes!);
-      await vision!.search(a);
+      var objMailResponse = await vision!.search(a);
+      for (var address in objMailResponse.addresses) {
+        address.validated = await UspsAddressVerification().verifyAddressString(address.address);
+      }
       setState(() {
         if (PickedFile != null) {
           _image = File(PickedFile.path);
@@ -101,7 +105,10 @@ class _MyHomePageState extends State<MyHomePage> {
     var a = base64.encode(Uint8List.view(buffer));
     print("Image: $image\nBuffer: $buffer\na: $a\n");
     //await vision!.searchImageForText(a);
-    await vision!.searchImageForText(a);
+    var objAddressList = await vision!.searchImageForText(a);
+    for (var address in objAddressList) {
+        address.validated = await UspsAddressVerification().verifyAddressString(address.address);
+      }
     print("Exit ProcessImageWithOCR");
   }
 
@@ -121,7 +128,10 @@ class _MyHomePageState extends State<MyHomePage> {
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     print("Image: $image\nBuffer: $buffer\na: $a\n");
-    await vision!.search(a);
+    var objMr = await vision!.search(a);
+    for (var address in objMr.addresses) {
+      address.validated = await UspsAddressVerification().verifyAddressString(address.address);
+    }
     print("Exit ProcessImage (All Features)");
   }
 
