@@ -23,12 +23,6 @@ void main() async {
       }
       expect(error, '');
     });
-    // test("Cloud Vision Credentials Test - Credentials File loaded", () async {
-    //   CredentialsProvider cP = CredentialsProvider();
-    //   var errorMsg = '';
-    //   await cP.client.asStream((element) => print(element.credentials.toString();
-    //   expect(s, false);
-    // });
     test(
         'Cloud Vision Image Information Retrieval Test - Receives Text from image',
         () async {
