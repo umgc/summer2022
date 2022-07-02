@@ -1,26 +1,8 @@
-import 'package:flutter/services.dart';
-import 'package:googleapis_auth/auth_io.dart';
 import 'package:googleapis/vision/v1.dart';
 import 'models/MailResponse.dart';
 import './models/Address.dart';
 import './models/Logo.dart';
-import 'dart:convert';
-
-class CredentialsProvider {
-  CredentialsProvider();
-
-  Future<ServiceAccountCredentials> get _credentials async {
-    String _file = await rootBundle.loadString('assets/credentials.json');
-    return ServiceAccountCredentials.fromJson(_file);
-  }
-
-  Future<AutoRefreshingAuthClient> get client async {
-    AutoRefreshingAuthClient _client = await clientViaServiceAccount(
-        await _credentials, [VisionApi.cloudVisionScope]);
-    // await _credentials, [VisionApi.CloudVisionScope]).then((c) => c);
-    return _client;
-  }
-}
+import 'credentials_provider.dart';
 
 class Block {
   List<String> list = [];
@@ -36,38 +18,6 @@ class Block {
 
 class CloudVisionApi {
   final _client = CredentialsProvider().client;
-
-  // Future<WebLabel> search(String image) async {
-  //   var _vision = VisionApi(await _client);
-  //   var _api = _vision.images;
-
-  //   var _response = await _api.annotate(BatchAnnotateImagesRequest.fromJson({
-  //     "requests": [
-  //       // {
-  //       //   "features": [
-  //       //     {"type": "TEXT_DETECTION"}
-  //       //   ],
-  //       //   "image": {
-  //       //     "source": {
-  //       //       "imageUri":
-  //       //           //"gs://mybucket_20220607/28a705a8-0868-4770-9f57-3f59960869997954911254635801631.jpg"
-  //       //           "gs://visionbucket_20220609/unnamed.jpg"
-  //       //     }
-  //       //   },
-  //       // }
-  //     ]
-  //   }));
-  //   WebLabel _bestGuessLabel;
-  //   //print(1);
-  //   //print(_response.toJson());
-  //   // _response.responses.forEach((data) {
-  //   //   print(data.fullTextAnnotation.toJson().toString());
-  //   // });
-  //   // print(2);
-
-  //   return _bestGuessLabel;
-  // }
-  //Combines Addresses and logos into a mailObject for UI to parse.
   Future<MailResponse> search(String image) async {
     List<AddressObject>? addresses = await searchImageForText(image);
     List<LogoObject>? logos = await searchImageForLogo(image);
@@ -789,20 +739,21 @@ class CloudVisionApi {
         }
       ]
     }));
-    print("Image Search for Logo");
+    // print("Image Search for Logo");
     _response.responses!.forEach((data) {
       if (data.logoAnnotations != null) {
         data.logoAnnotations!.forEach((element) {
           print(element.description);
           logos.add(LogoObject(name: element.description as String));
         });
-      } else {
-        logos.add(LogoObject(name: "None"));
-        print(logos.elementAt(0).getName);
-        print("No Logos were found");
       }
+      // else {
+      //   logos.add(LogoObject(name: "None"));
+      //   print(logos.elementAt(0).getName);
+      //   print("No Logos were found");
+      // }
     });
-    print("Logo Search Done");
+    //print("Logo Search Done");
 
     return logos;
   }
