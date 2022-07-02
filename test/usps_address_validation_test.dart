@@ -4,7 +4,7 @@ import 'package:xml/xml.dart' as xml;
 
 void main() async {
     bool result;
-    final uspsAddressValidator = new UspsAddressVerification();
+    final uspsAddressValidator = UspsAddressVerification();
 
     group('USPS Address Verification Tests', () { 
         test('Well Formatted Address', () async {
@@ -15,6 +15,18 @@ void main() async {
         });
         test('Well Formatted Address, Without second Address', () async {
             const strAddress = r'13001 VANDALIA DR; ROCKVILLE, MD 20853-3348';
+            result = await uspsAddressValidator.verifyAddressString(strAddress);
+            print(result);
+            expect(result, true);
+        });
+        test('Well Formatted Address, With full state name', () async {
+            const strAddress = r'13001 VANDALIA DR; ROCKVILLE, MARYLAND 20853-3348';
+            result = await uspsAddressValidator.verifyAddressString(strAddress);
+            print(result);
+            expect(result, true);
+        });
+        test('Well Formatted Address, With full state name and short zip', () async {
+            const strAddress = r'13001 VANDALIA DR; ROCKVILLE, MARYLAND 20853';
             result = await uspsAddressValidator.verifyAddressString(strAddress);
             print(result);
             expect(result, true);
@@ -64,51 +76,6 @@ void main() async {
     });
 
     group('USPS Address Validation Function Tests', () {
-        test('XML Builder Test', (){
-            xml.XmlDocument doc = uspsAddressValidator.buildAddressXml('1004 SPA RD', 'APT 202', 'ANNAPOLIS', 'MD', '21403', '');
-            print(doc.toString());
-            expect(doc.toString(), '<?xml "version="1.0"?><AddressValidateRequest USERID="974UNIVE7445"><Revision>1</Revision><Address ID="0"><Address1>1004 SPA RD</Address1><Address2>APT 202</Address2><City>ANNAPOLIS</City><State>MD</State><Zip5>21403</Zip5><Zip4></Zip4></Address></AddressValidateRequest>');
-        });
-        test('Find Zip5 from long zip', (){
-            final zip5 = uspsAddressValidator.findZip5('ANNAPOLIS MD 21403-5555');
-            print(zip5);
-            expect(zip5, '21403');
-        });
-        test('Find Zip5 from short zip', (){
-            final zip5 = uspsAddressValidator.findZip5('ANNAPOLIS MD 21403');
-            print(zip5);
-            expect(zip5, '21403');
-        });
-        test('Find Zip5 from no zip', (){
-            final zip5 = uspsAddressValidator.findZip5('ANNAPOLIS MD');
-            print(zip5);
-            expect(zip5, '');
-        });
-        test('Find Zip4 from long zip', (){
-            final zip4 = uspsAddressValidator.findZip4('ANNAPOLIS MD 21403-5555');
-            print(zip4);
-            expect(zip4, '5555');
-        });
-        test('Find Zip4 from short zip', (){
-            final zip4 = uspsAddressValidator.findZip4('ANNAPOLIS MD 21403');
-            print(zip4);
-            expect(zip4, '');
-        });
-        test('Find State from Short State', () {
-            final state = uspsAddressValidator.findState('ANNAPOLIS MD 21403-5555');
-            print(state);
-            expect(state, 'MD');
-        });
-        test('Find State from Long State', () {
-            final state = uspsAddressValidator.findState('ANNAPOLIS MARYLAND 21403');
-            print(state);
-            expect(state, 'MARYLAND');
-        });
-        test('Find State from Long State, with long zip', () {
-            final state = uspsAddressValidator.findState('ANNAPOLIS MARYLAND 21403-5555');
-            print(state);
-            expect(state, 'MARYLAND');
-        });
         test('Get URL', () {
            String url = uspsAddressValidator.getUrl();
            print(url);

@@ -10,9 +10,9 @@ import 'package:http/http.dart' as http;
 
 class UspsAddressVerification {
 
-  String strUrl = "https://secure.shippingapis.com/ShippingAPI.dll?API=Verify&XML=";
-  String strUserID = "974UNIVE7445";
-  String strXmlVersion = '"version="1.0"';
+  String _strUrl = "https://secure.shippingapis.com/ShippingAPI.dll?API=Verify&XML=";
+  String _strUserID = "974UNIVE7445";
+  String _strXmlVersion = '"version="1.0"';
 
   UspsAddressVerification() {
     //Nothing to initialize but it makes me feel better having this here
@@ -20,17 +20,17 @@ class UspsAddressVerification {
 
   //getter for strUrl
   String getUrl() {
-    return strUrl;
+    return _strUrl;
   }
 
   //getter for strUserID
   String getUserID() {
-    return strUserID;
+    return _strUserID;
   }
 
   //getter for strXmlVersion
   String getXmlVersion() {
-    return strXmlVersion;
+    return _strXmlVersion;
   }
 
   //Can't overload in dart so new Name for Json specific functions
@@ -81,19 +81,19 @@ class UspsAddressVerification {
     if (list.last.contains(',')) {
       //address is well formatted and can assume that left of the comma is the city
       strCity = list.last.trim().split(',')[0];
-      strState = findState(list.last.trim());
-      strZip5 = findZip5(list.last.trim());
-      strZip4 = findZip4(list.last.trim());
+      strState = _findState(list.last.trim());
+      strZip5 = _findZip5(list.last.trim());
+      strZip4 = _findZip4(list.last.trim());
     }
     else{
       //address is not well formatted and need to find the other components before we can assume city
-      strState = findState(list.last.trim());
-      strZip5 = findZip5(list.last.trim());
-      strZip4 = findZip4(list.last.trim());
+      strState = _findState(list.last.trim());
+      strZip5 = _findZip5(list.last.trim());
+      strZip4 = _findZip4(list.last.trim());
       strCity = list.last.split(strState)[0].trim();
     }
 
-    xml.XmlDocument doc = buildAddressXml(strAddr1, strAddr2, strCity, strState, strZip5, strZip4);
+    xml.XmlDocument doc = _buildAddressXml(strAddr1, strAddr2, strCity, strState, strZip5, strZip4);
     //according to documentation, append xml to the end of the url
     String strUri = getUrl() + doc.outerXml;
     //create web client
@@ -112,7 +112,7 @@ class UspsAddressVerification {
     }
   }
 
-  String findZip5(String str) {
+  String _findZip5(String str) {
     RegExp fiveAndFour = RegExp(r'[0-9]+-[0-9]+$');
     RegExp numericEnd = RegExp( r'[0-9]+$');
     if(fiveAndFour.hasMatch(str)){
@@ -127,7 +127,7 @@ class UspsAddressVerification {
     }
   }
 
-  String findZip4(String str) {
+  String _findZip4(String str) {
     RegExp fiveAndFour = RegExp(r'[0-9]+-[0-9]+$');
     if(fiveAndFour.hasMatch(str)){
       final strSplit = str.split(' ');
@@ -136,7 +136,7 @@ class UspsAddressVerification {
     return '';
   }
 
-  String findState(String str) {
+  String _findState(String str) {
     RegExp shortState = RegExp(r' [A-Z]{2} ');
     String strState = '';
     if(shortState.hasMatch(str)){
@@ -162,7 +162,7 @@ class UspsAddressVerification {
     return strState;
   }
 
-  xml.XmlDocument buildAddressXml(String strAddr1, String strAddr2, String strCity, String strState, String strZip5, String strZip4) {
+  xml.XmlDocument _buildAddressXml(String strAddr1, String strAddr2, String strCity, String strState, String strZip5, String strZip4) {
     final builder = xml.XmlBuilder();
     builder.processing('xml', getXmlVersion());
     builder.element('AddressValidateRequest', nest:() {
