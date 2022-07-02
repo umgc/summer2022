@@ -4,7 +4,7 @@ import 'package:xml/xml.dart' as xml;
 
 void main() async {
     bool result;
-    final uspsAddressValidator = UspsAddressVerification();
+    final uspsAddressValidator = new UspsAddressVerification();
 
     group('USPS Address Verification Tests', () { 
         test('Well Formatted Address', () async {
@@ -108,6 +108,21 @@ void main() async {
             final state = uspsAddressValidator.findState('ANNAPOLIS MARYLAND 21403-5555');
             print(state);
             expect(state, 'MARYLAND');
+        });
+        test('Get URL', () {
+           String url = uspsAddressValidator.getUrl();
+           print(url);
+           expect(url, 'https://secure.shippingapis.com/ShippingAPI.dll?API=Verify&XML=');
+        });
+        test('Get XML Version', () {
+            String url = uspsAddressValidator.getXmlVersion();
+            print(url);
+            expect(url, '"version="1.0"');
+        });
+        test('Get UserID', () {
+            String url = uspsAddressValidator.getUserID();
+            print(url);
+            expect(url, '974UNIVE7445');
         });
     });
 }

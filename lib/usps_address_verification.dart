@@ -14,6 +14,25 @@ class UspsAddressVerification {
   String strUserID = "974UNIVE7445";
   String strXmlVersion = '"version="1.0"';
 
+  UspsAddressVerification(){
+    //Nothing to initialize but it makes me feel better having this here
+  }
+
+  //getter for strUrl
+  String getUrl(){
+    return strUrl;
+  }
+
+  //getter for strUserID
+  String getUserID(){
+    return strUserID;
+  }
+
+  //getter for strXmlVersion
+  String getXmlVersion(){
+    return strXmlVersion;
+  }
+
   //Can't overload in dart so new Name for Json specific functions
   Future<bool> verifyAddressString(String strAddr) async {
     String strAddr1 = "";
@@ -75,7 +94,7 @@ class UspsAddressVerification {
     }
     xml.XmlDocument doc = buildAddressXml(strAddr1, strAddr2, strCity, strState, strZip5, strZip4);
     //according to documentation, append xml to the end of the url
-    String strUri = strUrl + doc.outerXml;
+    String strUri = getUrl() + doc.outerXml;
     //create web client
     final client = RetryClient(http.Client());
     //download response string from api
@@ -144,9 +163,9 @@ class UspsAddressVerification {
 
   xml.XmlDocument buildAddressXml(String strAddr1, String strAddr2, String strCity, String strState, String strZip5, String strZip4) {
     final builder = xml.XmlBuilder();
-    builder.processing('xml', strXmlVersion);
+    builder.processing('xml', getXmlVersion());
     builder.element('AddressValidateRequest', nest:() {
-      builder.attribute('USERID', strUserID);
+      builder.attribute('USERID', getUserID());
       builder.element('Revision', nest: 1);
       builder.element('Address', nest:() {
         builder.attribute('ID', 0);
