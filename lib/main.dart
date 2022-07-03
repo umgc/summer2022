@@ -130,8 +130,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _processBarcode() async {
     print("Inside process barcode\n");
-    _barcodeScannerApi!.setImageFromFile(_image!);
-    _barcodeScannerApi!.processImage();
+    File img = File("assets/QRCode.PASSED.tdbank_id.jpeg");
+    _barcodeScannerApi = BarcodeScannerApi();
+    _barcodeScannerApi!.setImageFromFile(img);
+    await _barcodeScannerApi!.processImage();
     print("Exit ProcessBarcode");
   }
 

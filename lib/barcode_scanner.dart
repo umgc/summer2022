@@ -2,15 +2,11 @@ import 'dart:io';
 
 import './models/Code.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
-import 'package:image_picker/image_picker.dart';
 
 class BarcodeScannerApi {
   final BarcodeScanner _barcodeScanner = BarcodeScanner();
-  File? _image;
   String? _path;
-  ImagePicker? _imagePicker;
   InputImage? inputImage;
-  bool _canProcess = true;
   bool _isBusy = false;
 
   void setImageFromPath(String path) {
@@ -24,13 +20,13 @@ class BarcodeScannerApi {
   Future<List<codeObject>> processImage() async {
     List<codeObject> codes = [];
 
-    if (!_canProcess) return codes;
     if (_isBusy) return codes;
 
     _isBusy = true;
 
     if (_path != null) {
       final barcodes = await _barcodeScanner.processImage(inputImage!);
+      print(inputImage);
       if (inputImage!.inputImageData?.size != null &&
           inputImage!.inputImageData?.imageRotation != null) {
       } else {
