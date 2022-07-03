@@ -2,31 +2,32 @@
 
 import 'dart:io';
 
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import '../lib/models/Code.dart';
 import '../lib/barcode_scanner.dart';
 
-void main() {
-  test('Scanner must return QR Code link', () {
+void main() async {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  test('Scanner must return QR Code link', () async {
     final barcodeScanner = BarcodeScannerApi();
     List<codeObject> codes = [];
 
-    File img = barcodeScanner
-        .getImageFileFromAssets('assets/QRCode.PASSED.tdbank_id.jpeg') as File;
+    File img = await barcodeScanner
+        .getImageFileFromAssets('assets/QRCode.PASSED.tdbank_id.jpeg');
     barcodeScanner.setImageFromFile(img);
-    codes = barcodeScanner.processImage() as List<codeObject>;
+    codes = await barcodeScanner.processImage();
 
     expect(codes[0].info, "https://qrco.de/bczuEB");
   });
 
-  test('Scanner must not recognize QR Code', () {
+  test('Scanner must not recognize QR Code', () async {
     final barcodeScanner = BarcodeScannerApi();
     List<codeObject> codes = [];
 
-    File img = barcodeScanner
-        .getImageFileFromAssets("assets/QRCode_FAILED.XFINITY.jpeg") as File;
+    File img = await barcodeScanner
+        .getImageFileFromAssets("assets/QRCode.FAILED.XFINITY.jpeg");
     barcodeScanner.setImageFromFile(img);
-    codes = barcodeScanner.processImage() as List<codeObject>;
+    codes = await barcodeScanner.processImage();
 
     expect(codes[0].info, "");
   });
