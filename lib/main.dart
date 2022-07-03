@@ -84,7 +84,8 @@ class _MyHomePageState extends State<MyHomePage> {
       String a = base64.encode(_imageBytes!);
       var objMailResponse = await vision!.search(a);
       for (var address in objMailResponse.addresses) {
-        address.validated = await UspsAddressVerification().verifyAddressString(address.address);
+        address.validated = await UspsAddressVerification()
+            .verifyAddressString(address.address);
       }
       setState(() {
         if (PickedFile != null) {
@@ -100,15 +101,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _processImageWithOCR() async {
     print("inside processImageWithOCR\n");
-    var image = await rootBundle.load('assets/unnamed_4.jpg');
+    var image = await rootBundle.load('assets/mail.75.png');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
-    print("Image: $image\nBuffer: $buffer\na: $a\n");
+    //print("Image: $image\nBuffer: $buffer\na: $a\n");
     //await vision!.searchImageForText(a);
     var objAddressList = await vision!.searchImageForText(a);
     for (var address in objAddressList) {
-        address.validated = await UspsAddressVerification().verifyAddressString(address.address);
-      }
+      address.validated =
+          await UspsAddressVerification().verifyAddressString(address.address);
+      print(address.toJson());
+    }
     print("Exit ProcessImageWithOCR");
   }
 
@@ -117,21 +120,23 @@ class _MyHomePageState extends State<MyHomePage> {
     var image = await rootBundle.load('assets/logo_combined.jpg');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
-    print("Image: $image\nBuffer: $buffer\na: $a\n");
+    //print("Image: $image\nBuffer: $buffer\na: $a\n");
     await vision!.searchImageForLogo(a);
     print("Exit ProcessImageForLogo");
   }
 
   void _processImage() async {
     print("Inside process image\n");
-    var image = await rootBundle.load('assets/horusx.jpg');
+    var image = await rootBundle.load('assets/mail.02.jpg');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
-    print("Image: $image\nBuffer: $buffer\na: $a\n");
+    //print("Image: $image\nBuffer: $buffer\na: $a\n");
     var objMr = await vision!.search(a);
     for (var address in objMr.addresses) {
-      address.validated = await UspsAddressVerification().verifyAddressString(address.address);
+      address.validated =
+          await UspsAddressVerification().verifyAddressString(address.address);
     }
+    print(objMr.toJson());
     print("Exit ProcessImage (All Features)");
   }
 
