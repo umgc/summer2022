@@ -22,7 +22,7 @@ class CloudVisionApi {
     List<AddressObject>? addresses = await searchImageForText(image);
     List<LogoObject>? logos = await searchImageForLogo(image);
     MailResponse response = MailResponse(addresses: addresses, logos: logos);
-    print(response.toJson().toString());
+    // print(response.toJson().toString());
     return response;
   }
 
@@ -43,7 +43,7 @@ class CloudVisionApi {
         }
       ]
     }));
-    print("Image to Text Search");
+    // print("Image to Text Search");
     if (_response.responses != null) {
       _response.responses!.forEach((data) {
         //print(data.fullTextAnnotation!.text);
@@ -108,23 +108,23 @@ class CloudVisionApi {
               } else {}
             });
           } else {
-            print("No Pages were found");
+            // print("No Pages were found");
           }
         } else {
-          print("No Full Text Annotation Object Found");
+          // print("No Full Text Annotation Object Found");
         }
       });
     } else {
-      print("Image Text Search failed.");
+      // print("Image Text Search failed.");
     }
-    print("Text Search done");
-    for (int x = 0; x < blocks.length; x++) {
-      print("---------Block $x---------");
-      for (int y = 0; y < blocks.elementAt(x).getList().length; y++) {
-        print(blocks.elementAt(x).getList().elementAt(y));
-      }
-      print("--------------------------");
-    }
+    // print("Text Search done");
+    // for (int x = 0; x < blocks.length; x++) {
+    //   print("---------Block $x---------");
+    //   for (int y = 0; y < blocks.elementAt(x).getList().length; y++) {
+    //     print(blocks.elementAt(x).getList().elementAt(y));
+    //   }
+    //   print("--------------------------");
+    // }
     List<int> sB = findBlocksWithAddresses(blocks);
     for (int sb = 0; sb < sB.length; sb++) {
       int z = sB[sb];
@@ -135,14 +135,14 @@ class CloudVisionApi {
 
     List<AddressObject> pB = parseBlocksForAddresses2(blocks, sB);
 
-    pB.forEach((a) {
-      print("--------Address----------");
-      print('name: ${a.name}');
-      print('address: ${a.address}');
-      print('type: ${a.type}');
-      print('validation: ${a.validated}');
-      print("-------------------------");
-    });
+    // pB.forEach((a) {
+    //   print("--------Address----------");
+    //   print('name: ${a.name}');
+    //   print('address: ${a.address}');
+    //   print('type: ${a.type}');
+    //   print('validation: ${a.validated}');
+    //   print("-------------------------");
+    // });
 
     //print(s);
     return pB;
@@ -152,7 +152,7 @@ class CloudVisionApi {
   List<AddressObject> parseBlocksForAddresses2(
       List<Block> blocks, List<int> b) {
     List<AddressObject> addresses = [];
-    print(b.length);
+    // print(b.length);
     for (int x = 0; x < b.length; x++) {
       String name1 = '';
       String address1 = '';
@@ -486,7 +486,7 @@ class CloudVisionApi {
                   blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
             } else {
               address1 +=
-                  blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
+                  ' ' + blocks.elementAt(b.elementAt(x)).getList().elementAt(z);
             }
           }
         }
@@ -516,7 +516,7 @@ class CloudVisionApi {
           }
         }
       } else {
-        print("did not fit into mail category");
+        // print("did not fit into mail category");
       }
       if (name1.isNotEmpty || address1.isNotEmpty) {
         AddressObject aO = AddressObject(
@@ -543,12 +543,14 @@ class CloudVisionApi {
     RegExp regExp2 = new RegExp(r'US POSTAGE');
     RegExp regExp3 = new RegExp(r'USPOSTAGE');
     RegExp regExp4 = new RegExp(r'MAILED FROM ZIP CODE\s\d{5}$');
+    RegExp regExp5 = new RegExp(r'MAILED FROM\s\d{5}$');
 
     for (int y = 0; y < block.getList().length; y++) {
       if (regExp1.hasMatch(block.getList().elementAt(y).toUpperCase()) ||
           regExp2.hasMatch(block.getList().elementAt(y).toUpperCase()) ||
           regExp3.hasMatch(block.getList().elementAt(y).toUpperCase()) ||
-          regExp4.hasMatch(block.getList().elementAt(y).toUpperCase())) {
+          regExp4.hasMatch(block.getList().elementAt(y).toUpperCase()) ||
+          regExp5.hasMatch(block.getList().elementAt(y).toUpperCase())) {
         return true;
       }
     }
@@ -743,7 +745,7 @@ class CloudVisionApi {
     _response.responses!.forEach((data) {
       if (data.logoAnnotations != null) {
         data.logoAnnotations!.forEach((element) {
-          print(element.description);
+          //print(element.description);
           logos.add(LogoObject(name: element.description as String));
         });
       }
