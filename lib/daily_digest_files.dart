@@ -11,8 +11,8 @@ The following objects allow the Daily Digest JSON files to be serialized and des
 The comments in the MailObject class describes how the code for the nested classes is implemented.
 */
 
-/// An annotation for the code generator to know that this class needs the
-/// JSON serialization logic to be generated.
+// An annotation for the code generator to know that this class needs the
+// JSON serialization logic to be generated.
 @JsonSerializable(explicitToJson: true)
 class MailObject {
   final String type;
@@ -79,16 +79,15 @@ class DailyDigestFile {
 class DailyDigestFiles {
 
   String directory;
-  List<DailyDigestFile> files;
+  List<String> files;
 
+  DailyDigestFiles(this.directory, this.files) {
+    // Set the storage directory for the Daily Digest JSON files
+    Directory dir = getApplicationDocumentsDirectory() as Directory;
+    directory = dir.path;
+  }
 
-  // Set the storage directory for the Daily Digest JSON files
-  // Directory dir = getApplicationDocumentsDirectory() as Directory;
-  // directory = dir.path;
-
-  DailyDigestFiles(this.directory, this.files);
-
-  List<DailyDigestFile> getFiles() {
+  List<String> getFiles() {
     return files;
   }
 
@@ -106,21 +105,23 @@ class DailyDigestFiles {
     }
 
     for (var jsonFile in fileList) {
-      DailyDigestFile dailyDigest = readFromFile(jsonFile);
-      files.add(dailyDigest);
+      DailyDigestFile? dailyDigest = readFromFile(jsonFile);
+      if (dailyDigest != null) {
+        files.add(dailyDigest.toString());
+      }
     }
   }
 
   // Load a Daily Digest JSON File from a specific date.
-  DailyDigestFile getDailyDigestByDate(String date) {
+  DailyDigestFile? getDailyDigestByDate(String date) {
     String fileName = "'$date'.json";
-    DailyDigestFile dailyDigest = readFromFile(fileName);
+    DailyDigestFile? dailyDigest = readFromFile(fileName);
     return dailyDigest;
   }
 
   // Write a Daily Digest JSON object to a file.
   void writeToFile(DailyDigestFile digestObject, String date) {
-    String fileName = "TODO";
+    String fileName = "'$date'.json";
     String filePath = "'$this.directory'/'$fileName'";
     File file = File(filePath);
     file.createSync();
@@ -128,20 +129,19 @@ class DailyDigestFiles {
   }
 
   // Read a Daily Digest JSON file.
-  DailyDigestFile readFromFile(String fileName) {
+  DailyDigestFile? readFromFile(String fileName) {
     String filePath = "'$this.directory'/'$fileName'";
     File jsonFile = File(filePath);
     bool fileExists = jsonFile.existsSync();
-    DailyDigestFile dailyDigest = null;
+    DailyDigestFile dailyDigest;
     if (fileExists) {
       String contents = jsonFile.readAsStringSync();
       dailyDigest = DailyDigestFile.fromJson(jsonDecode(contents));
+      return dailyDigest;
+    } else {
+      return null;
     }
-    return dailyDigest;
+    
   }
 
-}
-
-void main() {
-  print('Hello');
 }
