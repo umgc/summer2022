@@ -5,6 +5,8 @@ class MainWidget extends StatefulWidget {
 }
 
 class MainWidgetState extends State<MainWidget> {
+  DateTime selected_date = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,11 +19,27 @@ class MainWidgetState extends State<MainWidget> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/digest_mail');
-                    },
-                    icon: Icon(Icons.search),
-                    label: Text("Digest Date Selection"),
+                    onPressed: () => selectDigestDate(context),
+                    icon: Icon(Icons.calendar_month_outlined),
+                    label: Text("Digest Selection"),
+                    style: TextButton.styleFrom(
+                      primary: Colors.black,
+                      shadowColor: Colors.grey,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              child: Center(
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: OutlinedButton.icon(
+                    onPressed: () => selectOtherMailDate(context),
+                    icon: Icon(Icons.email_outlined),
+                    label: Text("Other Email"),
                     style: TextButton.styleFrom(
                       primary: Colors.black,
                       shadowColor: Colors.grey,
@@ -39,45 +57,13 @@ class MainWidgetState extends State<MainWidget> {
                   child: OutlinedButton.icon(
                     onPressed: () {},
                     icon: Icon(Icons.camera_alt_outlined),
-                    label: const Text("Scan Mails"),
+                    label: const Text("Scan Mail"),
                     style: TextButton.styleFrom(
                       primary: Colors.black,
                       shadowColor: Colors.grey,
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              child: Center(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/digest_mail');
-                  },
-                  child: const Text("Latest Informed Delivery Digest"),
-                  style: TextButton.styleFrom(
-                    primary: Colors.black,
-                    shadowColor: Colors.grey,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              child: Center(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/other_mail');
-                  },
-                  child: const Text("All Other Mail"),
-                  style: TextButton.styleFrom(
-                    primary: Colors.black,
-                    shadowColor: Colors.grey,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
                   ),
                 ),
               ),
@@ -122,5 +108,33 @@ class MainWidgetState extends State<MainWidget> {
         ),
       ),
     );
+  }
+
+  Future<void> selectDigestDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selected_date,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime.now());
+    if ((picked != null) && (picked != selected_date)) {
+      Navigator.pushNamed(context, '/digest_mail');
+      setState(() {
+        selected_date = picked;
+      });
+    }
+  }
+
+  Future<void> selectOtherMailDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selected_date,
+        firstDate: DateTime(1970),
+        lastDate: DateTime.now());
+    if ((picked != null) && (picked != selected_date)) {
+      Navigator.pushNamed(context, '/other_mail');
+      setState(() {
+        selected_date = picked;
+      });
+    }
   }
 }
