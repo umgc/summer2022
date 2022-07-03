@@ -26,7 +26,6 @@ class BarcodeScannerApi {
 
     if (_path != null) {
       final barcodes = await _barcodeScanner.processImage(inputImage!);
-      print(inputImage);
       if (inputImage!.inputImageData?.size != null &&
           inputImage!.inputImageData?.imageRotation != null) {
       } else {
