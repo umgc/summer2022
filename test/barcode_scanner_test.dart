@@ -21,7 +21,7 @@ void main() {
   test('Scanner must not recognize QR Code', () {
     final barcodeScanner = BarcodeScannerApi();
     List<codeObject> codes = [];
-    File img = File("");
+    File img = File("assets/QRCode.FAILED.XFINITY.jpeg");
 
     barcodeScanner.setImageFromFile(img);
     codes = barcodeScanner.processImage() as List<codeObject>;
