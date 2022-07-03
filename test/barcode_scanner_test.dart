@@ -10,8 +10,9 @@ void main() {
   test('Scanner must return QR Code link', () {
     final barcodeScanner = BarcodeScannerApi();
     List<codeObject> codes = [];
-    File img = File("assets/QRCode.PASSED.tdbank_id.jpeg");
 
+    File img = barcodeScanner
+        .getImageFileFromAssets('assets/QRCode.PASSED.tdbank_id.jpeg') as File;
     barcodeScanner.setImageFromFile(img);
     codes = barcodeScanner.processImage() as List<codeObject>;
 
@@ -21,8 +22,9 @@ void main() {
   test('Scanner must not recognize QR Code', () {
     final barcodeScanner = BarcodeScannerApi();
     List<codeObject> codes = [];
-    File img = File("assets/QRCode.FAILED.XFINITY.jpeg");
 
+    File img = barcodeScanner
+        .getImageFileFromAssets("assets/QRCode_FAILED.XFINITY.jpeg") as File;
     barcodeScanner.setImageFromFile(img);
     codes = barcodeScanner.processImage() as List<codeObject>;
 

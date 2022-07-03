@@ -87,7 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
       String a = base64.encode(_imageBytes!);
       var objMailResponse = await vision!.search(a);
       for (var address in objMailResponse.addresses) {
-        address.validated = await UspsAddressVerification().verifyAddressString(address.address);
+        address.validated = await UspsAddressVerification()
+            .verifyAddressString(address.address);
       }
       setState(() {
         if (PickedFile != null) {
@@ -110,8 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
     //await vision!.searchImageForText(a);
     var objAddressList = await vision!.searchImageForText(a);
     for (var address in objAddressList) {
-        address.validated = await UspsAddressVerification().verifyAddressString(address.address);
-      }
+      address.validated =
+          await UspsAddressVerification().verifyAddressString(address.address);
+    }
     print("Exit ProcessImageWithOCR");
   }
 
@@ -133,16 +135,20 @@ class _MyHomePageState extends State<MyHomePage> {
     print("Image: $image\nBuffer: $buffer\na: $a\n");
     var objMr = await vision!.search(a);
     for (var address in objMr.addresses) {
-      address.validated = await UspsAddressVerification().verifyAddressString(address.address);
+      address.validated =
+          await UspsAddressVerification().verifyAddressString(address.address);
     }
     print("Exit ProcessImage (All Features)");
   }
 
   void _processBarcode() async {
     print("Inside process barcode\n");
-    File img = File("assets/QRCode.PASSED.tdbank_id.jpeg");
     _barcodeScannerApi = BarcodeScannerApi();
+
+    File img = await _barcodeScannerApi!
+        .getImageFileFromAssets('assets/QRCode.PASSED.tdbank_id.jpeg');
     _barcodeScannerApi!.setImageFromFile(img);
+
     await _barcodeScannerApi!.processImage();
     print("Exit ProcessBarcode");
   }

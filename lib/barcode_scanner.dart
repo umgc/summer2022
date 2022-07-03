@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'dart:async';
 
 import './models/Code.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 
 class BarcodeScannerApi {
@@ -8,6 +11,16 @@ class BarcodeScannerApi {
   String? _path;
   InputImage? inputImage;
   bool _isBusy = false;
+
+  Future<File> getImageFileFromAssets(String path) async {
+    final byteData = await rootBundle.load(path);
+
+    final file = File('${(await getTemporaryDirectory()).path}/image.png');
+    await file.writeAsBytes(byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
+  }
 
   void setImageFromPath(String path) {
     inputImage = InputImage.fromFilePath(path);
@@ -24,14 +37,37 @@ class BarcodeScannerApi {
 
     _isBusy = true;
 
-    if (_path != null) {
+    if (_path != null || inputImage != null) {
       final barcodes = await _barcodeScanner.processImage(inputImage!);
       if (inputImage!.inputImageData?.size != null &&
           inputImage!.inputImageData?.imageRotation != null) {
       } else {
         for (final barcode in barcodes) {
-          print(barcode);
-          codes.add(codeObject(type: '', info: barcode.rawValue));
+          var type = "Other";
+
+          switch (barcode.type) {
+            case BarcodeType.url:
+              type = "QR Code";
+              break;
+            case BarcodeType.product:
+            case BarcodeType.isbn:
+              type = "Barcode";
+              break;
+            case BarcodeType.unknown:
+            case BarcodeType.contactInfo:
+            case BarcodeType.email:
+            case BarcodeType.phone:
+            case BarcodeType.sms:
+            case BarcodeType.text:
+            case BarcodeType.wifi:
+            case BarcodeType.geoCoordinates:
+            case BarcodeType.calendarEvent:
+            case BarcodeType.driverLicense:
+              type = "Other";
+              break;
+          }
+          print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
+          codes.add(codeObject(type: type, info: barcode.rawValue));
         }
       }
       _isBusy = false;
