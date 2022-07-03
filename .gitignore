@@ -11,7 +11,7 @@ pubspec.lock
 # If you don't generate documentation locally you can remove this line.
 doc/api/
 .flutter-plugins
-.flutter-dependencies
+.flutter-plugins-dependencies
 .vscode/
 # Avoid committing generated Javascript files:
 *.dart.js
