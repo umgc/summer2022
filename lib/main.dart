@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:usps_informed_delivery_backend/usps_address_verification.dart';
 import 'api.dart';
+import 'models/Code.dart';
 
 void main() {
   runApp(const MyApp());
@@ -130,7 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _processImage() async {
     print("Inside process image\n");
-    var image = await rootBundle.load('assets/mail.02.jpg');
+    var fileName = 'assets/QRCode.PASSED.tdbank_id.jpeg';
+    var image = await rootBundle.load(fileName);
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     //print("Image: $image\nBuffer: $buffer\na: $a\n");
@@ -138,6 +140,14 @@ class _MyHomePageState extends State<MyHomePage> {
     for (var address in objMr.addresses) {
       address.validated =
           await UspsAddressVerification().verifyAddressString(address.address);
+    }
+    _barcodeScannerApi = BarcodeScannerApi();
+    File img = await _barcodeScannerApi!.getImageFileFromAssets(fileName);
+    _barcodeScannerApi!.setImageFromFile(img);
+
+    List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    for (final code in codes) {
+      objMr.codes.add(code);
     }
     print(objMr.toJson());
     print("Exit ProcessImage (All Features)");
@@ -181,8 +191,16 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               width: double.infinity,
               child: ElevatedButton(
+                onPressed: _processBarcode,
+                child: const Text("ML Kit  QR Codes/Barcodes Image Scan"),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
                 onPressed: _processImage,
-                child: const Text("Vision (OCR & Logo)"),
+                child: const Text(
+                    "All (OCR, Logo, & QR/Bar Codes) Image Processing"),
               ),
             ),
             Container(
@@ -190,13 +208,6 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ElevatedButton(
                 onPressed: _processImage,
                 child: const Text("Process Mail Image using Camera"),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _processBarcode,
-                child: const Text("Process QR Codes/Barcodes"),
               ),
             ),
           ],

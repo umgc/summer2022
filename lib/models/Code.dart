@@ -5,9 +5,16 @@ part 'Code.g.dart';
 
 @JsonSerializable()
 class codeObject {
-  String? type;
-  String? info;
-  codeObject({required info, required type});
+  String type;
+  String info;
+  codeObject({this.info = '', this.type = ''});
+  String get getType {
+    return type;
+  }
+
+  String get getInfo {
+    return info;
+  }
   // }
   // static listFromJson(List<Map<String, dynamic>> list) {
   //   List<codeObject> codes = [];

@@ -66,13 +66,12 @@ class BarcodeScannerApi {
               type = "Other";
               break;
           }
-          print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
-          codes.add(codeObject(type: type, info: barcode.rawValue));
+          // print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
+          codes.add(codeObject(type: type, info: barcode.rawValue as String));
         }
       }
       _isBusy = false;
     }
-
     return codes;
   }
 }

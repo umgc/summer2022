@@ -2,13 +2,24 @@
 
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../lib/models/Code.dart';
 import '../lib/barcode_scanner.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = null;
+
   test('Scanner must return QR Code link', () async {
+    const MethodChannel('google_mlkit_barcode_scanning')
+        .setMockMethodCallHandler((MethodCall methodCall) async {
+      if (methodCall.method == 'vision#startBarcodeScanner') {
+        print(1);
+        return <codeObject>[];
+      }
+      return null;
+    });
     final barcodeScanner = BarcodeScannerApi();
     List<codeObject> codes = [];
 
@@ -21,6 +32,14 @@ void main() async {
   });
 
   test('Scanner must not recognize QR Code', () async {
+    const MethodChannel('google_mlkit_barcode_scanning')
+        .setMockMethodCallHandler((MethodCall methodCall) async {
+      if (methodCall.method == 'vision#startBarcodeScanner') {
+        print(2);
+        return <codeObject>[];
+      }
+      return null;
+    });
     final barcodeScanner = BarcodeScannerApi();
     List<codeObject> codes = [];
 
