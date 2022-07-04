@@ -79,7 +79,7 @@ class DailyDigestFile {
 class DailyDigestFiles {
 
   String directory;
-  List<String> files;
+  List<DailyDigestFile> files;
 
   DailyDigestFiles(this.directory, this.files) {
     // Set the storage directory for the Daily Digest JSON files
@@ -87,7 +87,7 @@ class DailyDigestFiles {
     directory = dir.path;
   }
 
-  List<String> getFiles() {
+  List<DailyDigestFile> getFiles() {
     return files;
   }
 
@@ -107,7 +107,7 @@ class DailyDigestFiles {
     for (var jsonFile in fileList) {
       DailyDigestFile? dailyDigest = readFromFile(jsonFile);
       if (dailyDigest != null) {
-        files.add(dailyDigest.toString());
+        files.add(dailyDigest);
       }
     }
   }
