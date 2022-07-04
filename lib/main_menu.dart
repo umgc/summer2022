@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class MainWidget extends StatefulWidget {
   MainWidgetState createState() => MainWidgetState();
@@ -6,7 +7,7 @@ class MainWidget extends StatefulWidget {
 
 class MainWidgetState extends State<MainWidget> {
   DateTime selected_date = DateTime.now();
-
+  bool email_selected = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,27 +20,9 @@ class MainWidgetState extends State<MainWidget> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: OutlinedButton.icon(
-                    onPressed: () => selectDigestDate(context),
+                    onPressed: () => selectDate(context),
                     icon: Icon(Icons.calendar_month_outlined),
-                    label: Text("Digest Selection"),
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                      shadowColor: Colors.grey,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              child: Center(
-                child: Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: OutlinedButton.icon(
-                    onPressed: () => selectOtherMailDate(context),
-                    icon: Icon(Icons.email_outlined),
-                    label: Text("Other Email"),
+                    label: determineButtonText(),
                     style: TextButton.styleFrom(
                       primary: Colors.black,
                       shadowColor: Colors.grey,
@@ -66,6 +49,51 @@ class MainWidgetState extends State<MainWidget> {
                     ),
                   ),
                 ),
+              ),
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        if (!email_selected) {
+                          Navigator.pushNamed(context, '/other_mail');
+                        } else {
+                          Navigator.pushNamed(context, '/digest_mail');
+                        }
+                      },
+                      child: const Text("Latest",
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        if (!email_selected) {
+                          Navigator.pushNamed(context, '/other_mail');
+                        } else {
+                          Navigator.pushNamed(context, '/digest_mail');
+                        }
+                      },
+                      child: const Text("Unread",
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Container(
@@ -104,20 +132,58 @@ class MainWidgetState extends State<MainWidget> {
                 ),
               ),
             ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    "Email",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Center(
+                    child: Switch(
+                      value: email_selected,
+                      activeTrackColor: Colors.lightGreenAccent,
+                      activeColor: Colors.green,
+                      onChanged: (bool value) {
+                        setState(() {
+                          email_selected = value;
+                        });
+                      },
+                    ),
+                  ),
+                  Text(
+                    "Digest",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> selectDigestDate(BuildContext context) async {
+  Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selected_date,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime.now());
     if ((picked != null) && (picked != selected_date)) {
-      Navigator.pushNamed(context, '/digest_mail');
+      if (!email_selected) {
+        Navigator.pushNamed(context, '/other_mail');
+      } else {
+        Navigator.pushNamed(context, '/digest_mail');
+      }
+
       setState(() {
         selected_date = picked;
       });
@@ -135,6 +201,14 @@ class MainWidgetState extends State<MainWidget> {
       setState(() {
         selected_date = picked;
       });
+    }
+  }
+
+  Widget determineButtonText() {
+    if (email_selected == true) {
+      return Text("Digest Selection");
+    } else {
+      return Text("Email Selection");
     }
   }
 }
