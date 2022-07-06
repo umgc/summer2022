@@ -54,8 +54,7 @@ void main() async {
     File f = await scanner
         .getImageFileFromAssets('assets/QRCode.PASSED.tdbank_id.jpeg');
     InputImage img = InputImage.fromFile(f);
-    print(await scanner.processImage(img));
-    //List<codeObject> codes = await scanner.processImage(img);
-    //expect(codes.length, 1);
+    List<codeObject> codes = await scanner.processImage(img);
+    expect(codes.length, 1);
   });
 }
