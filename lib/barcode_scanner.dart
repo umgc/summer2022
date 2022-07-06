@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:async';
-
 import './models/Code.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -30,48 +29,50 @@ class BarcodeScannerApi {
     inputImage = InputImage.fromFile(img);
   }
 
-  Future<List<codeObject>> processImage() async {
+  Future<List<codeObject>> processImage([InputImage? img]) async {
     List<codeObject> codes = [];
 
     if (_isBusy) return codes;
 
     _isBusy = true;
 
+    if (img != null) {
+      inputImage = img;
+    }
+
     if (_path != null || inputImage != null) {
       final barcodes = await _barcodeScanner.processImage(inputImage!);
-      if (inputImage!.inputImageData?.size != null &&
-          inputImage!.inputImageData?.imageRotation != null) {
-      } else {
-        for (final barcode in barcodes) {
-          var type = "Other";
 
-          switch (barcode.type) {
-            case BarcodeType.url:
-              type = "QR Code";
-              break;
-            case BarcodeType.product:
-            case BarcodeType.isbn:
-              type = "Barcode";
-              break;
-            case BarcodeType.unknown:
-            case BarcodeType.contactInfo:
-            case BarcodeType.email:
-            case BarcodeType.phone:
-            case BarcodeType.sms:
-            case BarcodeType.text:
-            case BarcodeType.wifi:
-            case BarcodeType.geoCoordinates:
-            case BarcodeType.calendarEvent:
-            case BarcodeType.driverLicense:
-              type = "Other";
-              break;
-          }
-          // print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
-          codes.add(codeObject(type: type, info: barcode.rawValue as String));
+      for (final barcode in barcodes) {
+        var type = "Other";
+
+        switch (barcode.type) {
+          case BarcodeType.url:
+            type = "QR Code";
+            break;
+          case BarcodeType.product:
+          case BarcodeType.isbn:
+            type = "Barcode";
+            break;
+          case BarcodeType.unknown:
+          case BarcodeType.contactInfo:
+          case BarcodeType.email:
+          case BarcodeType.phone:
+          case BarcodeType.sms:
+          case BarcodeType.text:
+          case BarcodeType.wifi:
+          case BarcodeType.geoCoordinates:
+          case BarcodeType.calendarEvent:
+          case BarcodeType.driverLicense:
+            type = "Other";
+            break;
         }
+        // print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
+        codes.add(codeObject(type: type, info: barcode.rawValue as String));
       }
       _isBusy = false;
     }
+
     return codes;
   }
 }
