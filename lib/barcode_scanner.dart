@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:flutter/material.dart';
+
 import './models/Code.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -40,35 +42,39 @@ class BarcodeScannerApi {
       inputImage = img;
     }
 
+    var barcodes = <Barcode>[];
     if (_path != null || inputImage != null) {
-      final barcodes = await _barcodeScanner.processImage(inputImage!);
-
-      for (final barcode in barcodes) {
-        var type = "Other";
-
-        switch (barcode.type) {
-          case BarcodeType.url:
-            type = "QR Code";
-            break;
-          case BarcodeType.product:
-          case BarcodeType.isbn:
-            type = "Barcode";
-            break;
-          case BarcodeType.unknown:
-          case BarcodeType.contactInfo:
-          case BarcodeType.email:
-          case BarcodeType.phone:
-          case BarcodeType.sms:
-          case BarcodeType.text:
-          case BarcodeType.wifi:
-          case BarcodeType.geoCoordinates:
-          case BarcodeType.calendarEvent:
-          case BarcodeType.driverLicense:
-            type = "Other";
-            break;
+      try {
+        barcodes = await _barcodeScanner.processImage(inputImage!);
+      } catch (e) {
+        rethrow;
+      } finally {
+        for (final barcode in barcodes) {
+          var type = "Other";
+          switch (barcode.type) {
+            case BarcodeType.url:
+              type = "QR Code";
+              break;
+            case BarcodeType.product:
+            case BarcodeType.isbn:
+              type = "Barcode";
+              break;
+            case BarcodeType.unknown:
+            case BarcodeType.contactInfo:
+            case BarcodeType.email:
+            case BarcodeType.phone:
+            case BarcodeType.sms:
+            case BarcodeType.text:
+            case BarcodeType.wifi:
+            case BarcodeType.geoCoordinates:
+            case BarcodeType.calendarEvent:
+            case BarcodeType.driverLicense:
+              type = "Other";
+              break;
+          }
+          // print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
+          codes.add(codeObject(type: type, info: barcode.rawValue as String));
         }
-        // print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
-        codes.add(codeObject(type: type, info: barcode.rawValue as String));
       }
       _isBusy = false;
     }
