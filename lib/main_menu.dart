@@ -7,7 +7,7 @@ class MainWidget extends StatefulWidget {
 
 class MainWidgetState extends State<MainWidget> {
   DateTime selected_date = DateTime.now();
-  bool email_selected = false;
+  String mail_type = "Email";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,21 +16,42 @@ class MainWidgetState extends State<MainWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
-              child: Center(
-                child: Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: OutlinedButton.icon(
-                    onPressed: () => selectDate(context),
-                    icon: Icon(Icons.calendar_month_outlined),
-                    label: determineButtonText(),
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                      shadowColor: Colors.grey,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: OutlinedButton.icon(
+                      onPressed: () => selectDate(context),
+                      icon: Icon(Icons.calendar_month_outlined),
+                      label: Text("$mail_type Date Selection"),
+                      style: TextButton.styleFrom(
+                        primary: Colors.black,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
                     ),
                   ),
-                ),
+                  Text("Mail Type:"),
+                  DropdownButton(
+                      value: "Email",
+                      items: [
+                        DropdownMenuItem<String>(
+                          value: "Email",
+                          child: Text("Email"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "Digest",
+                          child: Text("Digest"),
+                        ),
+                      ],
+                      onChanged: (String? valueSelected) {
+                        setState(() {
+                          mail_type = valueSelected!;
+                        });
+                      }),
+                ],
               ),
             ),
             Container(
@@ -58,7 +79,7 @@ class MainWidgetState extends State<MainWidget> {
                   Container(
                     child: OutlinedButton(
                       onPressed: () {
-                        if (!email_selected) {
+                        if (mail_type == "Email") {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
                           Navigator.pushNamed(context, '/digest_mail');
@@ -77,7 +98,7 @@ class MainWidgetState extends State<MainWidget> {
                   Container(
                     child: OutlinedButton(
                       onPressed: () {
-                        if (!email_selected) {
+                        if (mail_type == "Email") {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
                           Navigator.pushNamed(context, '/digest_mail');
@@ -132,39 +153,6 @@ class MainWidgetState extends State<MainWidget> {
                 ),
               ),
             ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    "Email",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Center(
-                    child: Switch(
-                      value: email_selected,
-                      activeTrackColor: Colors.lightGreenAccent,
-                      activeColor: Colors.green,
-                      onChanged: (bool value) {
-                        setState(() {
-                          email_selected = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Text(
-                    "Digest",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -178,7 +166,7 @@ class MainWidgetState extends State<MainWidget> {
         firstDate: DateTime(2015, 8),
         lastDate: DateTime.now());
     if ((picked != null) && (picked != selected_date)) {
-      if (!email_selected) {
+      if (mail_type == "Email") {
         Navigator.pushNamed(context, '/other_mail');
       } else {
         Navigator.pushNamed(context, '/digest_mail');
@@ -201,14 +189,6 @@ class MainWidgetState extends State<MainWidget> {
       setState(() {
         selected_date = picked;
       });
-    }
-  }
-
-  Widget determineButtonText() {
-    if (email_selected == true) {
-      return Text("Digest Selection");
-    } else {
-      return Text("Email Selection");
     }
   }
 }
