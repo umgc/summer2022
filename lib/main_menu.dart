@@ -35,7 +35,7 @@ class MainWidgetState extends State<MainWidget> {
                   ),
                   Text("Mail Type:"),
                   DropdownButton(
-                      value: "Email",
+                      value: mail_type,
                       items: [
                         DropdownMenuItem<String>(
                           value: "Email",
