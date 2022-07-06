@@ -3,10 +3,12 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'barcode_scanner.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:usps_informed_delivery_backend/usps_address_verification.dart';
 import 'api.dart';
+import 'models/Code.dart';
 
 void main() {
   runApp(const MyApp());
@@ -61,6 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Uint8List? _imageBytes;
   String? _imageName;
   CloudVisionApi? vision;
+  BarcodeScannerApi? _barcodeScannerApi;
 
   final picker = ImagePicker();
   @override
@@ -71,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       //api = CloudApi(json);
       vision = CloudVisionApi();
+      _barcodeScannerApi = BarcodeScannerApi();
     });
   }
 
@@ -127,7 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _processImage() async {
     print("Inside process image\n");
-    var image = await rootBundle.load('assets/mail.02.jpg');
+    var fileName = 'assets/QRCode.PASSED.tdbank_id.jpeg';
+    var image = await rootBundle.load(fileName);
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     //print("Image: $image\nBuffer: $buffer\na: $a\n");
@@ -136,8 +141,28 @@ class _MyHomePageState extends State<MyHomePage> {
       address.validated =
           await UspsAddressVerification().verifyAddressString(address.address);
     }
+    _barcodeScannerApi = BarcodeScannerApi();
+    File img = await _barcodeScannerApi!.getImageFileFromAssets(fileName);
+    _barcodeScannerApi!.setImageFromFile(img);
+
+    List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    for (final code in codes) {
+      objMr.codes.add(code);
+    }
     print(objMr.toJson());
     print("Exit ProcessImage (All Features)");
+  }
+
+  void _processBarcode() async {
+    print("Inside process barcode\n");
+    _barcodeScannerApi = BarcodeScannerApi();
+
+    File img = await _barcodeScannerApi!
+        .getImageFileFromAssets('assets/QRCode.PASSED.tdbank_id.jpeg');
+    _barcodeScannerApi!.setImageFromFile(img);
+
+    await _barcodeScannerApi!.processImage();
+    print("Exit ProcessBarcode");
   }
 
   @override
@@ -153,28 +178,36 @@ class _MyHomePageState extends State<MyHomePage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _processImageWithOCR,
-                child: Text("Vision OCR Text Search"),
+                child: const Text("Vision OCR Text Search"),
               ),
             ),
             Container(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _processImageForLogo,
-                child: Text("Vision Logo Search"),
+                child: const Text("Vision Logo Search"),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _processBarcode,
+                child: const Text("ML Kit  QR Codes/Barcodes Image Scan"),
               ),
             ),
             Container(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _processImage,
-                child: Text("Vision (OCR & Logo)"),
+                child: const Text(
+                    "All (OCR, Logo, & QR/Bar Codes) Image Processing"),
               ),
             ),
             Container(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _processImage,
-                child: Text("Process Mail Image using Camera"),
+                child: const Text("Process Mail Image using Camera"),
               ),
             ),
           ],

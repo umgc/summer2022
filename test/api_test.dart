@@ -1,14 +1,12 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usps_informed_delivery_backend/api.dart';
-import 'package:usps_informed_delivery_backend/credentials_provider.dart';
 import 'package:usps_informed_delivery_backend/models/Address.dart';
 import 'package:usps_informed_delivery_backend/models/Logo.dart';
 import 'package:usps_informed_delivery_backend/models/MailResponse.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'dart:io' as io;
-import 'package:image_picker/image_picker.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -61,7 +59,7 @@ void main() async {
       MailResponse mail = await vision.search(a);
       //print(mail.toJson().toString());
       expect(mail.toJson().toString(),
-          '{addresses: [{type: sender, name: GEICO., address: 2563 Forest Dr; Annapolis, MD 21401, validated: false}, {type: recipient, name: Stanley De Jesus, address: 7793 Montgomery Mews Ct; Severn MD 21144-1245, validated: false}], logos: [{name: GEICO}, {name: GEICO}]}');
+          '{addresses: [{type: sender, name: GEICO., address: 2563 Forest Dr; Annapolis, MD 21401, validated: false}, {type: recipient, name: Stanley De Jesus, address: 7793 Montgomery Mews Ct; Severn MD 21144-1245, validated: false}], logos: [{name: GEICO}, {name: GEICO}], codes: []}');
     });
     test('Cloud Vision Image Verification illegible- Returns empty object',
         () async {
