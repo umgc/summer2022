@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:async';
-import 'package:flutter/material.dart';
-
 import './models/Code.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -50,14 +48,14 @@ class BarcodeScannerApi {
         rethrow;
       } finally {
         for (final barcode in barcodes) {
-          var type = "Other";
+          var type = "other";
           switch (barcode.type) {
             case BarcodeType.url:
-              type = "QR Code";
+              type = "qr";
               break;
             case BarcodeType.product:
             case BarcodeType.isbn:
-              type = "Barcode";
+              type = "bar";
               break;
             case BarcodeType.unknown:
             case BarcodeType.contactInfo:
@@ -69,7 +67,7 @@ class BarcodeScannerApi {
             case BarcodeType.geoCoordinates:
             case BarcodeType.calendarEvent:
             case BarcodeType.driverLicense:
-              type = "Other";
+              type = "other";
               break;
           }
           // print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
