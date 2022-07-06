@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class MainWidget extends StatefulWidget {
   MainWidgetState createState() => MainWidgetState();
@@ -6,7 +7,7 @@ class MainWidget extends StatefulWidget {
 
 class MainWidgetState extends State<MainWidget> {
   DateTime selected_date = DateTime.now();
-
+  String mail_type = "Email";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,39 +16,42 @@ class MainWidgetState extends State<MainWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
-              child: Center(
-                child: Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: OutlinedButton.icon(
-                    onPressed: () => selectDigestDate(context),
-                    icon: Icon(Icons.calendar_month_outlined),
-                    label: Text("Digest Selection"),
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                      shadowColor: Colors.grey,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: OutlinedButton.icon(
+                      onPressed: () => selectDate(context),
+                      icon: Icon(Icons.calendar_month_outlined),
+                      label: Text("$mail_type Date Selection"),
+                      style: TextButton.styleFrom(
+                        primary: Colors.black,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            Container(
-              child: Center(
-                child: Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: OutlinedButton.icon(
-                    onPressed: () => selectOtherMailDate(context),
-                    icon: Icon(Icons.email_outlined),
-                    label: Text("Other Email"),
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                      shadowColor: Colors.grey,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                  ),
-                ),
+                  Text("Mail Type:"),
+                  DropdownButton(
+                      value: mail_type,
+                      items: [
+                        DropdownMenuItem<String>(
+                          value: "Email",
+                          child: Text("Email"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "Digest",
+                          child: Text("Digest"),
+                        ),
+                      ],
+                      onChanged: (String? valueSelected) {
+                        setState(() {
+                          mail_type = valueSelected!;
+                        });
+                      }),
+                ],
               ),
             ),
             Container(
@@ -66,6 +70,51 @@ class MainWidgetState extends State<MainWidget> {
                     ),
                   ),
                 ),
+              ),
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        if (mail_type == "Email") {
+                          Navigator.pushNamed(context, '/other_mail');
+                        } else {
+                          Navigator.pushNamed(context, '/digest_mail');
+                        }
+                      },
+                      child: const Text("Latest",
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        if (mail_type == "Email") {
+                          Navigator.pushNamed(context, '/other_mail');
+                        } else {
+                          Navigator.pushNamed(context, '/digest_mail');
+                        }
+                      },
+                      child: const Text("Unread",
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Container(
@@ -110,14 +159,19 @@ class MainWidgetState extends State<MainWidget> {
     );
   }
 
-  Future<void> selectDigestDate(BuildContext context) async {
+  Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selected_date,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime.now());
     if ((picked != null) && (picked != selected_date)) {
-      Navigator.pushNamed(context, '/digest_mail');
+      if (mail_type == "Email") {
+        Navigator.pushNamed(context, '/other_mail');
+      } else {
+        Navigator.pushNamed(context, '/digest_mail');
+      }
+
       setState(() {
         selected_date = picked;
       });
