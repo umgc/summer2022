@@ -13,7 +13,9 @@ import 'mail_widget.dart';
 import 'other_mail.dart';
 
 Future<void> main() async {
-  await GlobalConfiguration().loadFromAsset("app_settings");
+  WidgetsFlutterBinding.ensureInitialized();
+  GlobalConfiguration cfg = GlobalConfiguration();
+  await cfg.loadFromAsset("app_settings");
   runApp(MaterialApp(
       title: "USPS Infromed Delivery Visual Assistance App",
       initialRoute: '/',

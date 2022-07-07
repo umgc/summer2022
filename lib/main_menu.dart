@@ -1,5 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class MainWidget extends StatefulWidget {
   const MainWidget({Key? key}) : super(key: key);

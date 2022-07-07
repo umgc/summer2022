@@ -1,5 +1,3 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe
-
 import 'package:global_configuration/global_configuration.dart';
 import 'package:summer2022/daily_digest_files.dart';
 import 'package:text_to_speech/text_to_speech.dart';

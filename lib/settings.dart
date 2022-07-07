@@ -1,5 +1,3 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe
-
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -13,6 +11,7 @@ class SettingsWidget extends StatefulWidget {
 }
 
 class SettingWidgetState extends State<SettingsWidget> {
+  GlobalConfiguration cfg = GlobalConfiguration();
 
   @override
   Widget build(BuildContext context) {
@@ -76,12 +75,12 @@ class SettingWidgetState extends State<SettingsWidget> {
                         Container(
                           padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: GlobalConfiguration().getValue("sender"),
+                            value: cfg.getValue("sender"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                GlobalConfiguration().updateValue("sender", value);
+                                cfg.updateValue("sender", value);
                               });
                             },
                           ),
@@ -101,12 +100,12 @@ class SettingWidgetState extends State<SettingsWidget> {
                         Container(
                           padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: GlobalConfiguration().getValue("recipient"),
+                            value: cfg.getValue("recipient"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                GlobalConfiguration().updateValue("recipient", value);
+                                cfg.updateValue("recipient", value);
                               });
                             },
                           ),
@@ -126,12 +125,12 @@ class SettingWidgetState extends State<SettingsWidget> {
                         Container(
                           padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: GlobalConfiguration().getValue("logos"),
+                            value: cfg.getValue("logos"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                GlobalConfiguration().updateValue("logos", value);
+                                cfg.updateValue("logos", value);
                               });
                             },
                           ),
@@ -151,12 +150,12 @@ class SettingWidgetState extends State<SettingsWidget> {
                         Container(
                           padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: GlobalConfiguration().getValue("links"),
+                            value: cfg.getValue("links"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                GlobalConfiguration().updateValue("links", value);
+                                cfg.updateValue("links", value);
                               });
                             },
                           ),
@@ -176,12 +175,12 @@ class SettingWidgetState extends State<SettingsWidget> {
                         Container(
                           padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: GlobalConfiguration().getValue("address"),
+                            value: cfg.getValue("address"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                GlobalConfiguration().updateValue("address", value);
+                                cfg.updateValue("address", value);
                               });
                             },
                           ),
@@ -215,12 +214,12 @@ class SettingWidgetState extends State<SettingsWidget> {
                         Container(
                           padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: GlobalConfiguration().getValue("email_subject"),
+                            value: cfg.getValue("email_subject"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                GlobalConfiguration().updateValue("email_subject", value);
+                                cfg.updateValue("email_subject", value);
                               });
                             },
                           ),
@@ -240,12 +239,12 @@ class SettingWidgetState extends State<SettingsWidget> {
                         Container(
                           padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: GlobalConfiguration().getValue("email_text"),
+                            value: cfg.getValue("email_text"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                GlobalConfiguration().updateValue("email_text", value);
+                                cfg.updateValue("email_text", value);
                               });
                             },
                           ),
@@ -265,12 +264,12 @@ class SettingWidgetState extends State<SettingsWidget> {
                         Container(
                           padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: GlobalConfiguration().getValue("email_sender"),
+                            value: cfg.getValue("email_sender"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                GlobalConfiguration().updateValue("email_sender", value);
+                                cfg.updateValue("email_sender", value);
                               });
                             },
                           ),
@@ -290,12 +289,12 @@ class SettingWidgetState extends State<SettingsWidget> {
                         Container(
                           padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: GlobalConfiguration().getValue("email_recipients"),
+                            value: cfg.getValue("email_recipients"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                GlobalConfiguration().updateValue("email_recipients", value);
+                                cfg.updateValue("email_recipients", value);
                               });
                             },
                           ),

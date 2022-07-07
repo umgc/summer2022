@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.1 <3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -32,7 +32,7 @@ dependencies:
   json_annotation: ^4.5.0
   intl: ^0.17.0
   path_provider: ^2.0.11
-  global_configuration: ^1.6.0
+  global_configuration: ^2.0.0-nullsafety.0
   text_to_speech: ^0.2.3
 
 
@@ -73,6 +73,7 @@ flutter:
     - assets/Image1.png
     - assets/rectangle4.svg
     - assets/rectangle5.svg
+    - assets/cfg/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
