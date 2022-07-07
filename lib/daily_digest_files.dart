@@ -16,11 +16,12 @@ The comments in the MailObject class describes how the code for the nested class
 @JsonSerializable(explicitToJson: true)
 class MailObject {
   final String type;
-  final String name;
+  final String name;  // the sender
+  final String recipient;
   final String address;
   final String validated;
 
-  MailObject(this.type, this.name, this.address, this.validated);
+  MailObject(this.type, this.name, this.recipient, this.address, this.validated);
 
   // A necessary factory constructor for creating a new MailObject instance
   // from a map. Pass the map to the generated `_$UserFromJson()` constructor.
@@ -144,5 +145,4 @@ class DailyDigestFiles {
     }
     
   }
-
 }

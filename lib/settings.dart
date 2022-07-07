@@ -1,21 +1,18 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:global_configuration/global_configuration.dart';
+
 
 class SettingsWidget extends StatefulWidget {
+  const SettingsWidget({Key? key}) : super(key: key);
+
+  @override
   SettingWidgetState createState() => SettingWidgetState();
 }
 
 class SettingWidgetState extends State<SettingsWidget> {
-  bool digest_sender = true;
-  bool digest_recipient = true;
-  bool digest_logos = true;
-  bool digest_links = true;
-  bool digest_sender_address = true;
-
-  bool email_subject = true;
-  bool email_text = true;
-  bool email_sender_address = true;
-  bool email_recipients = true;
 
   @override
   Widget build(BuildContext context) {
@@ -23,74 +20,68 @@ class SettingWidgetState extends State<SettingsWidget> {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/');
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 30,
-                    ),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Container(
-                        child: Text(
-                          style: TextStyle(fontSize: 20),
-                          "Settings",
-                        ),
-                      ),
-                    ),
-                  ),
-                  Icon(
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/');
+                  },
+                  icon: const Icon(
                     Icons.arrow_back,
-                    size: 50,
-                    color: Color.fromARGB(0, 255, 255, 1),
+                    size: 30,
                   ),
-                ],
-              ),
+                ),
+                const Expanded(
+                  child: Center(
+                    child: Text(
+                      "Settings",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+                const Icon(
+                  Icons.arrow_back,
+                  size: 50,
+                  color: Color.fromARGB(0, 255, 255, 1),
+                ),
+              ],
             ),
             // Container(
             //   padding: EdgeInsets.only(top: 100),
             // ),
             Container(
-              color: Color.fromRGBO(228, 228, 228, 0.6),
+              color: const Color.fromRGBO(228, 228, 228, 0.6),
               child: Column(
                 children: [
                   Row(
-                    children: [
+                    children: const [
                       Expanded(
-                        child: Container(
-                          child: Text(
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                            "Envelope Details",
-                          ),
-                        ),
-                      ),
+                        child: Text(
+                          "Envelope Details",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        )
+                      )
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Sender: "),
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Sender: "),
                         ),
                         Container(
-                          padding: EdgeInsets.only(right: 50),
+                          padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: digest_sender,
+                            value: GlobalConfiguration().getValue("sender"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                digest_sender = value;
+                                GlobalConfiguration().updateValue("sender", value);
                               });
                             },
                           ),
@@ -99,23 +90,23 @@ class SettingWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Recipient: "),
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Recipient: "),
                         ),
                         Container(
-                          padding: EdgeInsets.only(right: 50),
+                          padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: digest_recipient,
+                            value: GlobalConfiguration().getValue("recipient"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                digest_recipient = value;
+                                GlobalConfiguration().updateValue("recipient", value);
                               });
                             },
                           ),
@@ -124,23 +115,23 @@ class SettingWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Logos: "),
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Logos: "),
                         ),
                         Container(
-                          padding: EdgeInsets.only(right: 50),
+                          padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: digest_logos,
+                            value: GlobalConfiguration().getValue("logos"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                digest_logos = value;
+                                GlobalConfiguration().updateValue("logos", value);
                               });
                             },
                           ),
@@ -149,23 +140,23 @@ class SettingWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Links: "),
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Links: "),
                         ),
                         Container(
-                          padding: EdgeInsets.only(right: 50),
+                          padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: digest_links,
+                            value: GlobalConfiguration().getValue("links"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                digest_links = value;
+                                GlobalConfiguration().updateValue("links", value);
                               });
                             },
                           ),
@@ -174,23 +165,23 @@ class SettingWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Sender Address: "),
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Sender Address: "),
                         ),
                         Container(
-                          padding: EdgeInsets.only(right: 50),
+                          padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: digest_sender_address,
+                            value: GlobalConfiguration().getValue("address"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                digest_sender_address = value;
+                                GlobalConfiguration().updateValue("address", value);
                               });
                             },
                           ),
@@ -202,34 +193,34 @@ class SettingWidgetState extends State<SettingsWidget> {
                     children: [
                       Expanded(
                         child: Container(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: const Text(
+                            "Email Details",
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
-                            "Email Details",
                           ),
                         ),
                       ),
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Subject: "),
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Subject: "),
                         ),
                         Container(
-                          padding: EdgeInsets.only(right: 50),
+                          padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: email_subject,
+                            value: GlobalConfiguration().getValue("email_subject"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                email_subject = value;
+                                GlobalConfiguration().updateValue("email_subject", value);
                               });
                             },
                           ),
@@ -238,23 +229,23 @@ class SettingWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Email Text: "),
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Email Text: "),
                         ),
                         Container(
-                          padding: EdgeInsets.only(right: 50),
+                          padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: email_text,
+                            value: GlobalConfiguration().getValue("email_text"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                email_text = value;
+                                GlobalConfiguration().updateValue("email_text", value);
                               });
                             },
                           ),
@@ -263,23 +254,23 @@ class SettingWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Sender Address: "),
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Sender Address: "),
                         ),
                         Container(
-                          padding: EdgeInsets.only(right: 50),
+                          padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: email_sender_address,
+                            value: GlobalConfiguration().getValue("email_sender"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                email_sender_address = value;
+                                GlobalConfiguration().updateValue("email_sender", value);
                               });
                             },
                           ),
@@ -288,23 +279,23 @@ class SettingWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Recipients: "),
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Recipients: "),
                         ),
                         Container(
-                          padding: EdgeInsets.only(right: 50),
+                          padding: const EdgeInsets.only(right: 50),
                           child: Switch(
-                            value: email_recipients,
+                            value: GlobalConfiguration().getValue("email_recipients"),
                             activeTrackColor: Colors.lightGreenAccent,
                             activeColor: Colors.green,
                             onChanged: (bool value) {
                               setState(() {
-                                email_recipients = value;
+                                GlobalConfiguration().updateValue("email_recipients", value);
                               });
                             },
                           ),
@@ -313,35 +304,33 @@ class SettingWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Autoplay"),
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Autoplay"),
+                        ),
+                        ToggleSwitch(
+                          customWidths: const [40.0, 40.0],
+                          cornerRadius: 20.0,
+                          activeBgColors: const [
+                            [Colors.lightGreen],
+                            [Colors.grey]
+                          ],
+                          activeFgColor: Colors.white,
+                          inactiveBgColor: Colors.grey,
+                          inactiveFgColor: Colors.white,
+                          totalSwitches: 2,
+                          labels: const ['|', 'O'],
+                          onToggle: (index) {
+                            print('switched to: $index');
+                          },
                         ),
                         Container(
-                          child: ToggleSwitch(
-                            customWidths: [40.0, 40.0],
-                            cornerRadius: 20.0,
-                            activeBgColors: [
-                              [Colors.lightGreen],
-                              [Colors.grey]
-                            ],
-                            activeFgColor: Colors.white,
-                            inactiveBgColor: Colors.grey,
-                            inactiveFgColor: Colors.white,
-                            totalSwitches: 2,
-                            labels: ['|', 'O'],
-                            onToggle: (index) {
-                              print('switched to: $index');
-                            },
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(right: 10),
-                          child: Text("Next Command"),
+                          padding: const EdgeInsets.only(right: 10),
+                          child: const Text("Next Command"),
                         ),
                       ],
                     ),

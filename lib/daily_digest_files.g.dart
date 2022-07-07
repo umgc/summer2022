@@ -9,6 +9,7 @@ part of 'daily_digest_files.dart';
 MailObject _$MailObjectFromJson(Map<String, dynamic> json) => MailObject(
       json['type'] as String,
       json['name'] as String,
+      json['recipient'] as String,
       json['address'] as String,
       json['validated'] as String,
     );

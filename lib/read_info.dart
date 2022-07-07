@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
 import 'package:global_configuration/global_configuration.dart';
 import 'package:summer2022/daily_digest_files.dart';
 import 'package:text_to_speech/text_to_speech.dart';
@@ -23,11 +24,10 @@ class ReadMail {
             String text = "The sender is '${digestFile.mailObjects[i].name}'";  
               tts.speak(text);  
             }
-            // There isn't a recipient in the json but there is in settings
-            //if (GlobalConfiguration().getValue("recipient")) {
-            //  String text = "The sender is '${mailObject.recipient}'";  
-            //  tts.speak(text);  
-            //}
+            if (GlobalConfiguration().getValue("recipient")) {
+              String text = "The sender is '${digestFile.mailObjects[i].recipient}'";  
+              tts.speak(text);  
+            }
             if (GlobalConfiguration().getValue("address")) {
               String text = "The address is '${digestFile.mailObjects[i].address}'";  
               tts.speak(text);  
@@ -60,7 +60,20 @@ class ReadMail {
       
       }
     } else { // Normal mail
-      //TODO read out info
+      if (GlobalConfiguration().getValue("email_subject")) {
+        // TODO
+      }
+      if (GlobalConfiguration().getValue("email_text")) {
+        // TODO
+
+      }
+      if (GlobalConfiguration().getValue("email_sender")) {
+        // TODO
+
+      }
+      if (GlobalConfiguration().getValue("email_recipients")) {
+        // TODO
+      }
     }
   }
 }

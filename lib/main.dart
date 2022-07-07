@@ -1,9 +1,10 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:summer2022/settings.dart';
 import 'package:summer2022/main_menu.dart';
 import 'package:summer2022/sign_in.dart';
-import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 import 'RouteGenerator.dart';
@@ -21,7 +22,7 @@ Future<void> main() async {
 }
 
 Widget buildScreen() {
-  return Scaffold(
+  return const Scaffold(
     body: MainWidget(),
     bottomNavigationBar: BottomBar(),
   );

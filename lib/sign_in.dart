@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class SignInWidget extends StatefulWidget {
+  const SignInWidget({Key? key}) : super(key: key);
+
+  @override
   SignInWidgetState createState() => SignInWidgetState();
 }
 
@@ -12,55 +15,49 @@ class SignInWidgetState extends State<SignInWidget> {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/');
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 30,
-                    ),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Container(
-                        child: Text(
-                          style: TextStyle(fontSize: 20),
-                          "Sign In",
-                        ),
-                      ),
-                    ),
-                  ),
-                  Icon(
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/');
+                  },
+                  icon: const Icon(
                     Icons.arrow_back,
-                    size: 50,
-                    color: Color.fromARGB(0, 255, 255, 1),
+                    size: 30,
                   ),
-                ],
-              ),
+                ),
+                const Expanded(
+                  child: Center(
+                    child: Text(
+                      "Sign In",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+                const Icon(
+                  Icons.arrow_back,
+                  size: 50,
+                  color: Color.fromARGB(0, 255, 255, 1),
+                ),
+              ],
             ),
             Container(
-              padding: EdgeInsets.only(top: 50),
+              padding: const EdgeInsets.only(top: 50),
             ),
             Container(
-              padding: EdgeInsets.only(top: 150),
-              color: Color.fromRGBO(228, 228, 228, 0.6),
+              padding: const EdgeInsets.only(top: 150),
+              color: const Color.fromRGBO(228, 228, 228, 0.6),
               child: Column(
                 children: [
                   Row(
                     children: [
-                      Container(
-                        child: Expanded(
-                          child: Container(
-                            padding: EdgeInsets.only(left: 25, right: 25),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'E-Mail Address',
-                              ),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 25, right: 25),
+                          child: const TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'E-Mail Address',
                             ),
                           ),
                         ),
@@ -68,22 +65,20 @@ class SignInWidgetState extends State<SignInWidget> {
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 50),
+                    padding: const EdgeInsets.only(top: 50),
                   ),
                   Row(
                     children: [
-                      Container(
-                        child: Expanded(
-                          child: Container(
-                            padding: EdgeInsets.only(left: 25, right: 25),
-                            child: TextField(
-                              obscureText: true,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Password',
-                              ),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 25, right: 25),
+                          child: const TextField(
+                            obscureText: true,
+                            enableSuggestions: false,
+                            autocorrect: false,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Password',
                             ),
                           ),
                         ),
@@ -91,28 +86,26 @@ class SignInWidgetState extends State<SignInWidget> {
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 150),
+                    padding: const EdgeInsets.only(top: 150),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        child: Expanded(
-                          child: Container(
-                            padding: EdgeInsets.only(left: 50, right: 50),
-                            child: OutlinedButton(
-                              onPressed: () {},
-                              child: const Text(
-                                "Login",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.black,
-                                shadowColor: Colors.grey,
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5))),
-                              ),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 50, right: 50),
+                          child: OutlinedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.black,
+                              shadowColor: Colors.grey,
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5))),
+                            ),
+                            child: const Text(
+                              "Login",
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
@@ -120,7 +113,7 @@ class SignInWidgetState extends State<SignInWidget> {
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.only(bottom: 50),
+                    padding: const EdgeInsets.only(bottom: 50),
                   ),
                 ],
               ),
