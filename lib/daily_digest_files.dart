@@ -66,11 +66,11 @@ class CodeObject {
 
 @JsonSerializable(explicitToJson: true)
 class DailyDigestFile {
-  final List<MailObject> mailObject;
-  final LogoObject logoObject;
-  final CodeObject codeObject;
+  final List<MailObject> mailObjects;
+  final List<LogoObject> logoObjects;
+  final List<CodeObject> codeObjects;
 
-  DailyDigestFile(this.mailObject, this.logoObject, this.codeObject);
+  DailyDigestFile(this.mailObjects, this.logoObjects, this.codeObjects);
 
   factory DailyDigestFile.fromJson(Map<String, dynamic> json) => _$DailyDigestFileFromJson(json);
   Map<String, dynamic> toJson() => _$DailyDigestFileToJson(this);
@@ -78,13 +78,14 @@ class DailyDigestFile {
 
 class DailyDigestFiles {
 
-  String directory;
-  List<DailyDigestFile> files;
+  late String directory;
+  late List<DailyDigestFile> files;
 
-  DailyDigestFiles(this.directory, this.files) {
+  DailyDigestFiles() {
     // Set the storage directory for the Daily Digest JSON files
     Directory dir = getApplicationDocumentsDirectory() as Directory;
     directory = dir.path;
+    files = [];
   }
 
   List<DailyDigestFile> getFiles() {

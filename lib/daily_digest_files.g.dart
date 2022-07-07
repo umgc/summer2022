@@ -53,16 +53,20 @@ Map<String, dynamic> _$CodeObjectToJson(CodeObject instance) =>
 
 DailyDigestFile _$DailyDigestFileFromJson(Map<String, dynamic> json) =>
     DailyDigestFile(
-      (json['mailObject'] as List<dynamic>)
+      (json['mailObjects'] as List<dynamic>)
           .map((e) => MailObject.fromJson(e as Map<String, dynamic>))
           .toList(),
-      LogoObject.fromJson(json['logoObject'] as Map<String, dynamic>),
-      CodeObject.fromJson(json['codeObject'] as Map<String, dynamic>),
+      (json['logoObjects'] as List<dynamic>)
+          .map((e) => LogoObject.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      (json['codeObjects'] as List<dynamic>)
+          .map((e) => CodeObject.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$DailyDigestFileToJson(DailyDigestFile instance) =>
     <String, dynamic>{
-      'mailObject': instance.mailObject.map((e) => e.toJson()).toList(),
-      'logoObject': instance.logoObject.toJson(),
-      'codeObject': instance.codeObject.toJson(),
+      'mailObject': instance.mailObjects.map((e) => e.toJson()).toList(),
+      'logoObject': instance.logoObjects.map((e) => e.toJson()).toList(),
+      'codeObject': instance.codeObjects.map((e) => e.toJson()).toList(),
     };

@@ -1,0 +1,9 @@
+{
+    "sender": true,
+    "recipient": true,
+    "logos": true,
+    "links": true,
+    "address": true,
+    "autoplay": true,
+    "validated": true
+}
