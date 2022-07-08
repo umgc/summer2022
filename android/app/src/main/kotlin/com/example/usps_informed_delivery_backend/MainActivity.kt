@@ -1,4 +1,4 @@
-package com.example.usps_informed_delivery_backend
+package com.example.summer2022
 
 import io.flutter.embedding.android.FlutterActivity
 

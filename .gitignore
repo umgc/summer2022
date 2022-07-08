@@ -37,9 +37,18 @@ credentials.json
 # Web related
 lib/generated_plugin_registrant.dart
 
+<<<<<<< HEAD
 # Symbolication related
 app.*.symbols
 
+=======
+# Directory created by dartdoc
+# If you don't generate documentation locally you can remove this line.
+doc/api/
+.flutter-plugins
+.flutter-plugins-dependencies
+.vscode/
+>>>>>>> 6e41aca090eb78eb40c06f62b8ac053632e69d25
 # Avoid committing generated Javascript files:
 *.dart.js
 *.info.json      # Produced by the --dump-info flag.
