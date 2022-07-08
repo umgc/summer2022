@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:usps_informed_delivery_backend/usps_address_verification.dart';
 import 'api.dart';
 import 'models/Code.dart';
+import 'backend_testing.dart';
 
 void main() {
   runApp(const MyApp());
@@ -69,100 +70,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    rootBundle.loadString('assets/credentials.json').then((json) {
-      print("JSon: \n$json");
-
-      //api = CloudApi(json);
-      vision = CloudVisionApi();
-      _barcodeScannerApi = BarcodeScannerApi();
-    });
   }
 
   void _getImage() async {
-    final PickedFile = await picker.getImage(source: ImageSource.camera);
-    print(PickedFile!.path);
-    if (PickedFile != null) {
-      _image = File(PickedFile.path);
-
-      _imageBytes = _image!.readAsBytesSync();
-      String a = base64.encode(_imageBytes!);
-      var objMailResponse = await vision!.search(a);
-      for (var address in objMailResponse.addresses) {
-        address.validated = await UspsAddressVerification()
-            .verifyAddressString(address.address);
-      }
-      setState(() {
-        if (PickedFile != null) {
-          _image = File(PickedFile.path);
-          _imageBytes = _image!.readAsBytesSync();
-          _imageName = _image!.path.split('/').last;
-        } else {
-          print('No image selected.');
-        }
-      });
-    }
-  }
-
-  void _processImageWithOCR() async {
-    print("inside processImageWithOCR\n");
-    var image = await rootBundle.load('assets/mail.75.png');
-    var buffer = image.buffer;
-    var a = base64.encode(Uint8List.view(buffer));
-    //print("Image: $image\nBuffer: $buffer\na: $a\n");
-    //await vision!.searchImageForText(a);
-    var objAddressList = await vision!.searchImageForText(a);
-    for (var address in objAddressList) {
-      address.validated =
-          await UspsAddressVerification().verifyAddressString(address.address);
-      print(address.toJson());
-    }
-    print("Exit ProcessImageWithOCR");
-  }
-
-  void _processImageForLogo() async {
-    print("Inside processImageForLogo\n");
-    var image = await rootBundle.load('assets/logo_combined.jpg');
-    var buffer = image.buffer;
-    var a = base64.encode(Uint8List.view(buffer));
-    //print("Image: $image\nBuffer: $buffer\na: $a\n");
-    await vision!.searchImageForLogo(a);
-    print("Exit ProcessImageForLogo");
-  }
-
-  void _processImage() async {
-    print("Inside process image\n");
-    var fileName = 'assets/QRCode.PASSED.tdbank_id.jpeg';
-    var image = await rootBundle.load(fileName);
-    var buffer = image.buffer;
-    var a = base64.encode(Uint8List.view(buffer));
-    //print("Image: $image\nBuffer: $buffer\na: $a\n");
-    var objMr = await vision!.search(a);
-    for (var address in objMr.addresses) {
-      address.validated =
-          await UspsAddressVerification().verifyAddressString(address.address);
-    }
-    _barcodeScannerApi = BarcodeScannerApi();
-    File img = await _barcodeScannerApi!.getImageFileFromAssets(fileName);
-    _barcodeScannerApi!.setImageFromFile(img);
-
-    List<codeObject> codes = await _barcodeScannerApi!.processImage();
-    for (final code in codes) {
-      objMr.codes.add(code);
-    }
-    print(objMr.toJson());
-    print("Exit ProcessImage (All Features)");
-  }
-
-  void _processBarcode() async {
-    print("Inside process barcode\n");
-    _barcodeScannerApi = BarcodeScannerApi();
-
-    File img = await _barcodeScannerApi!
-        .getImageFileFromAssets('assets/QRCode.PASSED.tdbank_id.jpeg');
-    _barcodeScannerApi!.setImageFromFile(img);
-
-    await _barcodeScannerApi!.processImage();
-    print("Exit ProcessBarcode");
+    setState(() {});
   }
 
   @override
@@ -173,50 +84,24 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _processImageWithOCR,
-                child: const Text("Vision OCR Text Search"),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _processImageForLogo,
-                child: const Text("Vision Logo Search"),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _processBarcode,
-                child: const Text("ML Kit  QR Codes/Barcodes Image Scan"),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _processImage,
-                child: const Text(
-                    "All (OCR, Logo, & QR/Bar Codes) Image Processing"),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _processImage,
-                child: const Text("Process Mail Image using Camera"),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const BackendPage(
+                                title: "USPS Backend Testing",
+                              )));
+                },
+                child: const Text("Backend Testing"),
               ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getImage,
-        tooltip: 'Camera',
-        child: const Icon(Icons.add_a_photo),
       ),
     );
   }
