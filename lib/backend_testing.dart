@@ -65,6 +65,8 @@ class _BackendPageState extends State<BackendPage> {
   String? _imageName;
   CloudVisionApi? vision;
   BarcodeScannerApi? _barcodeScannerApi;
+  TextEditingController _textController = new TextEditingController();
+  Image? displayImage;
   //var fileName = 'assets/QRCode.PASSED.tdbank_id.jpeg';
   var fileName = 'assets/mail.test.03.png';
   final picker = ImagePicker();
@@ -113,11 +115,16 @@ class _BackendPageState extends State<BackendPage> {
     //print("Image: $image\nBuffer: $buffer\na: $a\n");
     //await vision!.searchImageForText(a);
     var objAddressList = await vision!.searchImageForText(a);
+    var output = '';
     for (var address in objAddressList) {
       address.validated =
           await UspsAddressVerification().verifyAddressString(address.address);
-      print(address.toJson());
+      output += address.toJson().toString() + "\n";
     }
+    print(output);
+    setState(() {
+      _textController.text = output;
+    });
     print("Exit ProcessImageWithOCR");
   }
 
@@ -128,9 +135,15 @@ class _BackendPageState extends State<BackendPage> {
     var a = base64.encode(Uint8List.view(buffer));
     //print("Image: $image\nBuffer: $buffer\na: $a\n");
     List<LogoObject> logos = await vision!.searchImageForLogo(a);
+    var output = '';
     for (var logo in logos) {
-      print(logo.toJson());
+      output += logo.toJson().toString() + "\n";
     }
+    print(output);
+    setState(() {
+      _textController.text = output;
+    });
+
     print("Exit ProcessImageForLogo");
   }
 
@@ -141,9 +154,14 @@ class _BackendPageState extends State<BackendPage> {
     _barcodeScannerApi!.setImageFromFile(img);
 
     List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    var output = '';
     for (var code in codes) {
-      print(code.toJson());
+      output += code.toJson().toString();
     }
+    print(output);
+    setState(() {
+      _textController.text = output;
+    });
     print("Exit ProcessBarcode");
   }
 
@@ -166,7 +184,12 @@ class _BackendPageState extends State<BackendPage> {
     for (final code in codes) {
       objMr.codes.add(code);
     }
-    print(objMr.toJson());
+    var output = objMr.toJson().toString();
+    print(output);
+
+    setState(() {
+      _textController.text = output;
+    });
     print("Exit ProcessImage (All Features)");
   }
 
@@ -174,119 +197,167 @@ class _BackendPageState extends State<BackendPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/');
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 30,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/');
+                      },
+                      icon: Icon(
+                        Icons.arrow_back,
+                        size: 30,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Container(
-                        child: Text(
-                          style: TextStyle(fontSize: 20),
-                          "Backend Testing",
+                    Expanded(
+                      child: Center(
+                        child: Container(
+                          child: Text(
+                            style: TextStyle(fontSize: 20),
+                            "Backend Testing",
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Icon(
-                    Icons.arrow_back,
-                    size: 50,
-                    color: Color.fromARGB(0, 255, 255, 1),
-                  ),
-                ],
+                    Icon(
+                      Icons.arrow_back,
+                      size: 50,
+                      color: Color.fromARGB(0, 255, 255, 1),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Center(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    width: double.infinity,
-                    color: Color.fromRGBO(228, 228, 228, 0.6),
-                    child: ElevatedButton(
-                      onPressed: _processImageWithOCR,
+              Center(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      width: double.infinity,
+                      color: Color.fromRGBO(228, 228, 228, 0.6),
+                      child: ElevatedButton(
+                        onPressed: _processImageWithOCR,
+                        child: const Text(
+                          "Vision OCR Text Search",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _processImageForLogo,
+                        child: const Text("Vision Logo Search",
+                            style: TextStyle(color: Colors.black)),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _processBarcode,
+                        child: const Text(
+                            "ML Kit  QR Codes/Barcodes Image Scan",
+                            style: TextStyle(color: Colors.black)),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _processImage,
+                        child: const Text(
+                            "All (OCR, Logo, & QR/Bar Codes) Image Processing",
+                            style: TextStyle(color: Colors.black)),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _getImage,
+                        child: const Text("Process Mail Image using Camera",
+                            style: TextStyle(color: Colors.black)),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        ),
+                      ),
+                    ),
+                    Center(
                       child: const Text(
-                        "Vision OCR Text Search",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey,
-                        shadowColor: Colors.grey,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                        "Output",
+                        style: TextStyle(fontSize: 20, color: Colors.black),
                       ),
                     ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _processImageForLogo,
-                      child: const Text("Vision Logo Search",
-                          style: TextStyle(color: Colors.black)),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey,
-                        shadowColor: Colors.grey,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                    Container(
+                      width: double.infinity,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: 48),
+                        child: IntrinsicWidth(
+                          child: TextField(
+                            maxLines: null,
+                            controller: _textController,
+                            showCursor: false,
+                            readOnly: true,
+                            cursorColor: Colors.black,
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _processBarcode,
-                      child: const Text("ML Kit  QR Codes/Barcodes Image Scan",
-                          style: TextStyle(color: Colors.black)),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey,
-                        shadowColor: Colors.grey,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _processImage,
-                      child: const Text(
-                          "All (OCR, Logo, & QR/Bar Codes) Image Processing",
-                          style: TextStyle(color: Colors.black)),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey,
-                        shadowColor: Colors.grey,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _getImage,
-                      child: const Text("Process Mail Image using Camera",
-                          style: TextStyle(color: Colors.black)),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.grey,
-                        shadowColor: Colors.grey,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
-                      ),
-                    ),
-                  ),
-                ],
+                    _image != null
+                        ? Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 20.0, 0, 0),
+                            child: Image.file(
+                              File(_image!.path),
+                              width: 400,
+                              height: 300,
+                            ),
+                          )
+                        : Container(
+                            width: double.infinity,
+                            child: Text("No Image available"),
+                            alignment: Alignment.topCenter,
+                          ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
