@@ -15,50 +15,50 @@ void main() async {
       expect(result, true);
     });
     test('Well Formatted Address, Without second Address', () async {
-      const strAddress = r'13001 VANDALIA DR; ROCKVILLE, MD 20853-3348';
+      const strAddress = r'13123 VANDALIA DR; ROCKVILLE, MD 20853-3348';
       result = await uspsAddressValidator.verifyAddressString(strAddress);
       // print(result);
       expect(result, true);
     });
     test('Well Formatted Address, With full state name', () async {
-      const strAddress = r'13001 VANDALIA DR; ROCKVILLE, MARYLAND 20853-3348';
+      const strAddress = r'13123 VANDALIA DR; ROCKVILLE, MARYLAND 20853-3348';
       result = await uspsAddressValidator.verifyAddressString(strAddress);
       // print(result);
       expect(result, true);
     });
     test('Well Formatted Address, With full state name and short zip',
         () async {
-      const strAddress = r'13001 VANDALIA DR; ROCKVILLE, MARYLAND 20853';
+      const strAddress = r'13123 VANDALIA DR; ROCKVILLE, MARYLAND 20853';
       result = await uspsAddressValidator.verifyAddressString(strAddress);
       // print(result);
       expect(result, true);
     });
     test('No comma address', () async {
-      const strAddress = r'1004 SPA RD APT 202; ANNAPOLIS MD 21403';
+      const strAddress = r'1002 SPA RD APT 201; ANNAPOLIS MD 21403';
       result = await uspsAddressValidator.verifyAddressString(strAddress);
       // print(result);
       expect(result, true);
     });
     test('Second address is on second line', () async {
-      const strAddress = r'1004 SPA RD; APT 202; ANNAPOLIS MD 21403';
+      const strAddress = r'1002 SPA RD; APT 201; ANNAPOLIS MD 21403';
       result = await uspsAddressValidator.verifyAddressString(strAddress);
       // print(result);
       expect(result, true);
     });
     test('Second address is on first line', () async {
-      const strAddress = r'APT 202; 1004 SPA RD; ANNAPOLIS MD 21403';
+      const strAddress = r'APT 201; 1000 SPA RD; ANNAPOLIS MD 21403';
       result = await uspsAddressValidator.verifyAddressString(strAddress);
       // print(result);
       expect(result, true);
     });
     test('Second address is on first line with comma after city', () async {
-      const strAddress = r'APT 202; 1004 SPA RD; ANNAPOLIS, MD 21403';
+      const strAddress = r'APT 201; 1000 SPA RD; ANNAPOLIS, MD 21403';
       result = await uspsAddressValidator.verifyAddressString(strAddress);
       // print(result);
       expect(result, true);
     });
     test('PO Box address', () async {
-      const strAddress3 = r'PO Box 85149; Richmond, VA 23295-0001';
+      const strAddress3 = r'PO Box 85148; Richmond, VA 23295-0001';
       result = await uspsAddressValidator.verifyAddressString(strAddress3);
       // print(result);
       expect(result, true);

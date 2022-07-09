@@ -25,22 +25,22 @@ void main() async {
         'Cloud Vision Image Information Retrieval Test - Receives Text from image',
         () async {
       CloudVisionApi vision = CloudVisionApi();
-      var image = await rootBundle.load('assets/mail.06.jpg');
+      var image = await rootBundle.load('assets/mail.test.01.jpg');
       var buffer = image.buffer;
       var a = base64.encode(Uint8List.view(buffer));
       //print("Image: $image\nBuffer: $buffer\na: $a\n");
       List<AddressObject> addresses = await vision.searchImageForText(a);
       //print(s.toJson());
-      expect(addresses[0].getName, 'GEICO.');
+      expect(addresses[0].getName, 'GEICO');
       expect(addresses[0].getAddress, '2563 Forest Dr; Annapolis, MD 21401');
-      expect(addresses[1].getName, 'Stanley De Jesus');
+      expect(addresses[1].getName, 'Deborah Keenan');
       expect(addresses[1].getAddress,
-          '7793 Montgomery Mews Ct; Severn MD 21144-1245');
+          '1006 Morgan Station Dr; Severn, MD 21144-1245');
     });
     test('Cloud Vision Logo Detection Test - Receives Logo information',
         () async {
       CloudVisionApi vision = CloudVisionApi();
-      var image = await rootBundle.load('assets/mail.06.jpg');
+      var image = await rootBundle.load('assets/mail.test.01.jpg');
       var buffer = image.buffer;
       var a = base64.encode(Uint8List.view(buffer));
       //print("Image: $image\nBuffer: $buffer\na: $a\n");
@@ -52,14 +52,14 @@ void main() async {
         'Cloud Vision Daily Digest Test- For each image, the application uses the api to retrieve information and consolidates (JSON).',
         () async {
       CloudVisionApi vision = CloudVisionApi();
-      var image = await rootBundle.load('assets/mail.06.jpg');
+      var image = await rootBundle.load('assets/mail.test.01.jpg');
       var buffer = image.buffer;
       var a = base64.encode(Uint8List.view(buffer));
       //print("Image: $image\nBuffer: $buffer\na: $a\n");
       MailResponse mail = await vision.search(a);
       //print(mail.toJson().toString());
       expect(mail.toJson().toString(),
-          '{addresses: [{type: sender, name: GEICO., address: 2563 Forest Dr; Annapolis, MD 21401, validated: false}, {type: recipient, name: Stanley De Jesus, address: 7793 Montgomery Mews Ct; Severn MD 21144-1245, validated: false}], logos: [{name: GEICO}, {name: GEICO}], codes: []}');
+          '{addresses: [{type: sender, name: GEICO, address: 2563 Forest Dr; Annapolis, MD 21401, validated: false}, {type: recipient, name: Deborah Keenan, address: 1006 Morgan Station Dr; Severn, MD 21144-1245, validated: false}], logos: [{name: GEICO}, {name: GEICO}], codes: []}');
     });
     test('Cloud Vision Image Verification illegible- Returns empty object',
         () async {

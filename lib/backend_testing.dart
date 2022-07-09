@@ -65,8 +65,8 @@ class _BackendPageState extends State<BackendPage> {
   String? _imageName;
   CloudVisionApi? vision;
   BarcodeScannerApi? _barcodeScannerApi;
-  var fileName = 'assets/QRCode.PASSED.tdbank_id.jpeg';
-
+  //var fileName = 'assets/QRCode.PASSED.tdbank_id.jpeg';
+  var fileName = 'assets/mail.test.03.png';
   final picker = ImagePicker();
   @override
   void initState() {
@@ -173,55 +173,121 @@ class _BackendPageState extends State<BackendPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
+      body: SafeArea(
         child: Column(
-          children: <Widget>[
+          children: [
             Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _processImageWithOCR,
-                child: const Text("Vision OCR Text Search"),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/');
+                    },
+                    icon: Icon(
+                      Icons.arrow_back,
+                      size: 30,
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Container(
+                        child: Text(
+                          style: TextStyle(fontSize: 20),
+                          "Backend Testing",
+                        ),
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_back,
+                    size: 50,
+                    color: Color.fromARGB(0, 255, 255, 1),
+                  ),
+                ],
               ),
             ),
-            Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _processImageForLogo,
-                child: const Text("Vision Logo Search"),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _processBarcode,
-                child: const Text("ML Kit  QR Codes/Barcodes Image Scan"),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _processImage,
-                child: const Text(
-                    "All (OCR, Logo, & QR/Bar Codes) Image Processing"),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _getImage,
-                child: const Text("Process Mail Image using Camera"),
+            Center(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    width: double.infinity,
+                    color: Color.fromRGBO(228, 228, 228, 0.6),
+                    child: ElevatedButton(
+                      onPressed: _processImageWithOCR,
+                      child: const Text(
+                        "Vision OCR Text Search",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.grey,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _processImageForLogo,
+                      child: const Text("Vision Logo Search",
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.grey,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _processBarcode,
+                      child: const Text("ML Kit  QR Codes/Barcodes Image Scan",
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.grey,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _processImage,
+                      child: const Text(
+                          "All (OCR, Logo, & QR/Bar Codes) Image Processing",
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.grey,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _getImage,
+                      child: const Text("Process Mail Image using Camera",
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.grey,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getImage,
-        tooltip: 'Camera',
-        child: const Icon(Icons.add_a_photo),
       ),
     );
   }
