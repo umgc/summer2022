@@ -67,8 +67,13 @@ class _BackendPageState extends State<BackendPage> {
   BarcodeScannerApi? _barcodeScannerApi;
   TextEditingController _textController = new TextEditingController();
   Image? displayImage;
+  var mailAssetsFiles = [
+    'mail.test.02.png',
+    'mail.test.01.jpg',
+    'mail.test.03.png'
+  ];
   //var fileName = 'assets/QRCode.PASSED.tdbank_id.jpeg';
-  var fileName = 'assets/mail.test.03.png';
+  var fileName = 'mail.test.03.png';
   final picker = ImagePicker();
   @override
   void initState() {
@@ -109,7 +114,7 @@ class _BackendPageState extends State<BackendPage> {
 
   void _processImageWithOCR() async {
     print("inside processImageWithOCR\n");
-    var image = await rootBundle.load(fileName);
+    var image = await rootBundle.load('assets/$fileName');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     //print("Image: $image\nBuffer: $buffer\na: $a\n");
@@ -130,7 +135,7 @@ class _BackendPageState extends State<BackendPage> {
 
   void _processImageForLogo() async {
     print("Inside processImageForLogo\n");
-    var image = await rootBundle.load(fileName);
+    var image = await rootBundle.load('assets/$fileName');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     //print("Image: $image\nBuffer: $buffer\na: $a\n");
@@ -150,7 +155,10 @@ class _BackendPageState extends State<BackendPage> {
   void _processBarcode() async {
     print("Inside process barcode\n");
     _barcodeScannerApi = BarcodeScannerApi();
-    File img = await _barcodeScannerApi!.getImageFileFromAssets(fileName);
+    var fLoc = 'assets/$fileName';
+    print(fLoc);
+    File img =
+        await _barcodeScannerApi!.getImageFileFromAssets('assets/$fileName');
     _barcodeScannerApi!.setImageFromFile(img);
 
     List<codeObject> codes = await _barcodeScannerApi!.processImage();
@@ -167,7 +175,7 @@ class _BackendPageState extends State<BackendPage> {
 
   void _processImage() async {
     print("Inside process image\n");
-    var image = await rootBundle.load(fileName);
+    var image = await rootBundle.load('assets/$fileName');
     var buffer = image.buffer;
     var a = base64.encode(Uint8List.view(buffer));
     //print("Image: $image\nBuffer: $buffer\na: $a\n");
@@ -177,7 +185,8 @@ class _BackendPageState extends State<BackendPage> {
           await UspsAddressVerification().verifyAddressString(address.address);
     }
     _barcodeScannerApi = BarcodeScannerApi();
-    File img = await _barcodeScannerApi!.getImageFileFromAssets(fileName);
+    File img =
+        await _barcodeScannerApi!.getImageFileFromAssets('assets/$fileName');
     _barcodeScannerApi!.setImageFromFile(img);
 
     List<codeObject> codes = await _barcodeScannerApi!.processImage();
@@ -202,6 +211,7 @@ class _BackendPageState extends State<BackendPage> {
             children: [
               Container(
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
                       onPressed: () {
@@ -233,6 +243,40 @@ class _BackendPageState extends State<BackendPage> {
               Center(
                 child: Column(
                   children: <Widget>[
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Select Image File: ",
+                            style: TextStyle(
+                                color: Colors.black,
+                                // backgroundColor: Colors.grey,
+                                fontSize: 16),
+                          ),
+                          Container(
+                            color: Colors.grey,
+                            child: DropdownButton(
+                              alignment: Alignment.center,
+                              focusColor: Colors.black,
+                              dropdownColor: Colors.grey,
+                              iconSize: 10,
+                              value: fileName,
+                              items: mailAssetsFiles.map((String items) {
+                                return DropdownMenuItem(
+                                    value: items, child: Text(items));
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  if (newValue! != null) fileName = newValue;
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
                     Container(
                       width: double.infinity,
                       color: Color.fromRGBO(228, 228, 228, 0.6),
