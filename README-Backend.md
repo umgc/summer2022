@@ -2,15 +2,15 @@
 SWEN 670 Capstone Course. Summer Cohort
 
 -------------------------------------------------------------------
-(07-08-2022)
+(07-09-2022)
 
-- Need UI to add a button to navigate to backend testing page.
+- Pulled Developer Branch and added route/button to backend testing page
 
 -------------------------------------------------------------------
 (07-06-2022)
 
 - Added Barcode feature. Incorporated into consolidated json object.
-- Barcode Unit test fails.  
+- Barcode Unit tests fail.  
 
 -------------------------------------------------------------------
 (07-02-2022)

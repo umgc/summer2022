@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:usps_informed_delivery_backend/api.dart';
-import 'package:usps_informed_delivery_backend/models/Address.dart';
-import 'package:usps_informed_delivery_backend/models/Logo.dart';
-import 'package:usps_informed_delivery_backend/models/MailResponse.dart';
+import '../lib/api.dart';
+import '../lib/models/Address.dart';
+import '../lib/models/Logo.dart';
+import '../lib/models/MailResponse.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'dart:io' as io;

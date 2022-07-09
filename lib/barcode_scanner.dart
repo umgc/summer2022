@@ -14,7 +14,9 @@ class BarcodeScannerApi {
   Future<File> getImageFileFromAssets(String path) async {
     final byteData = await rootBundle.load(path);
 
-    final file = File('${(await getTemporaryDirectory()).path}/image.png');
+    //final file = File('${(await getTemporaryDirectory()).path}\\image.png');
+    final file =
+        File('${(await getApplicationDocumentsDirectory()).path}\\image.png');
     await file.writeAsBytes(byteData.buffer
         .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
@@ -70,7 +72,7 @@ class BarcodeScannerApi {
               type = "other";
               break;
           }
-          // print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
+          //print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
           codes.add(codeObject(type: type, info: barcode.rawValue as String));
         }
       }

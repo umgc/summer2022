@@ -3,11 +3,11 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:usps_informed_delivery_backend/models/Logo.dart';
+import './models/Logo.dart';
 import 'barcode_scanner.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:usps_informed_delivery_backend/usps_address_verification.dart';
+import './/usps_address_verification.dart';
 import 'api.dart';
 import 'models/Code.dart';
 
