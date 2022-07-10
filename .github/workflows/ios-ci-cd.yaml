@@ -27,10 +27,9 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
-      - name: Set up cocoapods
-        uses: maxim-lobanov/setup-cocoapods@v1
-        with:
-            podfile-path: ios/Podfile.lock
       - run: flutter pub get
-      - run: pod install
+      - run: |
+          cd ios
+          pod install
+          cd ..
       - run: flutter build ios --release --no-codesign
