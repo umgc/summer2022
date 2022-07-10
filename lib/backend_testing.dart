@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import './models/Logo.dart';
 import 'barcode_scanner.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import './/usps_address_verification.dart';
 import 'api.dart';
 import 'models/Code.dart';
@@ -74,7 +74,7 @@ class _BackendPageState extends State<BackendPage> {
   ];
   //var fileName = 'assets/QRCode.PASSED.tdbank_id.jpeg';
   var fileName = 'mail.test.03.png';
-  final picker = ImagePicker();
+  // final picker = ImagePicker();
   @override
   void initState() {
     super.initState();
@@ -87,30 +87,30 @@ class _BackendPageState extends State<BackendPage> {
     });
   }
 
-  void _getImage() async {
-    final PickedFile = await picker.getImage(source: ImageSource.camera);
-    print(PickedFile!.path);
-    if (PickedFile != null) {
-      _image = File(PickedFile.path);
+  // void _getImage() async {
+  //   final PickedFile = await picker.getImage(source: ImageSource.camera);
+  //   print(PickedFile!.path);
+  //   if (PickedFile != null) {
+  //     _image = File(PickedFile.path);
 
-      _imageBytes = _image!.readAsBytesSync();
-      String a = base64.encode(_imageBytes!);
-      var objMailResponse = await vision!.search(a);
-      for (var address in objMailResponse.addresses) {
-        address.validated = await UspsAddressVerification()
-            .verifyAddressString(address.address);
-      }
-      setState(() {
-        if (PickedFile != null) {
-          _image = File(PickedFile.path);
-          _imageBytes = _image!.readAsBytesSync();
-          _imageName = _image!.path.split('/').last;
-        } else {
-          print('No image selected.');
-        }
-      });
-    }
-  }
+  //     _imageBytes = _image!.readAsBytesSync();
+  //     String a = base64.encode(_imageBytes!);
+  //     var objMailResponse = await vision!.search(a);
+  //     for (var address in objMailResponse.addresses) {
+  //       address.validated = await UspsAddressVerification()
+  //           .verifyAddressString(address.address);
+  //     }
+  //     setState(() {
+  //       if (PickedFile != null) {
+  //         _image = File(PickedFile.path);
+  //         _imageBytes = _image!.readAsBytesSync();
+  //         _imageName = _image!.path.split('/').last;
+  //       } else {
+  //         print('No image selected.');
+  //       }
+  //     });
+  //   }
+  // }
 
   void _processImageWithOCR() async {
     print("inside processImageWithOCR\n");
@@ -345,7 +345,8 @@ class _BackendPageState extends State<BackendPage> {
                     Container(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _getImage,
+                        // onPressed: _getImage,
+                        onPressed: null,
                         child: const Text("Process Mail Image using Camera",
                             style: TextStyle(color: Colors.black)),
                         style: ElevatedButton.styleFrom(
