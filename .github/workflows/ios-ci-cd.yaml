@@ -30,7 +30,6 @@ jobs:
       - name:
         uses: maxim-lobanov/setup-cocoapods@v1
         with:
-            version: 1.11.3
             podfile-path: summer2022/ios/Podfile.lock
       - run: flutter pub get
       - run: pod install
