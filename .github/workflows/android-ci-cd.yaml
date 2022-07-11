@@ -32,4 +32,5 @@ jobs:
         run: flutter pub get
       - name: Build App Bundle
         run: flutter build appbundle
-      #Add more steps here to send to app store
+      - name: Run Unit Tests
+        run: flutter test
