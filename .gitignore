@@ -76,3 +76,9 @@ macos/Flutter/ephemeral/Flutter-Generated.xcconfig
 macos/Flutter/ephemeral/flutter_export_environment.sh
 /coverage/
 macos/Flutter/ephemeral/flutter_export_environment.sh
+.flutter-plugins 2
+.vscode/launch.json
+android/local.properties
+.idea/misc.xml
+summer2022.iml
+assets/credentials.json
