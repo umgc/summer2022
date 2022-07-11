@@ -50,7 +50,7 @@ doc/api/
 android/local.properties
 .idea/
 *summer2022.iml*
-credentials.json
+assets/credentials.json
 
 # Avoid committing generated Javascript files:
 *.dart.js
