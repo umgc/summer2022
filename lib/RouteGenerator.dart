@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:summer2022/mail_widget.dart';
-import 'package:summer2022/main_menu.dart';
-import 'package:summer2022/other_mail.dart';
-import 'package:summer2022/settings.dart';
-import 'package:summer2022/sign_in.dart';
+import './mail_widget.dart';
+import './main_menu.dart';
+import './other_mail.dart';
+import './settings.dart';
+import './sign_in.dart';
+import './backend_testing.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -19,6 +20,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => SignInWidget());
       case '/other_mail':
         return MaterialPageRoute(builder: (_) => OtherMailWidget());
+      case '/backend_testing':
+        return MaterialPageRoute(
+            builder: (_) => BackendPage(title: "Backend Testing"));
       default:
         return MaterialPageRoute(builder: (_) {
           return Scaffold(

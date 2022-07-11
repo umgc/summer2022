@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:summer2022/settings.dart';
-import 'package:summer2022/main_menu.dart';
-import 'package:summer2022/sign_in.dart';
+import './settings.dart';
+import './main_menu.dart';
+import './sign_in.dart';
 
 import 'RouteGenerator.dart';
 import 'bottom_app_bar.dart';

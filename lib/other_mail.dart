@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:summer2022/main_menu.dart';
+import './main_menu.dart';
 
 class OtherMailWidget extends StatefulWidget {
   OtherMailWidgetState createState() => OtherMailWidgetState();
