@@ -58,19 +58,44 @@ class ReadMail {
       
       }
     } else { // Normal mail
+      // TODO placeholder until we actually parse email
+      var emailDetails = {'email_subject':'Checking in','email_text':'Hi, how are you?', 'email_sender':'myfriend@yahoo.com', 'email_recipients':'someemail@gmail.com'}; 
+      
       if (GlobalConfiguration().getValue("email_subject")) {
-        // TODO
+        var subject = emailDetails["email_subject"];
+        String text = "The email subject is $subject";
+        if (subject != null) {
+          tts.speak(text);
+        } else {
+          tts.speak("There is no email subject.");
+        }
       }
       if (GlobalConfiguration().getValue("email_text")) {
-        // TODO
-
+        var emailText = emailDetails["email_text"];
+        String text = "The email text is $emailText";
+        if (emailText != null) {
+          tts.speak(text);
+        } else {
+          tts.speak("There is no email text.");
+        }
       }
       if (GlobalConfiguration().getValue("email_sender")) {
-        // TODO
-
+        var sender = emailDetails["email_sender"];
+        String text = "The email sender is $sender";
+        if (sender != null) {
+          tts.speak(text);
+        } else {
+          tts.speak("There is no email sender.");
+        }
       }
       if (GlobalConfiguration().getValue("email_recipients")) {
-        // TODO
+        var recipients = emailDetails["email_recipients"];
+        String text = "The email recipients are $recipients";
+        if (recipients != null) {
+          tts.speak(text);
+        } else {
+          tts.speak("There are no email recipients.");
+        }
       }
     }
   }
