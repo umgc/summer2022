@@ -1,6 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:toggle_switch/toggle_switch.dart';
+import './backend_testing.dart';
 
 class MainWidget extends StatefulWidget {
   const MainWidget({Key? key}) : super(key: key);
@@ -73,10 +75,32 @@ class MainWidgetState extends State<MainWidget> {
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/backend_testing');
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => const BackendPage(
+                //               title: "USPS Backend Testing",
+                //             )));
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey,
+                shadowColor: Colors.grey,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5))),
+              ),
+              child: const Text("Backend Testing",
+                  style: TextStyle(color: Colors.black)),
+            ),
+            Container(
+              child: Column(
               children: [
-                OutlinedButton(
+              Center(
+                child: Column(
+                  children: [
+                  OutlinedButton(
                   onPressed: () {
                     if (mailType == "Email") {
                       Navigator.pushNamed(context, '/other_mail');
@@ -92,62 +116,63 @@ class MainWidgetState extends State<MainWidget> {
                   ),
                   child: const Text("Latest",
                       style: TextStyle(color: Colors.black)),
-                ),
-                OutlinedButton(
+                  ),
+                  OutlinedButton(
+                    onPressed: () {
+                      if (mailType == "Email") {
+                        Navigator.pushNamed(context, '/other_mail');
+                      } else {
+                        Navigator.pushNamed(context, '/digest_mail');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      shadowColor: Colors.grey,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                    ),
+                    child: const Text("Unread",
+                      style: TextStyle(color: Colors.black)),
+                  ),
+                ]
+              ),
+              ),
+              Center(
+                child: OutlinedButton(
                   onPressed: () {
-                    if (mailType == "Email") {
-                      Navigator.pushNamed(context, '/other_mail');
-                    } else {
-                      Navigator.pushNamed(context, '/digest_mail');
-                    }
+                    Navigator.pushNamed(context, '/settings');
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
+                    primary: Colors.grey,
+                    shadowColor: Colors.grey,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                 ),
+                  child: const Text("Settings",
+                      style: TextStyle(color: Colors.black)),
+                ),
+              ),
+              Center(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/sign_in');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.black,
                     shadowColor: Colors.grey,
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                   ),
-                  child: const Text("Unread",
-                      style: TextStyle(color: Colors.black)),
-                ),
-              ],
-            ),
-            Center(
-              child: OutlinedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/settings');
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.grey,
-                  shadowColor: Colors.grey,
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                ),
-                child: const Text("Settings",
-                    style: TextStyle(color: Colors.black)),
-              ),
-            ),
-            Center(
-              child: OutlinedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/sign_in');
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.black,
-                  shadowColor: Colors.grey,
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                ),
-                child: const Text(
-                  "Sign Out",
-                  style: TextStyle(color: Colors.white),
+                  child: const Text(
+                    "Sign Out",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+          ] // Children
+          ),
       ),
-    );
+    ])));
   }
 
   Future<void> selectDate(BuildContext context) async {
