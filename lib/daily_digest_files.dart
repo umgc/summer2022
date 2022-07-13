@@ -2,85 +2,15 @@ import 'dart:io';
 import 'dart:convert'; //to convert json to maps and vice versa
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
-import 'package:json_annotation/json_annotation.dart';
+//import 'package:json_annotation/json_annotation.dart';
+import 'package:summer2022/models/MailResponse.dart';
 
 part 'daily_digest_files.g.dart';
-
-/*
-The following objects allow the Daily Digest JSON files to be serialized and deserialized.
-The comments in the MailObject class describes how the code for the nested classes is implemented.
-*/
-
-// An annotation for the code generator to know that this class needs the
-// JSON serialization logic to be generated.
-@JsonSerializable(explicitToJson: true)
-class MailObject {
-  final String type;
-  final String name;  // the sender
-  final String recipient;
-  final String address;
-  final String validated;
-
-  MailObject(this.type, this.name, this.recipient, this.address, this.validated);
-
-  // A necessary factory constructor for creating a new MailObject instance
-  // from a map. Pass the map to the generated `_$UserFromJson()` constructor.
-  // The constructor is named after the source class, in this case, MailObject.
-  factory MailObject.fromJson(Map<String, dynamic> json) => _$MailObjectFromJson(json);
-
-  // `toJson` is the convention for a class to declare support for serialization
-  // to JSON. The implementation simply calls the private, generated
-  // helper method `_$MailObjectToJson`
-  Map<String, dynamic> toJson() => _$MailObjectToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class DescriptionObject {
-  final String name;
-
-  DescriptionObject(this.name);
-
-  factory DescriptionObject.fromJson(Map<String, dynamic> json) => _$DescriptionObjectFromJson(json);
-  Map<String, dynamic> toJson() => _$DescriptionObjectToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class LogoObject {
-  final DescriptionObject description;
-
-  LogoObject(this.description);
-
-  factory LogoObject.fromJson(Map<String, dynamic> json) => _$LogoObjectFromJson(json);
-  Map<String, dynamic> toJson() => _$LogoObjectToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class CodeObject {
-  final String codeType;
-  final String link;
-
-  CodeObject(this.codeType, this.link);
-
-  factory CodeObject.fromJson(Map<String, dynamic> json) => _$CodeObjectFromJson(json);
-  Map<String, dynamic> toJson() => _$CodeObjectToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class DailyDigestFile {
-  final List<MailObject> mailObjects;
-  final List<LogoObject> logoObjects;
-  final List<CodeObject> codeObjects;
-
-  DailyDigestFile(this.mailObjects, this.logoObjects, this.codeObjects);
-
-  factory DailyDigestFile.fromJson(Map<String, dynamic> json) => _$DailyDigestFileFromJson(json);
-  Map<String, dynamic> toJson() => _$DailyDigestFileToJson(this);
-}
 
 class DailyDigestFiles {
 
   late String directory;
-  late List<DailyDigestFile> files;
+  late List<MailResponse> files;
 
   DailyDigestFiles() {
     // Set the storage directory for the Daily Digest JSON files
@@ -89,7 +19,7 @@ class DailyDigestFiles {
     files = [];
   }
 
-  List<DailyDigestFile> getFiles() {
+  List<MailResponse> getFiles() {
     return files;
   }
 
@@ -107,7 +37,7 @@ class DailyDigestFiles {
     }
 
     for (var jsonFile in fileList) {
-      DailyDigestFile? dailyDigest = readFromFile(jsonFile);
+      MailResponse? dailyDigest = readFromFile(jsonFile);
       if (dailyDigest != null) {
         files.add(dailyDigest);
       }
@@ -115,14 +45,14 @@ class DailyDigestFiles {
   }
 
   // Load a Daily Digest JSON File from a specific date.
-  DailyDigestFile? getDailyDigestByDate(String date) {
+  MailResponse? getDailyDigestByDate(String date) {
     String fileName = "'$date'.json";
-    DailyDigestFile? dailyDigest = readFromFile(fileName);
+    MailResponse? dailyDigest = readFromFile(fileName);
     return dailyDigest;
   }
 
   // Write a Daily Digest JSON object to a file.
-  void writeToFile(DailyDigestFile digestObject, String date) {
+  void writeToFile(MailResponse digestObject, String date) {
     String fileName = "'$date'.json";
     String filePath = "'$this.directory'/'$fileName'";
     File file = File(filePath);
@@ -131,14 +61,14 @@ class DailyDigestFiles {
   }
 
   // Read a Daily Digest JSON file.
-  DailyDigestFile? readFromFile(String fileName) {
+  MailResponse? readFromFile(String fileName) {
     String filePath = "'$this.directory'/'$fileName'";
     File jsonFile = File(filePath);
     bool fileExists = jsonFile.existsSync();
-    DailyDigestFile dailyDigest;
+    MailResponse dailyDigest;
     if (fileExists) {
       String contents = jsonFile.readAsStringSync();
-      dailyDigest = DailyDigestFile.fromJson(jsonDecode(contents));
+      dailyDigest = MailResponse.fromJson(jsonDecode(contents));
       return dailyDigest;
     } else {
       return null;
