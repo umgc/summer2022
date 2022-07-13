@@ -1,11 +1,9 @@
 import 'package:global_configuration/global_configuration.dart';
-import 'package:summer2022/daily_digest_files.dart';
 import 'package:summer2022/models/MailResponse.dart';
 import 'package:summer2022/models/Address.dart';
 import 'package:summer2022/models/Logo.dart';
 import 'package:summer2022/models/Code.dart';
 import 'package:text_to_speech/text_to_speech.dart';
-import 'dart:io';
 
 
 /*

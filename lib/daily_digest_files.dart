@@ -2,10 +2,10 @@ import 'dart:io';
 import 'dart:convert'; //to convert json to maps and vice versa
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:summer2022/models/Code.dart';
+import 'package:summer2022/models/Logo.dart';
 //import 'package:json_annotation/json_annotation.dart';
 import 'package:summer2022/models/MailResponse.dart';
-
-part 'daily_digest_files.g.dart';
 
 class DailyDigestFiles {
 
