@@ -1,4 +1,4 @@
-package com.example.enough_mail_test
+package com.example.summer2022
 
 import io.flutter.embedding.android.FlutterActivity
 
