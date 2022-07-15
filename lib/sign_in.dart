@@ -108,6 +108,7 @@ class SignInWidgetState extends State<SignInWidget> {
                                 String email = email_controller.text.toString();
                                 String password =
                                     password_controller.text.toString();
+                                //Store the credentials into the the secure storage
                                 //If email validated through enough mail then switch to the main screen, if not, add error text to the to show on the scren
                                 Navigator.pushNamed(context, '/main');
                               },
