@@ -87,7 +87,9 @@ class MainWidgetState extends State<MainWidget> {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
                           await getDigest();
-                          Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+                          if(digest != null) {
+                            Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+                          }
                         }
                       },
                       child: const Text("Latest",
@@ -102,13 +104,14 @@ class MainWidgetState extends State<MainWidget> {
                   ),
                   Container(
                     child: OutlinedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (mail_type == "Email") {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
-                          getDigest();
-                          while(digest != null)
-                          Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+                          await getDigest();
+                          if(digest != null) {
+                            Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+                          }
                         }
                       },
                       child: const Text("Unread",
@@ -217,7 +220,10 @@ class MainWidgetState extends State<MainWidget> {
       if (mail_type == "Email") {
         Navigator.pushNamed(context, '/other_mail');
       } else {
-        Navigator.pushNamed(context, '/digest_mail');
+        await getDigest(picked);
+        if(digest != null) {
+          Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+        }
       }
 
       setState(() {
@@ -242,7 +248,7 @@ class MainWidgetState extends State<MainWidget> {
 
   late Digest digest;
 
-  Future<void> getDigest() async {
-    await DigestEmailParser().createDigest("GartrellBarry@gmail.com", "jcgbbrahopwwffma", selected_date).then((value) => digest = value);
+  Future<void> getDigest([DateTime? pickedDate]) async {
+    await DigestEmailParser().createDigest("GartrellBarry@gmail.com", "jcgbbrahopwwffma", pickedDate ?? selected_date).then((value) => digest = value);
   }
 }

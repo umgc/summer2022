@@ -5,8 +5,8 @@ import 'models/Digest.dart';
 
 class DigestEmailParser {
 
-  String _userName = 'GartrellBarry@gmail.com'; // Add your credentials
-  String _password = 'jcgbbrahopwwffma'; // Add your credentials
+  String _userName = ''; // Add your credentials
+  String _password = ''; // Add your credentials
   String _imapServerHost = 'imap.gmail.com';
   int _imapServerPort = 993;
   bool _isImapServerSecure = true;
@@ -28,7 +28,8 @@ class DigestEmailParser {
     m.mimeData?.parts?.forEach((item) async {
       if(item.contentType?.value.toString().contains("image") ?? false) {
         var attachment = Attachment();
-        attachment.attachment = item.decodeMessageData().toString(); //These are base64 encoded images
+        attachment.attachment = item.decodeMessageData().toString(); //These are base64 encoded images with formatting
+        attachment.attachmentNoFormatting = attachment.attachment.toString().replaceAll("\r\n", ""); //These are base64 encoded images with formatting
         //attachment.detailedInformation = await CloudVisionApi().search(attachment.attachment); //TODO get CloudVisionAPI info
         list.add(attachment);
       }

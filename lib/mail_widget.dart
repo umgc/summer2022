@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -25,7 +27,6 @@ class _MailWidgetState extends State<MailWidget> {
   @override
   Widget build(BuildContext context) {
     // Figma Flutter Generator MailWidget - FRAME
-
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -48,7 +49,7 @@ class _MailWidgetState extends State<MailWidget> {
                       child: Container(
                         child: Text(
                           style: TextStyle(fontSize: 20),
-                          "Mail",
+                          "USPS Informed Delivery Daily Digest",
                         ),
                       ),
                     ),
@@ -66,8 +67,8 @@ class _MailWidgetState extends State<MailWidget> {
                 Expanded(
                   child: Center(
                     child: Container(
-                        child: Image.asset(
-                            'assets/Image1.png')), //This will eventually be populated with the downloaded image from the digest
+                        //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
+                        child: Image.memory(base64Decode(widget.digest.attachments[attachmentIndex].attachmentNoFormatting)))
                   ),
                 ),
               ],
@@ -122,9 +123,10 @@ class _MailWidgetState extends State<MailWidget> {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Icon(Icons.skip_previous, size: 50),
-                    Text("1/6"),
-                    Icon(Icons.skip_next, size: 50)
+                    ElevatedButton(onPressed: () { setState(() { seekBack(); }); }, child: Icon(Icons.skip_previous, size: 50)),
+                    Text((attachmentIndex + 1).toString() + "/" + widget.digest.attachments.length.toString()),
+                    ElevatedButton(onPressed: () { setState(() { seekForward(widget.digest.attachments.length); });  }, child: Icon(Icons.skip_next, size: 50))
+
                   ]),
             )
           ],
@@ -133,6 +135,20 @@ class _MailWidgetState extends State<MailWidget> {
     );
   }
 
+  void seekBack() {
+    if(attachmentIndex != 0) {
+      attachmentIndex = attachmentIndex - 1;
+    }
+    print(attachmentIndex);
+  }
+
+  void seekForward(int max) {
+    if(attachmentIndex < max - 1) {
+      attachmentIndex = attachmentIndex + 1;
+    }
+    print(attachmentIndex);
+  }
+  
   void showLinkDialog() {
     showDialog(
       context: context,
@@ -144,12 +160,12 @@ class _MailWidgetState extends State<MailWidget> {
             width: 300.0, // Change as per your requirement
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: getLinks().length,
+              itemCount: widget.digest.links.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   title: ElevatedButton(
-                    child: Text(getLinks()[index]),
-                    onPressed: () => openLink(getLinks()[index]),
+                    child: Text(widget.digest.links[index].info == "" ? widget.digest.links[index].link : widget.digest.links[index].info),
+                    onPressed: () => openLink(widget.digest.links[index].link),
                   ),
                 );
               },
@@ -165,12 +181,4 @@ class _MailWidgetState extends State<MailWidget> {
     if (!await launchUrl(uri)) throw 'Could not launch $uri';
   }
 
-  List<String> getLinks() {
-    List<String> links = [];
-    links.add("https://google.com");
-    links.add("https://facebook.com");
-    links.add("https://umgc.edu");
-
-    return links;
-  }
 }
