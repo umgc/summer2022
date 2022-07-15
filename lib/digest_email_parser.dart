@@ -29,7 +29,7 @@ class DigestEmailParser {
       if(item.contentType?.value.toString().contains("image") ?? false) {
         var attachment = Attachment();
         attachment.attachment = item.decodeMessageData().toString(); //These are base64 encoded images
-        attachment.detailedInformation = await CloudVisionApi().search(attachment.attachment);
+        //attachment.detailedInformation = await CloudVisionApi().search(attachment.attachment); //TODO get CloudVisionAPI info
         list.add(attachment);
       }
     });
@@ -69,7 +69,9 @@ class DigestEmailParser {
       final fetchResult = await client.fetchRecentMessages(messageCount: _messageSearchDepth, criteria: 'BODY.PEEK[]');
       for (final message in fetchResult.messages) {
         DateTime? decodedDate = message.decodeDate();
-        if((message.decodeSubject()?.contains("Your Daily Digest") ?? false) && _formatDateTime(decodedDate) == _formatDateTime(targetDate)){
+        if((message.decodeSubject()?.contains("Your Daily Digest") ?? false)
+            && message.decodeSender(combine: true).toString().contains("USPSInformeddelivery@email.informeddelivery.usps.com")
+            && _formatDateTime(decodedDate) == _formatDateTime(targetDate)){
           return message;
         }
       }

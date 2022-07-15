@@ -3,12 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'models/Arguments.dart';
+import 'models/Digest.dart';
+
 class MailWidget extends StatefulWidget {
+  final Digest digest;
+
+  const MailWidget({
+    required this.digest
+  });
+
   @override
-  _MailWidgetState createState() => _MailWidgetState();
+  State<MailWidget> createState() {
+    return _MailWidgetState();
+  }
 }
 
 class _MailWidgetState extends State<MailWidget> {
+  int attachmentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     // Figma Flutter Generator MailWidget - FRAME

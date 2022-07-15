@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:summer2022/digest_email_parser.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import './backend_testing.dart';
+import 'models/Arguments.dart';
+import 'models/Digest.dart';
 
 class MainWidget extends StatefulWidget {
   MainWidgetState createState() => MainWidgetState();
@@ -79,11 +82,12 @@ class MainWidgetState extends State<MainWidget> {
                 children: [
                   Container(
                     child: OutlinedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (mail_type == "Email") {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
-                          Navigator.pushNamed(context, '/digest_mail');
+                          await getDigest();
+                          Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
                         }
                       },
                       child: const Text("Latest",
@@ -102,7 +106,9 @@ class MainWidgetState extends State<MainWidget> {
                         if (mail_type == "Email") {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
-                          Navigator.pushNamed(context, '/digest_mail');
+                          getDigest();
+                          while(digest != null)
+                          Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
                         }
                       },
                       child: const Text("Unread",
@@ -232,5 +238,11 @@ class MainWidgetState extends State<MainWidget> {
         selected_date = picked;
       });
     }
+  }
+
+  late Digest digest;
+
+  Future<void> getDigest() async {
+    await DigestEmailParser().createDigest("GartrellBarry@gmail.com", "jcgbbrahopwwffma", selected_date).then((value) => digest = value);
   }
 }
