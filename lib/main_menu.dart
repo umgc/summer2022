@@ -160,6 +160,7 @@ class MainWidgetState extends State<MainWidget> {
               child: Center(
                 child: OutlinedButton(
                   onPressed: () {
+                    //TODO: Add logic to remove the credentials from the secure storage
                     Navigator.pushNamed(context, '/sign_in');
                   },
                   child: const Text(

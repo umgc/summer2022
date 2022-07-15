@@ -23,7 +23,7 @@ class _MailWidgetState extends State<MailWidget> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/');
+                      Navigator.pushNamed(context, '/main');
                     },
                     icon: Icon(
                       Icons.arrow_back,

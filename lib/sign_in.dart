@@ -6,6 +6,16 @@ class SignInWidget extends StatefulWidget {
 }
 
 class SignInWidgetState extends State<SignInWidget> {
+  final email_controller = TextEditingController();
+  final password_controller = TextEditingController();
+
+  @override
+  void dispose() {
+    email_controller.dispose();
+    password_controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,15 +25,6 @@ class SignInWidgetState extends State<SignInWidget> {
             Container(
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/');
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 30,
-                    ),
-                  ),
                   Expanded(
                     child: Center(
                       child: Container(
@@ -61,6 +62,7 @@ class SignInWidgetState extends State<SignInWidget> {
                                 border: OutlineInputBorder(),
                                 labelText: 'E-Mail Address',
                               ),
+                              controller: email_controller,
                             ),
                           ),
                         ),
@@ -80,6 +82,7 @@ class SignInWidgetState extends State<SignInWidget> {
                               obscureText: true,
                               enableSuggestions: false,
                               autocorrect: false,
+                              controller: password_controller,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: 'Password',
@@ -101,7 +104,13 @@ class SignInWidgetState extends State<SignInWidget> {
                           child: Container(
                             padding: EdgeInsets.only(left: 50, right: 50),
                             child: OutlinedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                String email = email_controller.text.toString();
+                                String password =
+                                    password_controller.text.toString();
+                                //If email validated through enough mail then switch to the main screen, if not, add error text to the to show on the scren
+                                Navigator.pushNamed(context, '/main');
+                              },
                               child: const Text(
                                 "Login",
                                 style: TextStyle(color: Colors.white),

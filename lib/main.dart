@@ -10,16 +10,17 @@ import 'mail_widget.dart';
 import 'other_mail.dart';
 
 void main() {
+  bool email_authenticated = false; //Replace with config read for credentials
   runApp(MaterialApp(
       title: "USPS Infromed Delivery Visual Assistance App",
-      initialRoute: '/',
+      initialRoute: email_authenticated == true ? "/main" : "/sign_in",
       onGenerateRoute: RouteGenerator.generateRoute,
-      home: buildScreen()));
+      home: buildScreen(email_authenticated)));
 }
 
-Widget buildScreen() {
+Widget buildScreen(bool email_authenticated) {
   return Scaffold(
-    body: MainWidget(),
+    body: email_authenticated == true ? MainWidget() : SignInWidget(),
     bottomNavigationBar: BottomBar(),
   );
 }
