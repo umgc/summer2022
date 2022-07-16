@@ -28,7 +28,11 @@ jobs:
         with:
           channel: 'stable'
           flutter-version: '3.0.2'
+<<<<<<< HEAD
           architecture: x64
+=======
+          architecture: arm64
+>>>>>>> 46872d71cc88efef562e137a2376114efc634365
       - run: flutter doctor -v
       - run: flutter pub get
       - name: Install from Podfile
