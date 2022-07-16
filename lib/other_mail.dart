@@ -19,7 +19,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                   children: [
                     IconButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/');
+                        Navigator.pushNamed(context, '/main');
                       },
                       icon: Icon(
                         Icons.arrow_back,
