@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:summer2022/Keychain.dart';
-import 'package:summer2022/Client.dart';
+import './Keychain.dart';
+import './Client.dart';
 
 class SignInWidget extends StatefulWidget {
   SignInWidgetState createState() => SignInWidgetState();

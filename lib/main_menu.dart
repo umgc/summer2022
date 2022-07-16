@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:summer2022/Client.dart';
-import 'package:summer2022/keychain.dart';
+import './Client.dart';
+import './keychain.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import './backend_testing.dart';
 
