@@ -262,6 +262,7 @@ class _BackendPageState extends State<BackendPage> {
                               focusColor: Colors.black,
                               dropdownColor: Colors.grey,
                               iconSize: 10,
+                              key: const Key('dropdown'),
                               value: fileName,
                               items: mailAssetsFiles.map((String items) {
                                 return DropdownMenuItem(
