@@ -9,6 +9,15 @@ class Digest {
   Digest(MimeMessage m) {
     message = m;
   }
+
+  bool isNull(){
+    if(message.mimeData == null) {
+      return true;
+    } else {
+      return false;
+    }
+
+  }
 }
 
 class Attachment {

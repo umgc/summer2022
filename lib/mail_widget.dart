@@ -77,9 +77,9 @@ class _MailWidgetState extends State<MailWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Center(
+                  Expanded(
                     //padding: EdgeInsets.only(left: 20),
-                    child: Expanded(
+                    child: Center(
                       child: OutlinedButton(
                         onPressed: () => showLinkDialog(),
                         child: const Text(
@@ -96,9 +96,9 @@ class _MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
-                  Center(
+                  Expanded(
                     //: EdgeInsets.only(right: 10),
-                    child: Expanded(
+                    child: Center(
                       child: OutlinedButton(
                         onPressed: () {},
                         child: const Text(
@@ -164,8 +164,8 @@ class _MailWidgetState extends State<MailWidget> {
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   title: ElevatedButton(
-                    child: Text(widget.digest.links[index].info == "" ? widget.digest.links[index].link : widget.digest.links[index].info),
-                    onPressed: () => openLink(widget.digest.links[index].link),
+                    child: Text(widget.digest.links.isNotEmpty ? widget.digest.links[index].info == "" ? widget.digest.links[index].link : widget.digest.links[index].info : ""),
+                    onPressed: () => openLink(widget.digest.links.isNotEmpty ? widget.digest.links[index].link : ""),
                   ),
                 );
               },
@@ -177,8 +177,10 @@ class _MailWidgetState extends State<MailWidget> {
   }
 
   void openLink(String link) async {
-    Uri uri = Uri.parse(link);
-    if (!await launchUrl(uri)) throw 'Could not launch $uri';
+    if(link != "") {
+        Uri uri = Uri.parse(link);
+        if (!await launchUrl(uri)) throw 'Could not launch $uri';
+      }
   }
 
 }

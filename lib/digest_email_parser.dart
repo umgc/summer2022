@@ -10,7 +10,7 @@ class DigestEmailParser {
   String _imapServerHost = 'imap.gmail.com';
   int _imapServerPort = 993;
   bool _isImapServerSecure = true;
-  final int _messageSearchDepth = 500;
+  final int _messageSearchDepth = 250;
   DateTime? _targetDate;
 
   Future<Digest> createDigest(String userName, String password, [DateTime? targetDate]) async {
@@ -72,7 +72,8 @@ class DigestEmailParser {
         DateTime? decodedDate = message.decodeDate();
         if((message.decodeSubject()?.contains("Your Daily Digest") ?? false)
             && message.decodeSender(combine: true).toString().contains("USPSInformeddelivery@email.informeddelivery.usps.com")
-            && _formatDateTime(decodedDate) == _formatDateTime(targetDate)){
+            && _formatDateTime(decodedDate) == _formatDateTime(targetDate)
+        ){
           return message;
         }
       }

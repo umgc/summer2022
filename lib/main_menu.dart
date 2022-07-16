@@ -87,8 +87,10 @@ class MainWidgetState extends State<MainWidget> {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
                           await getDigest();
-                          if(digest != null) {
+                          if(!digest.isNull()) {
                             Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+                          } else {
+                            showNoDigestDialog();
                           }
                         }
                       },
@@ -109,8 +111,10 @@ class MainWidgetState extends State<MainWidget> {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
                           await getDigest();
-                          if(digest != null) {
+                          if(!digest.isNull()) {
                             Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+                          } else {
+                            showNoDigestDialog();
                           }
                         }
                       },
@@ -221,8 +225,10 @@ class MainWidgetState extends State<MainWidget> {
         Navigator.pushNamed(context, '/other_mail');
       } else {
         await getDigest(picked);
-        if(digest != null) {
+        if(!digest.isNull()) {
           Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+        } else {
+          showNoDigestDialog();
         }
       }
 
@@ -230,6 +236,29 @@ class MainWidgetState extends State<MainWidget> {
         selected_date = picked;
       });
     }
+  }
+
+  void showNoDigestDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center( child : Text(
+              "No Digest Available"
+            ),
+          ),
+          content: Container(
+            height: 100.0, // Change as per your requirement
+            width: 100.0, // Change as per your requirement
+            child: Center( child : Text(
+                "There is no Digest available for the selected day: ${selected_date.month}/${selected_date.day}/${selected_date.year}",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> selectOtherMailDate(BuildContext context) async {
