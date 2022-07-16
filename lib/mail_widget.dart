@@ -182,5 +182,4 @@ class _MailWidgetState extends State<MailWidget> {
         if (!await launchUrl(uri)) throw 'Could not launch $uri';
       }
   }
-
 }

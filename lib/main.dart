@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import './settings.dart';
 import './main_menu.dart';
 import './sign_in.dart';
@@ -14,7 +15,7 @@ void main() {
       title: "USPS Infromed Delivery Visual Assistance App",
       initialRoute: '/',
       onGenerateRoute: RouteGenerator.generateRoute,
-      home: buildScreen()));
+      home: LoaderOverlay( child: buildScreen())));
 }
 
 Widget buildScreen() {

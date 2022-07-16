@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:summer2022/digest_email_parser.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import './backend_testing.dart';
@@ -86,12 +87,14 @@ class MainWidgetState extends State<MainWidget> {
                         if (mail_type == "Email") {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
+                          context.loaderOverlay.show();
                           await getDigest();
                           if(!digest.isNull()) {
                             Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
                           } else {
                             showNoDigestDialog();
                           }
+                          context.loaderOverlay.hide();
                         }
                       },
                       child: const Text("Latest",
@@ -110,12 +113,14 @@ class MainWidgetState extends State<MainWidget> {
                         if (mail_type == "Email") {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
+                          context.loaderOverlay.show();
                           await getDigest();
                           if(!digest.isNull()) {
                             Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
                           } else {
                             showNoDigestDialog();
                           }
+                          context.loaderOverlay.hide();
                         }
                       },
                       child: const Text("Unread",
@@ -224,12 +229,14 @@ class MainWidgetState extends State<MainWidget> {
       if (mail_type == "Email") {
         Navigator.pushNamed(context, '/other_mail');
       } else {
+        context.loaderOverlay.show();
         await getDigest(picked);
         if(!digest.isNull()) {
           Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
         } else {
           showNoDigestDialog();
         }
+        context.loaderOverlay.hide();
       }
 
       setState(() {
@@ -251,7 +258,7 @@ class MainWidgetState extends State<MainWidget> {
             height: 100.0, // Change as per your requirement
             width: 100.0, // Change as per your requirement
             child: Center( child : Text(
-                "There is no Digest available for the selected day: ${selected_date.month}/${selected_date.day}/${selected_date.year}",
+                "There is no Digest available for the selected date: ${selected_date.month}/${selected_date.day}/${selected_date.year}",
                 style: TextStyle(color: Colors.black),
               ),
             ),

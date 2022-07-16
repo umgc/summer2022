@@ -45,6 +45,7 @@ dependencies:
   camera: ^0.9.8+1
   url_launcher: ^6.1.4
   enough_mail: ^2.1.1
+  loader_overlay: ^2.0.7
 
 
 dev_dependencies:
