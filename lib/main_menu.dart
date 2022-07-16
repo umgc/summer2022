@@ -290,6 +290,6 @@ class MainWidgetState extends State<MainWidget> {
   late Digest digest;
 
   Future<void> getDigest([DateTime? pickedDate]) async {
-    await DigestEmailParser().createDigest("GartrellBarry@gmail.com", "jcgbbrahopwwffma", pickedDate ?? selected_date).then((value) => digest = value);
+    await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword(), pickedDate ?? selected_date).then((value) => digest = value);
   }
 }
