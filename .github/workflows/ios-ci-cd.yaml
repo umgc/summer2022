@@ -26,13 +26,15 @@ jobs:
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v1
         with:
-          channel: 'stable'
+          channel: '3.0.2'
+          architecture: arm64
+      - run: flutter doctor -v
       - run: flutter pub get
       - name: Install from Podfile
         run: |
           cd ios
           pod install
-          cd .. 
+          cd ..
       - name: FLutter build
         run: flutter build ios --release --no-codesign
       - name: Run Unit Tests
