@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:summer2022/Keychain.dart';
+import 'package:summer2022/Client.dart';
 
 class SignInWidget extends StatefulWidget {
   SignInWidgetState createState() => SignInWidgetState();
@@ -104,13 +106,21 @@ class SignInWidgetState extends State<SignInWidget> {
                           child: Container(
                             padding: EdgeInsets.only(left: 50, right: 50),
                             child: OutlinedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 String email = email_controller.text.toString();
                                 String password =
                                     password_controller.text.toString();
-                                //Store the credentials into the the secure storage
-                                //If email validated through enough mail then switch to the main screen, if not, add error text to the to show on the scren
-                                Navigator.pushNamed(context, '/main');
+                                //If email validated through enough mail then switch to the main screen, if not, add error text to the to show on the screen
+                                var loggedIn = await Client()
+                                    .getImapClient(email, password);
+                                //Store the credentials into the the secure storage only if validated
+                                if (loggedIn) {
+                                  Keychain().addCredentials(email, password);
+                                  Navigator.pushNamed(context, '/main');
+                                } else {
+                                  //TODO:send back error message
+
+                                }
                               },
                               child: const Text(
                                 "Login",
