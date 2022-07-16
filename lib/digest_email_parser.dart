@@ -1,5 +1,6 @@
 import 'package:enough_mail/enough_mail.dart';
 import 'package:googleapis/cloudsearch/v1.dart';
+import 'package:intl/intl.dart';
 import 'api.dart';
 import 'models/Digest.dart';
 
@@ -10,7 +11,6 @@ class DigestEmailParser {
   String _imapServerHost = 'imap.gmail.com';
   int _imapServerPort = 993;
   bool _isImapServerSecure = true;
-  final int _messageSearchDepth = 250;
   DateTime? _targetDate;
 
   Future<Digest> createDigest(String userName, String password, [DateTime? targetDate]) async {
@@ -59,6 +59,11 @@ class DigestEmailParser {
     return list;
   }
 
+  String _formatTargetDateForSearch(DateTime date) {
+    final DateFormat format = DateFormat('dd-MMM-yyyy');
+    return format.format(date);
+  }
+
   Future<MimeMessage> _getDigestEmail() async {
     final client = ImapClient(isLogEnabled: true);
     try {
@@ -67,16 +72,24 @@ class DigestEmailParser {
           isSecure: _isImapServerSecure);
       await client.login(_userName, _password);
       await client.selectInbox();
-      final fetchResult = await client.fetchRecentMessages(messageCount: _messageSearchDepth, criteria: 'BODY.PEEK[]');
-      for (final message in fetchResult.messages) {
-        DateTime? decodedDate = message.decodeDate();
-        if((message.decodeSubject()?.contains("Your Daily Digest") ?? false)
-            && message.decodeSender(combine: true).toString().contains("USPSInformeddelivery@email.informeddelivery.usps.com")
-            && _formatDateTime(decodedDate) == _formatDateTime(targetDate)
-        ){
-          return message;
-        }
+      //Search for sequence id of the Email
+      String searchCriteria = 'FROM USPSInformeddelivery@email.informeddelivery.usps.com ON ${_formatTargetDateForSearch(targetDate)} SUBJECT "Your Daily Digest"';
+      List<ReturnOption> returnOptions = [];
+      ReturnOption option = ReturnOption("all");
+      returnOptions.add(option);
+      final searchResult = await client.searchMessages(searchCriteria: searchCriteria, returnOptions: returnOptions);
+      //extract sequence id
+      int? seqID;
+      final matchingSequence = searchResult.matchingSequence;
+      if(matchingSequence != null ) {
+        seqID = matchingSequence.isNotEmpty ? matchingSequence.elementAt(0) : null; // this gets the sequence id of the desired email
       }
+      if(seqID != null) {
+        //Fetch Email Results
+        final fetchedMessage = await client.fetchMessage(seqID, 'BODY.PEEK[]');
+        return fetchedMessage.messages.first;
+      }
+
       return MimeMessage();
     } catch (e) {
       rethrow;

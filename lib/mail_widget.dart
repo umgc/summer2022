@@ -68,7 +68,7 @@ class _MailWidgetState extends State<MailWidget> {
                   child: Center(
                     child: Container(
                         //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
-                        child: Image.memory(base64Decode(widget.digest.attachments[attachmentIndex].attachmentNoFormatting)))
+                        child: widget.digest.attachments.isNotEmpty ? Image.memory(base64Decode(widget.digest.attachments[attachmentIndex].attachmentNoFormatting)) : Image.asset('assets/NoAttachments.png'))
                   ),
                 ),
               ],
@@ -124,7 +124,7 @@ class _MailWidgetState extends State<MailWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(onPressed: () { setState(() { seekBack(); }); }, child: Icon(Icons.skip_previous, size: 50)),
-                    Text((attachmentIndex + 1).toString() + "/" + widget.digest.attachments.length.toString()),
+                    Text(widget.digest.attachments.isNotEmpty ? (attachmentIndex + 1).toString() + "/" + widget.digest.attachments.length.toString() : "0/0"),
                     ElevatedButton(onPressed: () { setState(() { seekForward(widget.digest.attachments.length); });  }, child: Icon(Icons.skip_next, size: 50))
 
                   ]),
@@ -139,14 +139,12 @@ class _MailWidgetState extends State<MailWidget> {
     if(attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
     }
-    print(attachmentIndex);
   }
 
   void seekForward(int max) {
     if(attachmentIndex < max - 1) {
       attachmentIndex = attachmentIndex + 1;
     }
-    print(attachmentIndex);
   }
   
   void showLinkDialog() {
@@ -179,7 +177,7 @@ class _MailWidgetState extends State<MailWidget> {
   void openLink(String link) async {
     if(link != "") {
         Uri uri = Uri.parse(link);
-        if (!await launchUrl(uri)) throw 'Could not launch $uri';
+        if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) throw 'Could not launch $uri';
       }
   }
 }
