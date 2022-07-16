@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:summer2022/Client.dart';
-import 'package:summer2022/keychain.dart';
+import './Client.dart';
+import './keychain.dart';
 import './settings.dart';
 import './main_menu.dart';
 import './sign_in.dart';
