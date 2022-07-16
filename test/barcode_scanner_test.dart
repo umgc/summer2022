@@ -2,11 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
-import 'package:googleapis/servicemanagement/v1.dart';
 import 'package:summer2022/backend_testing.dart';
-import '../lib/models/Code.dart';
-import '../lib/barcode_scanner.dart';
+import 'package:summer2022/models/Code.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +13,27 @@ void main() async {
     return MediaQuery(
         data: const MediaQueryData(), child: MaterialApp(home: widget));
   }
+
+  setUpAll(() {
+    const channel = MethodChannel(
+      'plugins.flutter.io/path_provider_macos',
+    );
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      switch (methodCall.method) {
+        case 'getApplicationDocumentsDirectory':
+          return "test/data";
+        default:
+      }
+    });
+
+    const mlkit = MethodChannel('google_mlkit_barcode_scanning');
+    mlkit.setMockMethodCallHandler((MethodCall methodCall) async {
+      if (methodCall.method == 'vision#startBarcodeScanner') {
+        return <codeObject>[];
+      }
+      return null;
+    });
+  });
 
   testWidgets('Scan barcode with result', (tester) async {
     await tester
@@ -32,9 +50,9 @@ void main() async {
     await tester.tap(dropdownItem);
     await tester.pumpAndSettle();
 
-    // //Tap ML Kit QR Codes/Barcodes Image Scan button
+    //Tap ML Kit QR Codes/Barcodes Image Scan button
     await tester.tap(find.text("ML Kit  QR Codes/Barcodes Image Scan"));
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 5));
 
     // expect(
     //     find.text('{type: qr, info: https://qrco.de/bczuEB}'), findsOneWidget);
