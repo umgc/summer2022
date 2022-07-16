@@ -12,7 +12,7 @@ class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     print('setting.name:  ${settings.name}');
     switch (settings.name) {
-      case '/':
+      case '/main':
         return MaterialPageRoute(builder: (_) => MainWidget());
       case '/settings':
         return MaterialPageRoute(builder: (_) => SettingsWidget());

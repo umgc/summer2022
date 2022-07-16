@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:summer2022/digest_email_parser.dart';
+import './Client.dart';
+import './keychain.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import './backend_testing.dart';
 import 'models/Arguments.dart';
@@ -197,7 +199,10 @@ class MainWidgetState extends State<MainWidget> {
             Container(
               child: Center(
                 child: OutlinedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    //Add logic to remove the credentials from the secure storage
+                    Keychain().deleteAll();
+                    //TODO: Make sure Client logs out not sure if I need to?
                     Navigator.pushNamed(context, '/sign_in');
                   },
                   child: const Text(
