@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:summer2022/enough_mail_sample.dart';
 import './mail_widget.dart';
 import './main_menu.dart';
 import './other_mail.dart';
@@ -23,6 +24,9 @@ class RouteGenerator {
       case '/backend_testing':
         return MaterialPageRoute(
             builder: (_) => BackendPage(title: "Backend Testing"));
+      case '/enough_mail_sample':
+        return MaterialPageRoute(
+            builder: (_) => EnoughMailPage(title: "Enough Mail Sample"));
       default:
         return MaterialPageRoute(builder: (_) {
           return Scaffold(

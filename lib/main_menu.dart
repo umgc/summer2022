@@ -138,24 +138,44 @@ class MainWidgetState extends State<MainWidget> {
               ),
             ),
             Container(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/backend_testing');
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => const BackendPage(
-                  //               title: "USPS Backend Testing",
-                  //             )));
-                },
-                child: const Text("Backend Testing",
-                    style: TextStyle(color: Colors.black)),
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.grey,
-                  shadowColor: Colors.grey,
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                ),
+              width: double.infinity,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/backend_testing');
+                      },
+                      child: const Text("Backend Testing",
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.grey,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/enough_mail_sample');
+                      },
+                      child: const Text("Enough Mail Tester",
+                          style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.grey,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Container(
