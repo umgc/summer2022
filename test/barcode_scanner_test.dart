@@ -79,7 +79,7 @@ void main() async {
       BarcodeScannerApi scanner = BarcodeScannerApi();
       File f = await scanner.getImageFileFromAssets('assets/mail.test.03.png');
       InputImage img = InputImage.fromFile(f);
-      List<codeObject> codes = await scanner.processImage(img);
+      List<CodeObject> codes = await scanner.processImage(img);
       expect(codes.length, 1);
     });
     test('Scanner must not recognize QR Code', () async {
@@ -94,7 +94,7 @@ void main() async {
       BarcodeScannerApi scanner = BarcodeScannerApi();
       File f = await scanner.getImageFileFromAssets('assets/mail.test.02.png');
       InputImage img = InputImage.fromFile(f);
-      List<codeObject> codes = await scanner.processImage(img);
+      List<CodeObject> codes = await scanner.processImage(img);
       expect(codes.length, 0);
     });
     test('Scanner must recognize barcode', () async {
@@ -127,7 +127,7 @@ void main() async {
       BarcodeScannerApi scanner = BarcodeScannerApi();
       File f = await scanner.getImageFileFromAssets('assets/mail.test.04.png');
       InputImage img = InputImage.fromFile(f);
-      List<codeObject> codes = await scanner.processImage(img);
+      List<CodeObject> codes = await scanner.processImage(img);
       expect(codes.length, 1);
     });
   });
