@@ -34,7 +34,7 @@ class DigestEmailParser {
     return list;
   }
 
-  List<Link> _getLinks(MimeMessage m){
+  List<Link> _getLinks(MimeMessage m) {
     List<Link> list = [];
     RegExp linkExp = RegExp(r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
     String text = m.decodeTextPlainPart() ?? ""; //get body text of email
@@ -77,8 +77,7 @@ class DigestEmailParser {
           await client.login(_userName, _password);
           await client.selectInbox();
           //Search for sequence id of the Email
-          String searchCriteria = 'FROM USPSInformeddelivery@email.informeddelivery.usps.com ON ${_formatTargetDateForSearch(
-              targetDate)} SUBJECT "Your Daily Digest"';
+          String searchCriteria = 'FROM USPSInformeddelivery@email.informeddelivery.usps.com ON ${_formatTargetDateForSearch(targetDate)} SUBJECT "Your Daily Digest"';
           List<ReturnOption> returnOptions = [];
           ReturnOption option = ReturnOption("all");
           returnOptions.add(option);
