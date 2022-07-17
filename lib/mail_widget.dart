@@ -181,12 +181,14 @@ class _MailWidgetState extends State<MailWidget> {
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
+      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
     }
   }
 
   void seekForward(int max) {
     if (attachmentIndex < max - 1) {
       attachmentIndex = attachmentIndex + 1;
+      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
     }
   }
 

@@ -50,7 +50,7 @@ class DigestEmailParser {
           await saveImageFile(
               base64Decode(attachment.attachmentNoFormatting),
               "mailpiece" + x.toString() + ".jpg");
-          attachment.detailedInformation = await processImage(imagePath);
+          attachment.detailedInformation = await processImage(filePath);
           list.add(attachment);
         }
     }
@@ -219,7 +219,7 @@ class DigestEmailParser {
           await ImageGallerySaver.saveFile(saveFile.path,
               isReturnPathOfIOS: true);
         }
-        File saveFile2 = File(directory.path + "/$fileName");
+        filePath = saveFile.path;
         print("Directory" + directory.listSync().toString());
         return true;
       }
