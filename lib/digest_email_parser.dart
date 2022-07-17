@@ -8,9 +8,6 @@ class DigestEmailParser {
 
   String _userName = ''; // Add your credentials
   String _password = ''; // Add your credentials
-  String _imapServerHost = 'imap.gmail.com';
-  int _imapServerPort = 993;
-  bool _isImapServerSecure = true;
   DateTime? _targetDate;
 
   Future<Digest> createDigest(String userName, String password, [DateTime? targetDate]) async {
@@ -68,30 +65,42 @@ class DigestEmailParser {
     final client = ImapClient(isLogEnabled: true);
     try {
       DateTime targetDate = _targetDate ?? DateTime.now();
-      await client.connectToServer(_imapServerHost, _imapServerPort,
-          isSecure: _isImapServerSecure);
-      await client.login(_userName, _password);
-      await client.selectInbox();
-      //Search for sequence id of the Email
-      String searchCriteria = 'FROM USPSInformeddelivery@email.informeddelivery.usps.com ON ${_formatTargetDateForSearch(targetDate)} SUBJECT "Your Daily Digest"';
-      List<ReturnOption> returnOptions = [];
-      ReturnOption option = ReturnOption("all");
-      returnOptions.add(option);
-      final searchResult = await client.searchMessages(searchCriteria: searchCriteria, returnOptions: returnOptions);
-      //extract sequence id
-      int? seqID;
-      final matchingSequence = searchResult.matchingSequence;
-      if(matchingSequence != null ) {
-        seqID = matchingSequence.isNotEmpty ? matchingSequence.elementAt(0) : null; // this gets the sequence id of the desired email
-      }
-      if(seqID != null) {
-        //Fetch Email Results
-        final fetchedMessage = await client.fetchMessage(seqID, 'BODY.PEEK[]');
-        return fetchedMessage.messages.first;
-      }
-
-      return MimeMessage();
-    } catch (e) {
+      //Retrieve the imap server config
+      var config = await Discover.discover(_userName, isLogEnabled: false);
+      if (config == null) {
+        return MimeMessage();
+      } else {
+          var imapServerConfig = config.preferredIncomingImapServer;
+          await client.connectToServer(
+              imapServerConfig!.hostname as String, imapServerConfig.port as int,
+              isSecure: imapServerConfig.isSecureSocket);
+          await client.login(_userName, _password);
+          await client.selectInbox();
+          //Search for sequence id of the Email
+          String searchCriteria = 'FROM USPSInformeddelivery@email.informeddelivery.usps.com ON ${_formatTargetDateForSearch(
+              targetDate)} SUBJECT "Your Daily Digest"';
+          List<ReturnOption> returnOptions = [];
+          ReturnOption option = ReturnOption("all");
+          returnOptions.add(option);
+          final searchResult = await client.searchMessages(
+              searchCriteria: searchCriteria, returnOptions: returnOptions);
+          //extract sequence id
+          int? seqID;
+          final matchingSequence = searchResult.matchingSequence;
+          if (matchingSequence != null) {
+            seqID = matchingSequence.isNotEmpty
+                ? matchingSequence.elementAt(0)
+                : null; // this gets the sequence id of the desired email
+          }
+          if (seqID != null) {
+            //Fetch Email Results
+            final fetchedMessage = await client.fetchMessage(
+                seqID, 'BODY.PEEK[]');
+            return fetchedMessage.messages.first;
+          }
+          return MimeMessage();
+        }
+      } catch (e) {
       rethrow;
     }
     finally {
