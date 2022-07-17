@@ -38,8 +38,8 @@ class BarcodeScannerApi {
     inputImage = InputImage.fromFile(img);
   }
 
-  Future<List<codeObject>> processImage([InputImage? img]) async {
-    List<codeObject> codes = [];
+  Future<List<CodeObject>> processImage([InputImage? img]) async {
+    List<CodeObject> codes = [];
 
     if (_isBusy) return codes;
 
@@ -80,7 +80,7 @@ class BarcodeScannerApi {
               break;
           }
           //print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
-          codes.add(codeObject(type: type, info: barcode.rawValue as String));
+          codes.add(CodeObject(type: type, info: barcode.rawValue as String));
         }
       }
       _isBusy = false;

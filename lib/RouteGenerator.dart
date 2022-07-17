@@ -11,13 +11,13 @@ class RouteGenerator {
     print('setting.name:  ${settings.name}');
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => MainWidget());
+        return MaterialPageRoute(builder: (_) => const MainWidget());
       case '/settings':
-        return MaterialPageRoute(builder: (_) => SettingsWidget());
+        return MaterialPageRoute(builder: (_) => const SettingsWidget());
       case '/digest_mail':
-        return MaterialPageRoute(builder: (_) => MailWidget());
+        return MaterialPageRoute(builder: (_) => const MailWidget());
       case '/sign_in':
-        return MaterialPageRoute(builder: (_) => SignInWidget());
+        return MaterialPageRoute(builder: (_) => const SignInWidget());
       case '/other_mail':
         return MaterialPageRoute(builder: (_) => OtherMailWidget());
       case '/backend_testing':
