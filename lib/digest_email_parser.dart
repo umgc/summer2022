@@ -1,14 +1,30 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
 import 'package:googleapis/cloudsearch/v1.dart';
 import 'package:intl/intl.dart';
+import 'package:summer2022/models/MailResponse.dart';
 import 'api.dart';
 import 'models/Digest.dart';
+import 'models/Code.dart';
+import 'models/Logo.dart';
+import 'barcode_scanner.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:summer2022/usps_address_verification.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class DigestEmailParser {
 
   String _userName = ''; // Add your credentials
   String _password = ''; // Add your credentials
   DateTime? _targetDate;
+  CloudVisionApi vision = CloudVisionApi();
+  BarcodeScannerApi? _barcodeScannerApi;
+  String filePath = '';
+  String imagePath =
+      '/storage/emulated/0/Android/data/com.example.summer2022/files';
 
   Future<Digest> createDigest(String userName, String password, [DateTime? targetDate]) async {
     this._userName = userName;
@@ -22,15 +38,22 @@ class DigestEmailParser {
 
   Future<List<Attachment>> _getAttachments(MimeMessage m) async {
     List<Attachment> list = [];
-    m.mimeData?.parts?.forEach((item) async {
-      if(item.contentType?.value.toString().contains("image") ?? false) {
-        var attachment = Attachment();
-        attachment.attachment = item.decodeMessageData().toString(); //These are base64 encoded images with formatting
-        attachment.attachmentNoFormatting = attachment.attachment.toString().replaceAll("\r\n", ""); //These are base64 encoded images with formatting
-        //attachment.detailedInformation = await CloudVisionApi().search(attachment.attachment); //TODO get CloudVisionAPI info
-        list.add(attachment);
-      }
-    });
+    await deleteImageFiles();
+    for(int x = 0; x < m.mimeData!.parts!.length; x++) {
+        if(m.mimeData!.parts!.elementAt(x).contentType?.value.toString().contains("image") ?? false) {
+          var attachment = Attachment();
+          attachment.attachment = m.mimeData!.parts!.elementAt(x).decodeMessageData()
+              .toString(); //These are base64 encoded images with formatting
+          attachment.attachmentNoFormatting =
+              attachment.attachment.toString().replaceAll(
+                  "\r\n", ""); //These are base64 encoded images with formatting
+          await saveImageFile(
+              base64Decode(attachment.attachmentNoFormatting),
+              "mailpiece" + x.toString() + ".jpg");
+          attachment.detailedInformation = await processImage(imagePath);
+          list.add(attachment);
+        }
+    }
     return list;
   }
 
@@ -116,5 +139,132 @@ class DigestEmailParser {
     else{
       return "";
     }
+  }
+
+
+
+  deleteImageFiles() async {
+    Directory? directory = await getExternalStorageDirectory();
+    Directory? directory2 = await getTemporaryDirectory();
+    var files = directory?.listSync(recursive: false, followLinks: false);
+    var files2 = directory2.listSync(recursive: false, followLinks: false);
+    for (int x = 0; x < files!.length; x++) {
+      print("Delete in Extern: " + files[x].path);
+      files[x].delete();
+    }
+    for (int x = 0; x < files2.length; x++) {
+      print("Delete: " + files2[x].path);
+      files[x].delete();
+    }
+  }
+
+  void _processImageForLogo(String imagePath) async {
+    print("Inside processImageForLogo\n");
+    var image = File(imagePath);
+    var buffer = image.readAsBytesSync();
+    var a = base64.encode(buffer);
+    List<LogoObject> logos = await vision.searchImageForLogo(a);
+    var output = '';
+    for (var logo in logos) {
+      output += logo.toJson().toString() + "\n";
+    }
+    print(output);
+    print("Exit ProcessImageForLogo");
+  }
+
+  void _processBarcode() async {
+    print("Inside process barcode\n");
+    _barcodeScannerApi = BarcodeScannerApi();
+    var fLoc = filePath;
+    print(fLoc);
+    File? img = await _barcodeScannerApi?.getImageFileFromAssets(filePath);
+
+    _barcodeScannerApi!.setImageFromFile(img!);
+
+    List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    var output = '';
+    for (var code in codes) {
+      output += code.toJson().toString();
+    }
+    print(output);
+    print("Exit ProcessBarcode");
+  }
+
+  Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
+    Directory? directory;
+    try {
+      if (Platform.isAndroid) {
+        if (await _requestPermission(Permission.storage)) {
+          directory = await getExternalStorageDirectory();
+          imagePath = directory!.path.toString();
+          print(directory.path);
+        } else {
+          if (await _requestPermission(Permission.photos)) {
+            directory = await getTemporaryDirectory();
+            imagePath = directory.path;
+            print(directory.path);
+          } else {
+            return false;
+          }
+        }
+      }
+      if (!await directory!.exists()) {
+        await directory.create(recursive: true);
+      }
+      if (await directory.exists()) {
+        File saveFile = File(directory.path + "/$fileName");
+        saveFile.writeAsBytesSync(imageBytes);
+
+        if (Platform.isIOS) {
+          await ImageGallerySaver.saveFile(saveFile.path,
+              isReturnPathOfIOS: true);
+        }
+        File saveFile2 = File(directory.path + "/$fileName");
+        print("Directory" + directory.listSync().toString());
+        return true;
+      }
+    } catch (e) {
+      print("Something happened in saveImageFile method");
+    }
+    return false;
+  }
+
+  Future<bool> _requestPermission(Permission permission) async {
+    if (await permission.isGranted) {
+      return true;
+    } else {
+      var result = await permission.request();
+      if (result == PermissionStatus.granted) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  Future<MailResponse> processImage(String imagePath) async {
+    CloudVisionApi vision = CloudVisionApi();
+    print("processImage: " + imagePath);
+    var image = File(imagePath);
+    var imageByte;
+    imageByte = image.readAsBytesSync();
+
+    var a = base64.encode(imageByte);
+    print(a);
+    var objMr = await vision.search(a);
+    for (var address in objMr.addresses) {
+      address.validated =
+      await UspsAddressVerification().verifyAddressString(address.address);
+    }
+    _barcodeScannerApi = BarcodeScannerApi();
+    File img = File(filePath);
+    _barcodeScannerApi!.setImageFromFile(img);
+
+    List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    for (final code in codes) {
+      objMr.codes.add(code);
+    }
+    print(objMr.toJson());
+    return objMr;
   }
 }
