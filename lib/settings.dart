@@ -16,7 +16,7 @@ class SettingWidgetState extends State<SettingsWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             Row(
@@ -330,6 +330,45 @@ class SettingWidgetState extends State<SettingsWidget> {
                         Container(
                           padding: const EdgeInsets.only(right: 10),
                           child: const Text("Next Command"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: const Text(
+                            "General",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: const Text("Command Tutorial: "),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(right: 50),
+                          child: Switch(
+                            value: cfg.getValue("tutorial"),
+                            activeTrackColor: Colors.lightGreenAccent,
+                            activeColor: Colors.green,
+                            onChanged: (bool value) {
+                              setState(() {
+                                cfg.updateValue("tutorial", value);
+                              });
+                            },
+                          ),
                         ),
                       ],
                     ),
