@@ -93,7 +93,6 @@ void main() async {
 
       BarcodeScannerApi scanner = BarcodeScannerApi();
       File f = await scanner.getImageFileFromAssets('assets/mail.test.02.png');
-      print(f.path);
       InputImage img = InputImage.fromFile(f);
       List<codeObject> codes = await scanner.processImage(img);
       expect(codes.length, 0);
@@ -127,7 +126,6 @@ void main() async {
 
       BarcodeScannerApi scanner = BarcodeScannerApi();
       File f = await scanner.getImageFileFromAssets('assets/mail.test.04.png');
-      print(f.path);
       InputImage img = InputImage.fromFile(f);
       List<codeObject> codes = await scanner.processImage(img);
       expect(codes.length, 1);
