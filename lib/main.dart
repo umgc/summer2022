@@ -23,11 +23,12 @@ void main() async {
         username, password)); //Replace with config read for credentials
   }
 
-  runApp(GlobalLoaderOverlay( child:  MaterialApp(
-      title: "USPS Informed Delivery Visual Assistance App",
-      initialRoute: email_authenticated == true ? "/main" : "/sign_in",
-      onGenerateRoute: RouteGenerator.generateRoute,
-      home:buildScreen(email_authenticated))));
+  runApp(GlobalLoaderOverlay(
+      child: MaterialApp(
+          title: "USPS Informed Delivery Visual Assistance App",
+          initialRoute: email_authenticated == true ? "/main" : "/sign_in",
+          onGenerateRoute: RouteGenerator.generateRoute,
+          home: buildScreen(email_authenticated))));
 }
 
 Widget buildScreen(bool email_authenticated) {
