@@ -98,5 +98,39 @@ void main() async {
       List<codeObject> codes = await scanner.processImage(img);
       expect(codes.length, 0);
     });
+    test('Scanner must recognize barcode', () async {
+      const MethodChannel('google_mlkit_barcode_scanning')
+          .setMockMethodCallHandler((MethodCall methodCall) async {
+        if (methodCall.method == 'vision#startBarcodeScanner') {
+          return [
+            {
+              "type": 7,
+              "format": 3,
+              "displayValue": "ES303",
+              "rawValue": "ES303",
+              "rawBytes": Uint8List.fromList([]),
+              "boundingBoxLeft": 394.0,
+              "boundingBoxTop": 619.0,
+              "boundingBoxRight": 505.0,
+              "boundingBoxBottom": 730.0,
+              "cornerPoints": [
+                {"x": 394, "y": 619},
+                {"x": 505, "y": 619},
+                {"x": 504, "y": 727},
+                {"x": 395, "y": 730}
+              ],
+            }
+          ];
+        }
+        return null;
+      });
+
+      BarcodeScannerApi scanner = BarcodeScannerApi();
+      File f = await scanner.getImageFileFromAssets('assets/mail.test.04.png');
+      print(f.path);
+      InputImage img = InputImage.fromFile(f);
+      List<codeObject> codes = await scanner.processImage(img);
+      expect(codes.length, 1);
+    });
   });
 }

@@ -79,6 +79,7 @@ flutter:
     - assets/mail.test.01.jpg
     - assets/mail.test.02.png
     - assets/mail.test.03.png
+    - assets/mail.test.04.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
