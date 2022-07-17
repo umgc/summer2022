@@ -6,6 +6,7 @@ import './other_mail.dart';
 import './settings.dart';
 import './sign_in.dart';
 import './backend_testing.dart';
+import 'models/Arguments.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -16,7 +17,7 @@ class RouteGenerator {
       case '/settings':
         return MaterialPageRoute(builder: (_) => SettingsWidget());
       case '/digest_mail':
-        return MaterialPageRoute(builder: (_) => MailWidget());
+        return MaterialPageRoute(builder: (_) => MailWidget(digest: (settings.arguments as MailWidgetArguments).digest));
       case '/sign_in':
         return MaterialPageRoute(builder: (_) => SignInWidget());
       case '/other_mail':

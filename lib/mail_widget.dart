@@ -1,18 +1,32 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'models/Arguments.dart';
+import 'models/Digest.dart';
+
 class MailWidget extends StatefulWidget {
+  final Digest digest;
+
+  const MailWidget({
+    required this.digest
+  });
+
   @override
-  _MailWidgetState createState() => _MailWidgetState();
+  State<MailWidget> createState() {
+    return _MailWidgetState();
+  }
 }
 
 class _MailWidgetState extends State<MailWidget> {
+  int attachmentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     // Figma Flutter Generator MailWidget - FRAME
-
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -35,7 +49,7 @@ class _MailWidgetState extends State<MailWidget> {
                       child: Container(
                         child: Text(
                           style: TextStyle(fontSize: 20),
-                          "Mail",
+                          "USPS Informed Delivery Daily Digest",
                         ),
                       ),
                     ),
@@ -53,8 +67,8 @@ class _MailWidgetState extends State<MailWidget> {
                 Expanded(
                   child: Center(
                     child: Container(
-                        child: Image.asset(
-                            'assets/Image1.png')), //This will eventually be populated with the downloaded image from the digest
+                        //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
+                        child: widget.digest.attachments.isNotEmpty ? Image.memory(base64Decode(widget.digest.attachments[attachmentIndex].attachmentNoFormatting)) : Image.asset('assets/NoAttachments.png'))
                   ),
                 ),
               ],
@@ -63,9 +77,9 @@ class _MailWidgetState extends State<MailWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Center(
+                  Expanded(
                     //padding: EdgeInsets.only(left: 20),
-                    child: Expanded(
+                    child: Center(
                       child: OutlinedButton(
                         onPressed: () => showLinkDialog(),
                         child: const Text(
@@ -82,9 +96,9 @@ class _MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
-                  Center(
+                  Expanded(
                     //: EdgeInsets.only(right: 10),
-                    child: Expanded(
+                    child: Center(
                       child: OutlinedButton(
                         onPressed: () {},
                         child: const Text(
@@ -109,9 +123,10 @@ class _MailWidgetState extends State<MailWidget> {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Icon(Icons.skip_previous, size: 50),
-                    Text("1/6"),
-                    Icon(Icons.skip_next, size: 50)
+                    ElevatedButton(onPressed: () { setState(() { seekBack(); }); }, child: Icon(Icons.skip_previous, size: 50)),
+                    Text(widget.digest.attachments.isNotEmpty ? (attachmentIndex + 1).toString() + "/" + widget.digest.attachments.length.toString() : "0/0"),
+                    ElevatedButton(onPressed: () { setState(() { seekForward(widget.digest.attachments.length); });  }, child: Icon(Icons.skip_next, size: 50))
+
                   ]),
             )
           ],
@@ -120,6 +135,18 @@ class _MailWidgetState extends State<MailWidget> {
     );
   }
 
+  void seekBack() {
+    if(attachmentIndex != 0) {
+      attachmentIndex = attachmentIndex - 1;
+    }
+  }
+
+  void seekForward(int max) {
+    if(attachmentIndex < max - 1) {
+      attachmentIndex = attachmentIndex + 1;
+    }
+  }
+  
   void showLinkDialog() {
     showDialog(
       context: context,
@@ -131,12 +158,12 @@ class _MailWidgetState extends State<MailWidget> {
             width: 300.0, // Change as per your requirement
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: getLinks().length,
+              itemCount: widget.digest.links.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   title: ElevatedButton(
-                    child: Text(getLinks()[index]),
-                    onPressed: () => openLink(getLinks()[index]),
+                    child: Text(widget.digest.links.isNotEmpty ? widget.digest.links[index].info == "" ? widget.digest.links[index].link : widget.digest.links[index].info : ""),
+                    onPressed: () => openLink(widget.digest.links.isNotEmpty ? widget.digest.links[index].link : ""),
                   ),
                 );
               },
@@ -148,16 +175,9 @@ class _MailWidgetState extends State<MailWidget> {
   }
 
   void openLink(String link) async {
-    Uri uri = Uri.parse(link);
-    if (!await launchUrl(uri)) throw 'Could not launch $uri';
-  }
-
-  List<String> getLinks() {
-    List<String> links = [];
-    links.add("https://google.com");
-    links.add("https://facebook.com");
-    links.add("https://umgc.edu");
-
-    return links;
+    if(link != "") {
+        Uri uri = Uri.parse(link);
+        if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) throw 'Could not launch $uri';
+      }
   }
 }

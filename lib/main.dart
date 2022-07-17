@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import './Client.dart';
 import './keychain.dart';
 import './settings.dart';
@@ -22,11 +23,11 @@ void main() async {
         username, password)); //Replace with config read for credentials
   }
 
-  runApp(MaterialApp(
-      title: "USPS Infromed Delivery Visual Assistance App",
+  runApp(GlobalLoaderOverlay( child:  MaterialApp(
+      title: "USPS Informed Delivery Visual Assistance App",
       initialRoute: email_authenticated == true ? "/main" : "/sign_in",
       onGenerateRoute: RouteGenerator.generateRoute,
-      home: buildScreen(email_authenticated)));
+      home:buildScreen(email_authenticated))));
 }
 
 Widget buildScreen(bool email_authenticated) {

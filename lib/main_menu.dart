@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:summer2022/digest_email_parser.dart';
 import './Client.dart';
 import './keychain.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import './backend_testing.dart';
+import 'models/Arguments.dart';
+import 'models/Digest.dart';
 
 class MainWidget extends StatefulWidget {
   MainWidgetState createState() => MainWidgetState();
@@ -81,11 +85,18 @@ class MainWidgetState extends State<MainWidget> {
                 children: [
                   Container(
                     child: OutlinedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (mail_type == "Email") {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
-                          Navigator.pushNamed(context, '/digest_mail');
+                          context.loaderOverlay.show();
+                          await getDigest();
+                          if(!digest.isNull()) {
+                            Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+                          } else {
+                            showNoDigestDialog();
+                          }
+                          context.loaderOverlay.hide();
                         }
                       },
                       child: const Text("Latest",
@@ -100,11 +111,18 @@ class MainWidgetState extends State<MainWidget> {
                   ),
                   Container(
                     child: OutlinedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (mail_type == "Email") {
                           Navigator.pushNamed(context, '/other_mail');
                         } else {
-                          Navigator.pushNamed(context, '/digest_mail');
+                          context.loaderOverlay.show();
+                          await getDigest();
+                          if(!digest.isNull()) {
+                            Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+                          } else {
+                            showNoDigestDialog();
+                          }
+                          context.loaderOverlay.hide();
                         }
                       },
                       child: const Text("Unread",
@@ -216,13 +234,43 @@ class MainWidgetState extends State<MainWidget> {
       if (mail_type == "Email") {
         Navigator.pushNamed(context, '/other_mail');
       } else {
-        Navigator.pushNamed(context, '/digest_mail');
+        context.loaderOverlay.show();
+        await getDigest(picked);
+        if(!digest.isNull()) {
+          Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+        } else {
+          showNoDigestDialog();
+        }
+        context.loaderOverlay.hide();
       }
 
       setState(() {
         selected_date = picked;
       });
     }
+  }
+
+  void showNoDigestDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center( child : Text(
+              "No Digest Available"
+            ),
+          ),
+          content: Container(
+            height: 100.0, // Change as per your requirement
+            width: 100.0, // Change as per your requirement
+            child: Center( child : Text(
+                "There is no Digest available for the selected date: ${selected_date.month}/${selected_date.day}/${selected_date.year}",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> selectOtherMailDate(BuildContext context) async {
@@ -237,5 +285,11 @@ class MainWidgetState extends State<MainWidget> {
         selected_date = picked;
       });
     }
+  }
+
+  late Digest digest;
+
+  Future<void> getDigest([DateTime? pickedDate]) async {
+    await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword(), pickedDate ?? selected_date).then((value) => digest = value);
   }
 }
