@@ -121,7 +121,60 @@ class MainWidgetState extends State<MainWidget> {
                     ),
                   ),
                 ),
+                const Text("Mail Type:"),
+                DropdownButton(
+                    value: mailType,
+                    items: const [
+                      DropdownMenuItem<String>(
+                        value: "Email",
+                        child: Text("Email"),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: "Digest",
+                        child: Text("Digest"),
+                      ),
+                    ],
+                    onChanged: (String? valueSelected) {
+                      setState(() {
+                        mailType = valueSelected!;
+                      });
+                    }),
+              ],
+            ),
+            Center(
+              child: Directionality(
+                textDirection: TextDirection.rtl,
+                child: OutlinedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.camera_alt_outlined),
+                  label: const Text("Scan Mail"),
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                    shadowColor: Colors.grey,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                  ),
+                ),
               ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/backend_testing');
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => const BackendPage(
+                //               title: "USPS Backend Testing",
+                //             )));
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey,
+                shadowColor: Colors.grey,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5))),
+              ),
+              child: const Text("Backend Testing",
+                  style: TextStyle(color: Colors.black)),
             ),
             Container(
               child: Column(
@@ -199,8 +252,6 @@ class MainWidgetState extends State<MainWidget> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/settings');
                   },
-                  child: const Text("Settings",
-                      style: TextStyle(color: Colors.black)),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.grey,
                     shadowColor: Colors.grey,
@@ -248,6 +299,7 @@ class MainWidgetState extends State<MainWidget> {
           showNoEmailsDialog();
         }
         context.loaderOverlay.hide();
+
       } else {
         context.loaderOverlay.show();
         await getDigest(picked);

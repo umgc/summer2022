@@ -4,6 +4,9 @@ import './Keychain.dart';
 import './Client.dart';
 
 class SignInWidget extends StatefulWidget {
+  const SignInWidget({Key? key}) : super(key: key);
+
+  @override
   SignInWidgetState createState() => SignInWidgetState();
 }
 

@@ -16,11 +16,11 @@ class RouteGenerator {
       case '/main':
         return MaterialPageRoute(builder: (_) => MainWidget());
       case '/settings':
-        return MaterialPageRoute(builder: (_) => SettingsWidget());
+        return MaterialPageRoute(builder: (_) => const SettingsWidget());
       case '/digest_mail':
         return MaterialPageRoute(builder: (_) => MailWidget(digest: (settings.arguments as MailWidgetArguments).digest));
       case '/sign_in':
-        return MaterialPageRoute(builder: (_) => SignInWidget());
+        return MaterialPageRoute(builder: (_) => const SignInWidget());
       case '/other_mail':
         return MaterialPageRoute(builder: (_) => OtherMailWidget(emails: (settings.arguments as EmailWidgetArguments).emails));
       case '/backend_testing':

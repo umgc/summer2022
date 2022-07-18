@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -78,13 +79,13 @@ class _MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
-                  Icon(
-                    Icons.arrow_back,
-                    size: 50,
-                    color: Color.fromARGB(0, 255, 255, 1),
-                  ),
-                ],
-              ),
+                ),
+                const Icon(
+                  Icons.arrow_back,
+                  size: 50,
+                  color: Color.fromARGB(0, 255, 255, 1),
+                ),
+              ],
             ),
             Row(
               children: [
@@ -143,11 +144,11 @@ class _MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             Container(
-              padding: EdgeInsets.only(bottom: 60),
+              padding: const EdgeInsets.only(bottom: 60),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -197,8 +198,8 @@ class _MailWidgetState extends State<MailWidget> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Link Dialog"),
-          content: Container(
+          title: const Text("Link Dialog"),
+          content: SizedBox(
             height: 300.0, // Change as per your requirement
             width: 300.0, // Change as per your requirement
             child: ListView.builder(
