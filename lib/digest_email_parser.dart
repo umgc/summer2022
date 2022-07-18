@@ -31,8 +31,11 @@ class DigestEmailParser {
     this._password = password;
     this._targetDate = targetDate;
     Digest digest = Digest(await _getDigestEmail());
-    digest.attachments = await _getAttachments(digest.message);
-    digest.links = _getLinks(digest.message);
+    if(!digest.isNull()) {
+      digest.attachments = await _getAttachments(digest.message);
+      digest.links = _getLinks(digest.message);
+    }
+
     return digest;
   }
 
