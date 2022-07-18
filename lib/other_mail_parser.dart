@@ -63,6 +63,10 @@ class OtherMailParser {
       print('matchingSequence.every.length: ');
       print(matchingSequence?.every().length.toString());
 
+      final fetchedMessage = await client.fetchMessagesByCriteria();
+
+
+      /*
       List<Digest> emails = [];
       if (seqIdsIter != null)
       {
@@ -73,6 +77,8 @@ class OtherMailParser {
           //seqIdsIter.current
         }
       }
+      */
+       */
 
       return emails;
     } catch (e) {

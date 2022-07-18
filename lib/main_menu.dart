@@ -90,7 +90,7 @@ class MainWidgetState extends State<MainWidget> {
                       onPressed: () async {
                         if (mail_type == "Email") {
                           context.loaderOverlay.show();
-                          await getEmails();
+                          await getEmails(DateTime.now());
                           if(emails.isNotEmpty) {
                             Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
                           } else {
@@ -108,7 +108,7 @@ class MainWidgetState extends State<MainWidget> {
                           context.loaderOverlay.hide();
                         }
                       },
-                      child: const Text("Latest",
+                      child: const Text("Recent",
                           style: TextStyle(color: Colors.black)),
                       style: ElevatedButton.styleFrom(
                         primary: Colors.white,
@@ -123,7 +123,7 @@ class MainWidgetState extends State<MainWidget> {
                       onPressed: () async {
                         if (mail_type == "Email") {
                           context.loaderOverlay.show();
-                          await getEmails();
+                          await getEmails(DateTime.now());
                           if((emails.isNotEmpty)) {
                             Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
                           } else {
@@ -249,8 +249,8 @@ class MainWidgetState extends State<MainWidget> {
     if ((picked != null) && (picked != selected_date)) {
       if (mail_type == "Email") {
         context.loaderOverlay.show();
-        await getEmails();
-        if((emails.isNotEmpty)) {
+        await getEmails(picked);
+        if(emails.isNotEmpty) {
           Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
         } else {
           showNoEmailsDialog();
@@ -327,7 +327,7 @@ class MainWidgetState extends State<MainWidget> {
         lastDate: DateTime.now());
     if ((picked != null) && (picked != selected_date)) {
       context.loaderOverlay.show();
-      await getEmails();
+      await getEmails(DateTime.now());
       if((emails.isNotEmpty)) {
         Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
       } else {
