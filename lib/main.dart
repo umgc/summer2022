@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import './Client.dart';
 import './keychain.dart';
@@ -13,8 +14,9 @@ import 'mail_widget.dart';
 import 'other_mail.dart';
 
 void main() async {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // needed to access Keychain prior to main finishing
+  WidgetsFlutterBinding.ensureInitialized(); // needed to access Keychain prior to main finishing
+  GlobalConfiguration cfg = GlobalConfiguration();
+  await cfg.loadFromAsset("app_settings");
   var email_authenticated = false; // default false go to signin page
   String? username = await Keychain().getUsername();
   String? password = await Keychain().getPassword();

@@ -161,7 +161,7 @@ class _BackendPageState extends State<BackendPage> {
         await _barcodeScannerApi!.getImageFileFromAssets('assets/$fileName');
     _barcodeScannerApi!.setImageFromFile(img);
 
-    List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    List codes = await _barcodeScannerApi!.processImage();
     var output = '';
     for (var code in codes) {
       output += code.toJson().toString();
@@ -189,7 +189,7 @@ class _BackendPageState extends State<BackendPage> {
         await _barcodeScannerApi!.getImageFileFromAssets('assets/$fileName');
     _barcodeScannerApi!.setImageFromFile(img);
 
-    List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    List codes = await _barcodeScannerApi!.processImage();
     for (final code in codes) {
       objMr.codes.add(code);
     }

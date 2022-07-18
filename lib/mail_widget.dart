@@ -19,7 +19,6 @@ import 'models/Arguments.dart';
 import 'models/Code.dart';
 import 'models/Digest.dart';
 import 'models/Logo.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 
 class MailWidget extends StatefulWidget {
   final Digest digest;
@@ -50,6 +49,7 @@ class _MailWidgetState extends State<MailWidget> {
   @override
   Widget build(BuildContext context) {
     // Figma Flutter Generator MailWidget - FRAME
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -60,8 +60,8 @@ class _MailWidgetState extends State<MailWidget> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      // Navigator.pushNamed(context, '/main');
-                      Navigator.restorablePush(context, _buildRoute);
+                      Navigator.pushNamed(context, '/main');
+                      //Navigator.restorablePush(context, _buildRoute);
                     },
                     icon: Icon(
                       Icons.arrow_back,

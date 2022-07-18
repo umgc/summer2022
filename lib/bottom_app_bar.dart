@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 class BottomBar extends StatefulWidget {
+  const BottomBar({Key? key}) : super(key: key);
+
+  @override
   BottomBarState createState() => BottomBarState();
 }
 
 class BottomBarState extends State<BottomBar> {
-  bool mic_on = true;
-  bool speaker_on = true;
+  bool micOn = true;
+  bool speakerOn = true;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +18,7 @@ class BottomBarState extends State<BottomBar> {
         children: [
           IconButton(
             icon: Icon(
-              (speaker_on == true)
+              (speakerOn == true)
                   ? Icons.volume_up_outlined
                   : Icons.volume_off_rounded,
               size: 30,
@@ -23,28 +26,28 @@ class BottomBarState extends State<BottomBar> {
             onPressed: () {
               setState(
                 () {
-                  speaker_on = !speaker_on;
+                  speakerOn = !speakerOn;
                 },
               );
             },
           ),
-          Spacer(),
+          const Spacer(),
           IconButton(
             icon: Icon(
-              (mic_on == true) ? Icons.mic_none : Icons.mic_off,
+              (micOn == true) ? Icons.mic_none : Icons.mic_off,
               size: 30,
             ),
             onPressed: () {
               setState(
                 () {
-                  mic_on = !mic_on;
+                  micOn = !micOn;
                 },
               );
             },
           ),
-          Spacer(),
+          const Spacer(),
           IconButton(
-              icon: Icon(Icons.help_outline, size: 30),
+              icon: const Icon(Icons.help_outline, size: 30),
               onPressed: () {
                 print("Say commands out loud");
               }),

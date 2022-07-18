@@ -184,7 +184,7 @@ class DigestEmailParser {
 
     _barcodeScannerApi!.setImageFromFile(img!);
 
-    List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    List<CodeObject> codes = await _barcodeScannerApi!.processImage();
     var output = '';
     for (var code in codes) {
       output += code.toJson().toString();
@@ -263,7 +263,7 @@ class DigestEmailParser {
     File img = File(filePath);
     _barcodeScannerApi!.setImageFromFile(img);
 
-    List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    List<CodeObject> codes = await _barcodeScannerApi!.processImage();
     for (final code in codes) {
       objMr.codes.add(code);
     }
