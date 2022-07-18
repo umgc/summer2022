@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import './Client.dart';
-import './keychain.dart';
+import './Keychain.dart';
 import './settings.dart';
 import './main_menu.dart';
 import './sign_in.dart';
