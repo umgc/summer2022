@@ -99,6 +99,7 @@
 				97C146EF1CF9000F007C117D /* Products */,
 				46A89EB86C973E6B25EA98CB /* Pods */,
 				7932DB72C667D110DD0AD7B7 /* Frameworks */,
+
 			);
 			sourceTree = "<group>";
 		};
@@ -132,7 +133,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
+
 				4F69BC31B955245372DFB92C /* [CP] Check Pods Manifest.lock */,
+
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
@@ -490,7 +493,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.summer2022;
+
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
