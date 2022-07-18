@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:summer2022/command_tutorial.dart';
 import 'package:summer2022/digest_email_parser.dart';
 import 'package:summer2022/other_mail_parser.dart';
 import 'package:summer2022/usps_address_verification.dart';
@@ -16,6 +17,7 @@ import 'api.dart';
 import 'models/Arguments.dart';
 import 'models/EmailArguments.dart';
 import 'models/Digest.dart';
+import 'package:global_configuration/global_configuration.dart';
 
 class MainWidget extends StatefulWidget {
   const MainWidget({Key? key}) : super(key: key);
@@ -33,6 +35,15 @@ class MainWidgetState extends State<MainWidget> {
   Uint8List? _imageBytes;
   String? _imageName;
   final picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    if (GlobalConfiguration().getValue("tutorial") == true) {
+      CommandTutorial commandTutorial = CommandTutorial();
+      commandTutorial.runTutorial();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

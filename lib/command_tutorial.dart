@@ -18,7 +18,7 @@ class CommandTutorial {
   String unreadEmail = "To get emails you have no listened to yet, say email unread";
   String help = "To hear this voice command anytime, say help";
 
-  ReadDigestMail() {
+  CommandTutorial() {
     tts = TextToSpeech();  
   }
 
