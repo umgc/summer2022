@@ -16,9 +16,16 @@ class BarcodeScannerApi {
 
     //final file = File('${(await getTemporaryDirectory()).path}\\image.png');
     final file =
-        File('${(await getApplicationDocumentsDirectory()).path}\\image.png');
-    await file.writeAsBytes(byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+        File('${(await getApplicationDocumentsDirectory()).path}/image.png');
+
+    if (!file.path.contains('test')) {
+      try {
+        await file.writeAsBytes(byteData.buffer
+            .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+      } catch (e) {
+        rethrow;
+      }
+    }
 
     return file;
   }

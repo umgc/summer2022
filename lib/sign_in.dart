@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import './Keychain.dart';
+import './Client.dart';
 
 class SignInWidget extends StatefulWidget {
   const SignInWidget({Key? key}) : super(key: key);
@@ -9,116 +11,147 @@ class SignInWidget extends StatefulWidget {
 }
 
 class SignInWidgetState extends State<SignInWidget> {
+  final email_controller = TextEditingController();
+  final password_controller = TextEditingController();
+
+  @override
+  void dispose() {
+    email_controller.dispose();
+    password_controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/');
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 30,
-                  ),
-                ),
-                const Expanded(
-                  child: Center(
-                    child: Text(
-                      "Sign In",
-                      style: TextStyle(fontSize: 20),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Container(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Container(
+                          child: Text(
+                            style: TextStyle(fontSize: 20),
+                            "Sign In",
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    Icon(
+                      Icons.arrow_back,
+                      size: 50,
+                      color: Color.fromARGB(0, 255, 255, 1),
+                    ),
+                  ],
                 ),
-                const Icon(
-                  Icons.arrow_back,
-                  size: 50,
-                  color: Color.fromARGB(0, 255, 255, 1),
-                ),
-              ],
-            ),
-            Container(
-              padding: const EdgeInsets.only(top: 50),
-            ),
-            Container(
-              padding: const EdgeInsets.only(top: 150),
-              color: const Color.fromRGBO(228, 228, 228, 0.6),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 25, right: 25),
-                          child: const TextField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'E-Mail Address',
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(top: 50),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 25, right: 25),
-                          child: const TextField(
-                            obscureText: true,
-                            enableSuggestions: false,
-                            autocorrect: false,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Password',
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(top: 150),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 50, right: 50),
-                          child: OutlinedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.black,
-                              shadowColor: Colors.grey,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5))),
-                            ),
-                            child: const Text(
-                              "Login",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(bottom: 50),
-                  ),
-                ],
               ),
-            ),
-          ],
+              Container(
+                padding: EdgeInsets.only(top: 50),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 150),
+                color: Color.fromRGBO(228, 228, 228, 0.6),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          child: Expanded(
+                            child: Container(
+                              padding: EdgeInsets.only(left: 25, right: 25),
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'E-Mail Address',
+                                ),
+                                controller: email_controller,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 50),
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          child: Expanded(
+                            child: Container(
+                              padding: EdgeInsets.only(left: 25, right: 25),
+                              child: TextField(
+                                obscureText: true,
+                                enableSuggestions: false,
+                                autocorrect: false,
+                                controller: password_controller,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Password',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 150),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Expanded(
+                            child: Container(
+                              padding: EdgeInsets.only(left: 50, right: 50),
+                              child: OutlinedButton(
+                                onPressed: () async {
+                                  String email =
+                                      email_controller.text.toString();
+                                  String password =
+                                      password_controller.text.toString();
+                                  //If email validated through enough mail then switch to the main screen, if not, add error text to the to show on the screen
+                                  var loggedIn = await Client()
+                                      .getImapClient(email, password);
+                                  //Store the credentials into the the secure storage only if validated
+                                  if (loggedIn) {
+                                    Keychain().addCredentials(email, password);
+                                    Navigator.pushNamed(context, '/main');
+                                  } else {
+                                    //TODO:send back error message
+
+                                  }
+                                },
+                                child: const Text(
+                                  "Login",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.black,
+                                  shadowColor: Colors.grey,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5))),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(bottom: 50),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
