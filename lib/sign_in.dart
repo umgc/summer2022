@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import './Keychain.dart';
 import './Client.dart';
+import 'package:summer2022/speech_to_text.dart';
 
 class SignInWidget extends StatefulWidget {
   const SignInWidget({Key? key}) : super(key: key);
@@ -13,6 +14,13 @@ class SignInWidget extends StatefulWidget {
 class SignInWidgetState extends State<SignInWidget> {
   final email_controller = TextEditingController();
   final password_controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Speech stt = Speech("settings");
+    stt.recording();
+  }
 
   @override
   void dispose() {

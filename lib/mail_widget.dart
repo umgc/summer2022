@@ -20,6 +20,7 @@ import 'models/Arguments.dart';
 import 'models/Code.dart';
 import 'models/Digest.dart';
 import 'models/Logo.dart';
+import 'package:summer2022/speech_to_text.dart';
 
 class MailWidget extends StatefulWidget {
   final Digest digest;
@@ -39,6 +40,8 @@ class _MailWidgetState extends State<MailWidget> {
   initState() {
       print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
       super.initState();
+      Speech stt = Speech("mail");
+      stt.recording();
   }
 
   static Route _buildRoute(BuildContext context, Object? params) {

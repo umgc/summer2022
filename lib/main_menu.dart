@@ -36,6 +36,13 @@ class MainWidgetState extends State<MainWidget> {
   final picker = ImagePicker();
 
   @override
+  void initState() {
+    super.initState();
+    Speech stt = Speech("main");
+    stt.recording();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(

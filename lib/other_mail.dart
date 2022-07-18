@@ -4,6 +4,7 @@ import './main_menu.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'models/Arguments.dart';
 import 'models/Digest.dart';
+import 'package:summer2022/speech_to_text.dart';
 
 
 class OtherMailWidget extends StatefulWidget {
@@ -25,7 +26,10 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   @override
   void initState() {
     // index must be initialed before build or emails won't iterate
+    super.initState();
     index = widget.emails.length-1;
+    Speech stt = Speech("email");
+    stt.recording();
   }
 
   String removeLinks(Digest d){

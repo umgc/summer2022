@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:summer2022/speech_to_text.dart';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({Key? key}) : super(key: key);
@@ -13,6 +14,13 @@ GlobalConfiguration cfg = GlobalConfiguration();
 
 class SettingWidgetState extends State<SettingsWidget> {
   GlobalConfiguration cfg = GlobalConfiguration();
+
+  @override
+  void initState() {
+    super.initState();
+    Speech stt = Speech("settings");
+    stt.recording();
+  }
 
   @override
   Widget build(BuildContext context) {
