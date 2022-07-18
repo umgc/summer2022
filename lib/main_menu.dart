@@ -1,59 +1,22 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:summer2022/api.dart';
 import 'package:summer2022/digest_email_parser.dart';
+import 'package:summer2022/other_mail_parser.dart';
 import './Client.dart';
 import './keychain.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import './backend_testing.dart';
 import 'models/Arguments.dart';
+import 'models/EmailArguments.dart';
 import 'models/Digest.dart';
-import 'usps_address_verification.dart';
 
 class MainWidget extends StatefulWidget {
   MainWidgetState createState() => MainWidgetState();
 }
 
-CloudVisionApi? vision = CloudVisionApi();
-
 class MainWidgetState extends State<MainWidget> {
-  File? _image;
-  Uint8List? _imageBytes;
-  String? _imageName;
   DateTime selected_date = DateTime.now();
-  final picker = ImagePicker();
   String mail_type = "Email";
-
-  void _getImage() async {
-    final PickedFile = await picker.getImage(source: ImageSource.camera);
-    print(PickedFile!.path);
-    if (PickedFile != null) {
-      _image = File(PickedFile.path);
-
-      _imageBytes = _image!.readAsBytesSync();
-      String a = base64.encode(_imageBytes!);
-      var objMailResponse = await vision!.search(a);
-      for (var address in objMailResponse.addresses) {
-        address.validated = await UspsAddressVerification()
-            .verifyAddressString(address.address);
-      }
-      setState(() {
-        if (PickedFile != null) {
-          _image = File(PickedFile.path);
-          _imageBytes = _image!.readAsBytesSync();
-          _imageName = _image!.path.split('/').last;
-        } else {
-          print('No image selected.');
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +68,7 @@ class MainWidgetState extends State<MainWidget> {
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: OutlinedButton.icon(
-                    onPressed: _getImage,
+                    onPressed: () {},
                     icon: Icon(Icons.camera_alt_outlined),
                     label: const Text("Scan Mail"),
                     style: TextButton.styleFrom(
@@ -126,13 +89,19 @@ class MainWidgetState extends State<MainWidget> {
                     child: OutlinedButton(
                       onPressed: () async {
                         if (mail_type == "Email") {
-                          Navigator.pushNamed(context, '/other_mail');
+                          context.loaderOverlay.show();
+                          await getEmails();
+                          if(emails.isNotEmpty) {
+                            Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
+                          } else {
+                            showNoEmailsDialog();
+                          }
+                          context.loaderOverlay.hide();
                         } else {
                           context.loaderOverlay.show();
                           await getDigest();
-                          if (!digest.isNull()) {
-                            Navigator.pushNamed(context, '/digest_mail',
-                                arguments: MailWidgetArguments(digest));
+                          if(!digest.isNull()) {
+                            Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
                           } else {
                             showNoDigestDialog();
                           }
@@ -153,13 +122,19 @@ class MainWidgetState extends State<MainWidget> {
                     child: OutlinedButton(
                       onPressed: () async {
                         if (mail_type == "Email") {
-                          Navigator.pushNamed(context, '/other_mail');
+                          context.loaderOverlay.show();
+                          await getEmails();
+                          if((emails.isNotEmpty)) {
+                            Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
+                          } else {
+                            showNoEmailsDialog();
+                          }
+                          context.loaderOverlay.hide();
                         } else {
                           context.loaderOverlay.show();
                           await getDigest();
-                          if (!digest.isNull()) {
-                            Navigator.pushNamed(context, '/digest_mail',
-                                arguments: MailWidgetArguments(digest));
+                          if(!digest.isNull()) {
+                            Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
                           } else {
                             showNoDigestDialog();
                           }
@@ -273,13 +248,19 @@ class MainWidgetState extends State<MainWidget> {
         lastDate: DateTime.now());
     if ((picked != null) && (picked != selected_date)) {
       if (mail_type == "Email") {
-        Navigator.pushNamed(context, '/other_mail');
+        context.loaderOverlay.show();
+        await getEmails();
+        if((emails.isNotEmpty)) {
+          Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
+        } else {
+          showNoEmailsDialog();
+        }
+        context.loaderOverlay.hide();
       } else {
         context.loaderOverlay.show();
         await getDigest(picked);
-        if (!digest.isNull()) {
-          Navigator.pushNamed(context, '/digest_mail',
-              arguments: MailWidgetArguments(digest));
+        if(!digest.isNull()) {
+          Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
         } else {
           showNoDigestDialog();
         }
@@ -297,17 +278,40 @@ class MainWidgetState extends State<MainWidget> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Center(
-            child: Text("No Digest Available"),
+          title: Center( child : Text(
+              "No Digest Available"
+            ),
           ),
           content: Container(
             height: 100.0, // Change as per your requirement
             width: 100.0, // Change as per your requirement
-            child: Center(
-              child: Text(
+            child: Center( child : Text(
                 "There is no Digest available for the selected date: ${selected_date.month}/${selected_date.day}/${selected_date.year}",
                 style: TextStyle(color: Colors.black),
               ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showNoEmailsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center( child : Text(
+              "No Emails Available"
+          ),
+          ),
+          content: Container(
+            height: 100.0, // Change as per your requirement
+            width: 100.0, // Change as per your requirement
+            child: Center( child : Text(
+              "There are no emails available for the selected date: ${selected_date.month}/${selected_date.day}/${selected_date.year}",
+              style: TextStyle(color: Colors.black),
+            ),
             ),
           ),
         );
@@ -322,7 +326,14 @@ class MainWidgetState extends State<MainWidget> {
         firstDate: DateTime(1970),
         lastDate: DateTime.now());
     if ((picked != null) && (picked != selected_date)) {
-      Navigator.pushNamed(context, '/other_mail');
+      context.loaderOverlay.show();
+      await getEmails();
+      if((emails.isNotEmpty)) {
+        Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
+      } else {
+        showNoEmailsDialog();
+      }
+      context.loaderOverlay.hide();
       setState(() {
         selected_date = picked;
       });
@@ -330,11 +341,13 @@ class MainWidgetState extends State<MainWidget> {
   }
 
   late Digest digest;
+  late List<Digest> emails;
 
   Future<void> getDigest([DateTime? pickedDate]) async {
-    await DigestEmailParser()
-        .createDigest(await Keychain().getUsername(),
-            await Keychain().getPassword(), pickedDate ?? selected_date)
-        .then((value) => digest = value);
+    await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword(), pickedDate ?? selected_date).then((value) => digest = value);
+  }
+
+  Future<void> getEmails([DateTime? pickedDate]) async {
+    await OtherMailParser().createEmailList(await Keychain().getUsername(), await Keychain().getPassword(), pickedDate ?? selected_date).then((value) => emails = value);
   }
 }
