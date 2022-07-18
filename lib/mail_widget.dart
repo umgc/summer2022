@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:summer2022/main_menu.dart';
+import 'package:summer2022/read_info.dart';
 import 'package:summer2022/usps_address_verification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
@@ -34,10 +35,14 @@ class MailWidget extends StatefulWidget {
 
 class _MailWidgetState extends State<MailWidget> {
   int attachmentIndex = 0;
+  ReadDigestMail? reader;
 
   @override
   initState() {
-      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
+      if(widget.digest.attachments.isNotEmpty) {
+        reader = ReadDigestMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+        readMailPiece();
+      }
       super.initState();
   }
 
@@ -129,7 +134,7 @@ class _MailWidgetState extends State<MailWidget> {
                     //: EdgeInsets.only(right: 10),
                     child: Center(
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () { readMailPiece(); },
                         child: const Text(
                           "All Details",
                           style: TextStyle(color: Colors.black),
@@ -160,10 +165,7 @@ class _MailWidgetState extends State<MailWidget> {
                         },
                         child: Icon(Icons.skip_previous, size: 50)),
                     Text(widget.digest.attachments.isNotEmpty
-                        ? (attachmentIndex + 1).toString() +
-                            "/" +
-                            widget.digest.attachments.length.toString()
-                        : "0/0"),
+                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
                     ElevatedButton(
                         onPressed: () {
                           setState(() {
@@ -182,14 +184,16 @@ class _MailWidgetState extends State<MailWidget> {
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
-      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
+      reader = ReadDigestMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      readMailPiece();
     }
   }
 
   void seekForward(int max) {
     if (attachmentIndex < max - 1) {
       attachmentIndex = attachmentIndex + 1;
-      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
+      reader = ReadDigestMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      readMailPiece();
     }
   }
 
@@ -233,4 +237,22 @@ class _MailWidgetState extends State<MailWidget> {
         throw 'Could not launch $uri';
     }
   }
+
+  void readMailPiece() async {
+    if(reader != null) {
+      //read sender info
+      reader!.readDigestSenderName();
+      reader!.readDigestSenderAddress();
+      reader!.readDigestSenderAddressValidated();
+      //read recipient info
+      reader!.readDigestRecipientName();
+      reader!.readDigestRecipientAddress();
+      reader!.readDigestRecipientAddressValidated();
+      //read logos
+      reader!.readDigestLogos();
+      //read digest links
+      reader!.readDigestLinks();
+    }
+  }
+
 }
