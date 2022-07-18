@@ -79,13 +79,13 @@ class _MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
-                ),
-                const Icon(
+                Icon(
                   Icons.arrow_back,
                   size: 50,
                   color: Color.fromARGB(0, 255, 255, 1),
                 ),
-              ],
+                ],
+              ),
             ),
             Row(
               children: [
@@ -144,8 +144,8 @@ class _MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Container(
               padding: const EdgeInsets.only(bottom: 60),

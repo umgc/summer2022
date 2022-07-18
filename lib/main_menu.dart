@@ -121,40 +121,6 @@ class MainWidgetState extends State<MainWidget> {
                     ),
                   ),
                 ),
-                const Text("Mail Type:"),
-                DropdownButton(
-                    value: mailType,
-                    items: const [
-                      DropdownMenuItem<String>(
-                        value: "Email",
-                        child: Text("Email"),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: "Digest",
-                        child: Text("Digest"),
-                      ),
-                    ],
-                    onChanged: (String? valueSelected) {
-                      setState(() {
-                        mailType = valueSelected!;
-                      });
-                    }),
-              ],
-            ),
-            Center(
-              child: Directionality(
-                textDirection: TextDirection.rtl,
-                child: OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.camera_alt_outlined),
-                  label: const Text("Scan Mail"),
-                  style: TextButton.styleFrom(
-                    primary: Colors.black,
-                    shadowColor: Colors.grey,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                  ),
-                ),
               ),
             ),
             ElevatedButton(
@@ -248,7 +214,7 @@ class MainWidgetState extends State<MainWidget> {
               ),
               ),
               Center(
-                child: OutlinedButton(
+                child : OutlinedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/settings');
                   },
@@ -258,6 +224,10 @@ class MainWidgetState extends State<MainWidget> {
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                  ),
+                  child: const Text(
+                    "Settings",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
               Center(
