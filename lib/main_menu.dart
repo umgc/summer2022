@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import './backend_testing.dart';
+import './speech_to_text.dart';
 
 class MainWidget extends StatefulWidget {
   const MainWidget({Key? key}) : super(key: key);
@@ -14,58 +15,30 @@ class MainWidget extends StatefulWidget {
 class MainWidgetState extends State<MainWidget> {
   DateTime selectedDate = DateTime.now();
   String mailType = "Email";
-  
+  Speech speech = Speech();
+
+  @override
+  void initState() {
+    super.initState();
+    speech.speechToText();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: OutlinedButton.icon(
-                    onPressed: () => selectDate(context),
-                    icon: const Icon(Icons.calendar_month_outlined),
-                    label: Text("$mailType Date Selection"),
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                      shadowColor: Colors.grey,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                  ),
-                ),
-                const Text("Mail Type:"),
-                DropdownButton(
-                    value: mailType,
-                    items: const [
-                      DropdownMenuItem<String>(
-                        value: "Email",
-                        child: Text("Email"),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: "Digest",
-                        child: Text("Digest"),
-                      ),
-                    ],
-                    onChanged: (String? valueSelected) {
-                      setState(() {
-                        mailType = valueSelected!;
-                      });
-                    }),
-              ],
-            ),
-            Center(
-              child: Directionality(
+        body: SafeArea(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Directionality(
                 textDirection: TextDirection.rtl,
                 child: OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.camera_alt_outlined),
-                  label: const Text("Scan Mail"),
+                  onPressed: () => selectDate(context),
+                  icon: const Icon(Icons.calendar_month_outlined),
+                  label: Text("$mailType Date Selection"),
                   style: TextButton.styleFrom(
                     primary: Colors.black,
                     shadowColor: Colors.grey,
@@ -74,48 +47,81 @@ class MainWidgetState extends State<MainWidget> {
                   ),
                 ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/backend_testing');
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => const BackendPage(
-                //               title: "USPS Backend Testing",
-                //             )));
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.grey,
-                shadowColor: Colors.grey,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5))),
+              const Text("Mail Type:"),
+              DropdownButton(
+                  value: mailType,
+                  items: const [
+                    DropdownMenuItem<String>(
+                      value: "Email",
+                      child: Text("Email"),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: "Digest",
+                      child: Text("Digest"),
+                    ),
+                  ],
+                  onChanged: (String? valueSelected) {
+                    setState(() {
+                      mailType = valueSelected!;
+                    });
+                  }),
+            ],
+          ),
+          Center(
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: OutlinedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.camera_alt_outlined),
+                label: const Text("Scan Mail"),
+                style: TextButton.styleFrom(
+                  primary: Colors.black,
+                  shadowColor: Colors.grey,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                ),
               ),
-              child: const Text("Backend Testing",
-                  style: TextStyle(color: Colors.black)),
             ),
-            Container(
-              child: Column(
-              children: [
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/backend_testing');
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => const BackendPage(
+              //               title: "USPS Backend Testing",
+              //             )));
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.grey,
+              shadowColor: Colors.grey,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
+            ),
+            child: const Text("Backend Testing",
+                style: TextStyle(color: Colors.black)),
+          ),
+          Container(
+            child: Column(children: [
               Center(
-                child: Column(
-                  children: [
+                child: Column(children: [
                   OutlinedButton(
-                  onPressed: () {
-                    if (mailType == "Email") {
-                      Navigator.pushNamed(context, '/other_mail');
-                    } else {
-                      Navigator.pushNamed(context, '/digest_mail');
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
-                    shadowColor: Colors.grey,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                  ),
-                  child: const Text("Latest",
-                      style: TextStyle(color: Colors.black)),
+                    onPressed: () {
+                      if (mailType == "Email") {
+                        Navigator.pushNamed(context, '/other_mail');
+                      } else {
+                        Navigator.pushNamed(context, '/digest_mail');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      shadowColor: Colors.grey,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                    ),
+                    child: const Text("Latest",
+                        style: TextStyle(color: Colors.black)),
                   ),
                   OutlinedButton(
                     onPressed: () {
@@ -132,10 +138,9 @@ class MainWidgetState extends State<MainWidget> {
                           borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
                     child: const Text("Unread",
-                      style: TextStyle(color: Colors.black)),
+                        style: TextStyle(color: Colors.black)),
                   ),
-                ]
-              ),
+                ]),
               ),
               Center(
                 child: OutlinedButton(
@@ -147,7 +152,7 @@ class MainWidgetState extends State<MainWidget> {
                     shadowColor: Colors.grey,
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
-                 ),
+                  ),
                   child: const Text("Settings",
                       style: TextStyle(color: Colors.black)),
                 ),
@@ -169,10 +174,10 @@ class MainWidgetState extends State<MainWidget> {
                   ),
                 ),
               ),
-          ] // Children
+            ] // Children
+                ),
           ),
-      ),
-    ])));
+        ])));
   }
 
   Future<void> selectDate(BuildContext context) async {

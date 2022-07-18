@@ -12,15 +12,18 @@ import 'bottom_app_bar.dart';
 import 'mail_widget.dart';
 import 'other_mail.dart';
 
+final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GlobalConfiguration cfg = GlobalConfiguration();
   await cfg.loadFromAsset("app_settings");
   runApp(MaterialApp(
-      title: "USPS Infromed Delivery Visual Assistance App",
-      initialRoute: '/',
-      onGenerateRoute: RouteGenerator.generateRoute,
-      home: buildScreen()));
+    title: "USPS Infromed Delivery Visual Assistance App",
+    initialRoute: '/',
+    onGenerateRoute: RouteGenerator.generateRoute,
+    home: buildScreen(),
+    navigatorKey: navKey,
+  ));
 }
 
 Widget buildScreen() {
