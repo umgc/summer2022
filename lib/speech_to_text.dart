@@ -36,88 +36,137 @@ class Speech {
 // The commands that the user can utilise
   command(String s) {
     //General commands
-    if (s == 'stop' && mute == false) {
-    } else if (s == 'mute' && mute == false) {
-      mute = true;
-    } else if (s == 'unmute') {
-      mute = false;
-    } else if (s == 'speakers off' && mute == false) {
-    } else if (s == 'speakers on' && mute == false) {
-    } else if (s == 'back' && mute == false) {
-      navKey.currentState!.pushNamed('/');
+
+    if (s == 'unmute') {
+        mute = false;
+        return;
+    } 
+    if (mute == false){
+      switch (s) {
+        case 'mute':
+          mute = true;
+          break;
+        case 'stop' :
+          break;
+        case 'speakers off':
+          break;
+        case 'speakers on':
+          break;
+        case 'back':
+          navKey.currentState!.pushNamed('/');
+          break;
+        // Main menu commands
+        case "today's mail":
+          break;
+        case 'unread mail':
+          break;
+        case 'email date':
+          break;
+        case 'settings':
+          navKey.currentState!.pushNamed('/settings');
+          break;
+        case 'sign out':
+          navKey.currentState!.pushNamed('/sign_in');
+          break;
+        case 'switch email':
+          navKey.currentState!.pushNamed('/other_mail');
+          break;
+        case 'switch Digest':
+          navKey.currentState!.pushNamed('/digest_mail');
+          break;
+        case 'menu help':
+          break;
+        // mail page commands
+        case 'next':
+          break;
+        case 'previous':
+          break;
+        case 'next Digest':
+          break;
+        case 'previous Digest':
+          break;
+        case 'hyperlinks':
+          break;
+        case 'details':
+          break;
+        case 'mail help':
+          break;
+        // settings page commands
+        case 'send her on':
+          cfg.updateValue("sender", true);
+          break;
+        case 'send her off':
+          cfg.updateValue("sender", false);
+          break;
+        case 'recipient on':
+          cfg.updateValue("recipient", true);
+          break;
+        case 'recipient off':
+          cfg.updateValue("recipient", false);
+          break;
+        case 'logos on':
+          cfg.updateValue("logos", true);
+          break;
+        case 'logos off':
+          cfg.updateValue("logos", false);
+          break;
+        case 'hyperlinks on':
+          cfg.updateValue("links", true);
+          break;
+        case 'hyperlinks off':
+          cfg.updateValue("links", false);
+          break;
+        case 'address on':
+          cfg.updateValue("address", true);
+          break;
+        case 'address off':
+          cfg.updateValue("address", false);
+          break;
+        case 'email subject on':
+          cfg.updateValue("email_subject", true);
+          break;
+        case 'email subject off':
+          cfg.updateValue("email_subject", false);
+          break;
+        case 'email text on':
+          cfg.updateValue("email_text", true);
+          break;
+        case 'email text off':
+          cfg.updateValue("email_text", false);
+          break;
+        case 'email sender address on':
+          cfg.updateValue("email_sender", true);
+          break;
+        case 'email sender address off':
+          cfg.updateValue("email_sender", false);
+          break;
+        case 'email recipients on':
+          cfg.updateValue("email_recipients", true);
+          break;
+        case 'email recipients off':
+          cfg.updateValue("email_recipients", false);
+          break;
+        case 'autoplay on':
+          break;
+        case 'autoplay off':
+          break;
+        case 'repeat':
+          break;
+        case 'settings help':
+          break;
+        // Sign in page commands
+        case 'email address':
+          break;
+        case 'password':
+          break;
+        case 'login':
+          break;
+        case 'sign in help':
+          break;
+        // Wrong command
+        default:
+          break;
+      }
     }
-    // Main menu commands
-    else if (s == "today's mail" && mute == false) {
-    } else if (s == 'unread mail' && mute == false) {
-    } else if (s == 'email date' && mute == false) {
-    } else if (s == 'settings' && mute == false) {
-      navKey.currentState!.pushNamed('/settings');
-    } else if (s == 'sign out' && mute == false) {
-      navKey.currentState!.pushNamed('/sign_in');
-    } else if (s == 'switch email' && mute == false) {
-      navKey.currentState!.pushNamed('/other_mail');
-    } else if (s == 'switch Digest' && mute == false) {
-      navKey.currentState!.pushNamed('/digest_mail');
-    } else if (s == 'menu help' && mute == false) {
-    }
-    // mail page commands
-    else if (s == 'next' && mute == false) {
-    } else if (s == 'previous' && mute == false) {
-    } else if (s == 'next Digest' && mute == false) {
-    } else if (s == 'previous Digest' && mute == false) {
-    } else if (s == 'hyperlinks' && mute == false) {
-    } else if (s == 'details' && mute == false) {
-    } else if (s == 'mail help' && mute == false) {
-    }
-    // settings page commands
-    else if (s == 'send her on' && mute == false) {
-      cfg.updateValue("sender", true);
-    } else if (s == 'send her off' && mute == false) {
-      cfg.updateValue("sender", false);
-    } else if (s == 'recipient on' && mute == false) {
-      cfg.updateValue("recipient", true);
-    } else if (s == 'recipient off' && mute == false) {
-      cfg.updateValue("recipient", false);
-    } else if (s == 'logos on' && mute == false) {
-      cfg.updateValue("logos", true);
-    } else if (s == 'logos off' && mute == false) {
-      cfg.updateValue("logos", false);
-    } else if (s == 'hyperlinks on' && mute == false) {
-      cfg.updateValue("links", true);
-    } else if (s == 'hyperlinks off' && mute == false) {
-      cfg.updateValue("links", false);
-    } else if (s == 'address on' && mute == false) {
-      cfg.updateValue("address", true);
-    } else if (s == 'address off' && mute == false) {
-      cfg.updateValue("address", false);
-    } else if (s == 'email subject on' && mute == false) {
-      cfg.updateValue("email_subject", true);
-    } else if (s == 'email subject off' && mute == false) {
-      cfg.updateValue("email_subject", false);
-    } else if (s == 'email text on' && mute == false) {
-      cfg.updateValue("email_text", true);
-    } else if (s == 'email text off' && mute == false) {
-      cfg.updateValue("email_text", false);
-    } else if (s == 'email sender address on' && mute == false) {
-      cfg.updateValue("email_sender", true);
-    } else if (s == 'email sender address off' && mute == false) {
-      cfg.updateValue("email_sender", false);
-    } else if (s == 'email recipients on' && mute == false) {
-      cfg.updateValue("email_recipients", true);
-    } else if (s == 'email recipients off' && mute == false) {
-      cfg.updateValue("email_recipients", false);
-    } else if (s == 'autoplay on' && mute == false) {
-    } else if (s == 'autoplay off' && mute == false) {
-    } else if (s == 'repeat' && mute == false) {
-    } else if (s == 'settings help' && mute == false) {
-    }
-    // Sign in page commands
-    else if (s == 'email address' && mute == false) {
-    } else if (s == 'password' && mute == false) {
-    } else if (s == 'login' && mute == false) {
-    } else if (s == 'sign in help' && mute == false) {
-    }
-    // Wrong command
-    else {}
   }
 }
