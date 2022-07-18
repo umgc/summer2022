@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:global_configuration/global_configuration.dart';
 
-
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({Key? key}) : super(key: key);
 
   @override
   SettingWidgetState createState() => SettingWidgetState();
 }
+
+GlobalConfiguration cfg = GlobalConfiguration();
 
 class SettingWidgetState extends State<SettingsWidget> {
   GlobalConfiguration cfg = GlobalConfiguration();
@@ -55,12 +56,11 @@ class SettingWidgetState extends State<SettingsWidget> {
                   Row(
                     children: const [
                       Expanded(
-                        child: Text(
-                          "Envelope Details",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        )
-                      )
+                          child: Text(
+                        "Envelope Details",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ))
                     ],
                   ),
                   Container(

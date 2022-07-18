@@ -2,6 +2,7 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 import './main.dart';
+import './settings.dart';
 
 class Speech {
   SpeechToText speech = SpeechToText();
@@ -24,6 +25,7 @@ class Speech {
     speechEnabled = await speech.initialize();
     while (true) {
       input = recording();
+      print(input);
       command(input);
       input = '';
       words = '';
@@ -68,16 +70,42 @@ class Speech {
     } else if (s == 'mail help' && mute == false) {
     }
     // settings page commands
-    else if (s == 'sender on' && mute == false) {
-    } else if (s == 'sender off' && mute == false) {
+    else if (s == 'send her on' && mute == false) {
+      cfg.updateValue("sender", true);
+    } else if (s == 'send her off' && mute == false) {
+      cfg.updateValue("sender", false);
     } else if (s == 'recipient on' && mute == false) {
+      cfg.updateValue("recipient", true);
     } else if (s == 'recipient off' && mute == false) {
+      cfg.updateValue("recipient", false);
     } else if (s == 'logos on' && mute == false) {
+      cfg.updateValue("logos", true);
     } else if (s == 'logos off' && mute == false) {
+      cfg.updateValue("logos", false);
     } else if (s == 'hyperlinks on' && mute == false) {
+      cfg.updateValue("links", true);
     } else if (s == 'hyperlinks off' && mute == false) {
-    } else if (s == 'sender address on' && mute == false) {
-    } else if (s == 'sender address off' && mute == false) {
+      cfg.updateValue("links", false);
+    } else if (s == 'address on' && mute == false) {
+      cfg.updateValue("address", true);
+    } else if (s == 'address off' && mute == false) {
+      cfg.updateValue("address", false);
+    } else if (s == 'email subject on' && mute == false) {
+      cfg.updateValue("email_subject", true);
+    } else if (s == 'email subject off' && mute == false) {
+      cfg.updateValue("email_subject", false);
+    } else if (s == 'email text on' && mute == false) {
+      cfg.updateValue("email_text", true);
+    } else if (s == 'email text off' && mute == false) {
+      cfg.updateValue("email_text", false);
+    } else if (s == 'email sender address on' && mute == false) {
+      cfg.updateValue("email_sender", true);
+    } else if (s == 'email sender address off' && mute == false) {
+      cfg.updateValue("email_sender", false);
+    } else if (s == 'email recipients on' && mute == false) {
+      cfg.updateValue("email_recipients", true);
+    } else if (s == 'email recipients off' && mute == false) {
+      cfg.updateValue("email_recipients", false);
     } else if (s == 'autoplay on' && mute == false) {
     } else if (s == 'autoplay off' && mute == false) {
     } else if (s == 'repeat' && mute == false) {
