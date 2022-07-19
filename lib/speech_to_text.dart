@@ -51,132 +51,136 @@ class Speech {
           switch(s) {
             // mail page commands
             case 'next':
-              continue alsoGeneral;
+              break;
             case 'previous':
-              continue alsoGeneral;
+              break;
             case 'next Digest':
-              continue alsoGeneral;
+              break;
             case 'previous Digest':
-              continue alsoGeneral;
+              break;
             case 'hyperlinks':
-              continue alsoGeneral;
+              break;
             case 'details':
-              continue alsoGeneral;
+              break;
             default:
-                continue alsoGeneral;
+              continue alsoGeneral;
           }
+          break;
         case 'email':
           switch(s) {
             // mail page commands
             case 'next':
-              continue alsoGeneral;
+              break;
             case 'previous':
-              continue alsoGeneral;
+              break;
             case 'next Digest':
-              continue alsoGeneral;
+              break;
             case 'previous Digest':
-              continue alsoGeneral;
+              break;
             case 'hyperlinks':
-              continue alsoGeneral;
+              break;
             case 'details':
-              continue alsoGeneral;
+              break;
             default:
               continue alsoGeneral;
           }
+          break;
         // Main menu commands
         case 'main':
           switch (s) {
             case "today's mail":
-              continue alsoGeneral;
+              break;
             case 'unread mail':
-              continue alsoGeneral;
+              break;
             case 'email date':
-              continue alsoGeneral;
+              break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
-              continue alsoGeneral;
+              break;
             case 'sign out':
               navKey.currentState!.pushNamed('/sign_in');
-              continue alsoGeneral;
+              break;
             case 'switch email':
               navKey.currentState!.pushNamed('/other_mail');
-              continue alsoGeneral;
+              break;
             case 'switch Digest':
               navKey.currentState!.pushNamed('/digest_mail');
-              continue alsoGeneral;
+              break;
             case 'menu help':
-              continue alsoGeneral;
+              break;
             default:
               continue alsoGeneral;
           }
+          break;
         // settings page commands
         case 'settings':
           switch (s) {
             case 'send her on':
               cfg.updateValue("sender", true);
-              continue alsoGeneral;
+              break;
             case 'send her off':
               cfg.updateValue("sender", false);
-              continue alsoGeneral;
+              break;
             case 'recipient on':
               cfg.updateValue("recipient", true);
-              continue alsoGeneral;
+              break;
             case 'recipient off':
               cfg.updateValue("recipient", false);
-              continue alsoGeneral;
+              break;
             case 'logos on':
               cfg.updateValue("logos", true);
-              continue alsoGeneral;
+              break;
             case 'logos off':
               cfg.updateValue("logos", false);
-              continue alsoGeneral;
+              break;
             case 'hyperlinks on':
               cfg.updateValue("links", true);
-              continue alsoGeneral;
+              break;
             case 'hyperlinks off':
               cfg.updateValue("links", false);
-              continue alsoGeneral;
+              break;
             case 'address on':
               cfg.updateValue("address", true);
-              continue alsoGeneral;
+              break;
             case 'address off':
               cfg.updateValue("address", false);
-              continue alsoGeneral;
+              break;
             case 'email subject on':
               cfg.updateValue("email_subject", true);
-              continue alsoGeneral;
+              break;
             case 'email subject off':
               cfg.updateValue("email_subject", false);
-              continue alsoGeneral;
+              break;
             case 'email text on':
               cfg.updateValue("email_text", true);
-              continue alsoGeneral;
+              break;
             case 'email text off':
               cfg.updateValue("email_text", false);
-              continue alsoGeneral;
+              break;
             case 'email sender address on':
               cfg.updateValue("email_sender", true);
-              continue alsoGeneral;
+              break;
             case 'email sender address off':
               cfg.updateValue("email_sender", false);
-              continue alsoGeneral;
+              break;
             case 'email recipients on':
               cfg.updateValue("email_recipients", true);
-              continue alsoGeneral;
+              break;
             case 'email recipients off':
               cfg.updateValue("email_recipients", false);
-              continue alsoGeneral;
+              break;
             case 'autoplay on':
-              continue alsoGeneral;
+              break;
             case 'autoplay off':
-              continue alsoGeneral;
+              break;
             case 'repeat':
-              continue alsoGeneral;
+              break;
             case 'settings help':
-              continue alsoGeneral;
+              break;
             default:
               continue alsoGeneral;
           }
+          break;
         case 'signIn':
           switch (s) {
             // Sign in page commands
