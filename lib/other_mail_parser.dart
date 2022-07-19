@@ -12,17 +12,16 @@ class OtherMailParser {
   int _imapServerPort = 993;
   bool _isImapServerSecure = true;
   DateTime? _targetDate;
+  bool _isUnread = false;
+  final int maxUnreadEmails = 30;
 
-  Future<List<Digest>> createEmailList(String userName, String password, [DateTime? targetDate]) async {
+  Future<List<Digest>> createEmailList(bool isUnread, String userName, String password, [DateTime? targetDate]) async {
     this._userName = userName;
     this._password = password;
     this._targetDate = targetDate;
+    this._isUnread = isUnread;
 
-    // NOTE: this looks like a casting to type digest will need occur within getEmails()
-    //Digest digest = Digest(await _getEmails());
     List<Digest> emails = await _getEmails();
-
-
     return emails;
   }
 
@@ -35,52 +34,56 @@ class OtherMailParser {
     final client = ImapClient(isLogEnabled: true);
     try {
       DateTime targetDate = _targetDate ?? DateTime.now();
+      String searchCriteria = 'ON ${_formatTargetDateForSearch(targetDate)}';
+      if (_isUnread) {
+        searchCriteria = 'UNSEEN';
+      }
+
       await client.connectToServer(_imapServerHost, _imapServerPort,
           isSecure: _isImapServerSecure);
       await client.login(_userName, _password);
       await client.selectInbox();
-      //Search for sequence id of the Email
-      String searchCriteria = 'ON ${_formatTargetDateForSearch(targetDate)}';
+
       List<ReturnOption> returnOptions = [];
       ReturnOption option = ReturnOption("all");
       returnOptions.add(option);
       final searchResult = await client.searchMessages(searchCriteria: searchCriteria, returnOptions: returnOptions);
-      //extract sequence id
-      int? seqID;
       final matchingSequence = searchResult.matchingSequence;
-      if(matchingSequence != null ) {
-        seqID = matchingSequence.isNotEmpty ? matchingSequence.elementAt(0) : null; // this gets the sequence id of the desired email
-      }
 
-      print('!!!!!!!!!!!!!!');
-      print('count: ');
-      print(searchResult.count);
-      print('matchingSequence');
-      print(matchingSequence?.length.toString());
-      print('matchingSequence');
-      print(matchingSequence?.every());
-      Iterator<int>? seqIdsIter = matchingSequence?.every().iterator;
-      print('matchingSequence.every.length: ');
-      print(matchingSequence?.every().length.toString());
-
-      final fetchedMessage = await client.fetchMessagesByCriteria();
-
-
-      /*
       List<Digest> emails = [];
+      List<int> seqIdList = [];
+      String seqIdStr = "";
+      Iterator<int>? seqIdsIter = matchingSequence?.every().iterator;
       if (seqIdsIter != null)
       {
-        while (seqIdsIter.moveNext())
-        {
-          final fetchedMessage = await client.fetchMessage(seqIdsIter.current, 'BODY.PEEK[]');
-          emails.add(Digest(fetchedMessage.messages.first));
-          //seqIdsIter.current
+        // populate sequence Ids list
+        while (seqIdsIter.moveNext()) { seqIdList.add(seqIdsIter.current);}
+
+        // pull largest seq numbers first with maxUnreadEmail limit
+        int emailCount = 0;
+        int seqListLength = seqIdList.length;
+        if (seqListLength != 0) {
+          seqIdStr = seqIdList[seqListLength - 1].toString();
+        }
+        for (int i = seqListLength-2; i > 0 && emailCount < maxUnreadEmails-1; i-- ) {
+          seqIdStr += "," + seqIdList[i].toString();
+          emailCount++;
+        }
+
+        // fetch all emails from seqIds returned from search
+        print('?: searchCriteria: ' + seqIdStr);
+        if (emailCount != 0) {
+          // Search Criteria sequence ids can be entered '1:20' or '1,2,6,9,...'
+          final fetchedMessage = await client.fetchMessagesByCriteria( seqIdStr + ' (BODY.PEEK[])');
+          fetchedMessage.messages.forEach((message) {emails.add(Digest(message)); });
+        }
+        else {
+          print("?:  No sequence Ids");
         }
       }
-      */
-       */
 
       return emails;
+
     } catch (e) {
       rethrow;
     }
