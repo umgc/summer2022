@@ -27,22 +27,27 @@ class DigestEmailParser {
       '/storage/emulated/0/Android/data/com.example.summer2022/files';
 
   Future<Digest> createDigest(String userName, String password, [DateTime? targetDate]) async {
-    this._userName = userName;
-    this._password = password;
-    this._targetDate = targetDate;
-    Digest digest = Digest(await _getDigestEmail());
-    if(!digest.isNull()) {
-      digest.attachments = await _getAttachments(digest.message);
-      digest.links = _getLinks(digest.message);
+    try {
+      _userName = userName;
+      _password = password;
+      _targetDate = targetDate;
+      Digest digest = Digest(await _getDigestEmail());
+      if(!digest.isNull()) {
+        digest.attachments = await _getAttachments(digest.message);
+        digest.links = _getLinks(digest.message);
+      }
+      return digest;
+    } catch(e) {
+      rethrow;
     }
 
-    return digest;
   }
 
   Future<List<Attachment>> _getAttachments(MimeMessage m) async {
-    List<Attachment> list = [];
-    await deleteImageFiles();
-    for(int x = 0; x < m.mimeData!.parts!.length; x++) {
+    try {
+      List<Attachment> list = [];
+      await deleteImageFiles();
+      for(int x = 0; x < m.mimeData!.parts!.length; x++) {
         if(m.mimeData!.parts!.elementAt(x).contentType?.value.toString().contains("image") ?? false) {
           var attachment = Attachment();
           attachment.attachment = m.mimeData!.parts!.elementAt(x).decodeMessageData()
@@ -56,30 +61,37 @@ class DigestEmailParser {
           attachment.detailedInformation = await processImage(filePath);
           list.add(attachment);
         }
+      }
+      return list;
+    } catch (e) {
+      rethrow;
     }
-    return list;
   }
 
   List<Link> _getLinks(MimeMessage m) {
-    List<Link> list = [];
-    RegExp linkExp = RegExp(r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
-    String text = m.decodeTextPlainPart() ?? ""; //get body text of email
-    //remove encoding to make text easier to interpret
-    text = text.replaceAll('\r\n', " ");
-    text = text.replaceAll('<', " ");
-    text = text.replaceAll('>', " ");
-    text = text.replaceAll(']', " ");
-    text = text.replaceAll('[', " ");
+    try {
+      List<Link> list = [];
+      RegExp linkExp = RegExp(r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
+      String text = m.decodeTextPlainPart() ?? ""; //get body text of email
+      //remove encoding to make text easier to interpret
+      text = text.replaceAll('\r\n', " ");
+      text = text.replaceAll('<', " ");
+      text = text.replaceAll('>', " ");
+      text = text.replaceAll(']', " ");
+      text = text.replaceAll('[', " ");
 
-    while(linkExp.hasMatch(text)) {
-      var match = linkExp.firstMatch(text)?.group(0);
-      Link link = Link();
-      link.link = match.toString();
-      link.info = text.split(match.toString())[0].toString().split('.').last.toString().trim(); //attempt to get information about the link
-      list.add(link);
-      text = text.substring(text.indexOf(match.toString()) + match.toString().length); //remove the found link and continue searching
+      while(linkExp.hasMatch(text)) {
+        var match = linkExp.firstMatch(text)?.group(0);
+        Link link = Link();
+        link.link = match.toString();
+        link.info = text.split(match.toString())[0].toString().split('.').last.toString().trim(); //attempt to get information about the link
+        list.add(link);
+        text = text.substring(text.indexOf(match.toString()) + match.toString().length); //remove the found link and continue searching
+      }
+      return list;
+    } catch (e) {
+      rethrow;
     }
-    return list;
   }
 
   String _formatTargetDateForSearch(DateTime date) {
@@ -144,53 +156,56 @@ class DigestEmailParser {
     }
   }
 
-
-
   deleteImageFiles() async {
-    Directory? directory = await getExternalStorageDirectory();
-    Directory? directory2 = await getTemporaryDirectory();
-    var files = directory?.listSync(recursive: false, followLinks: false);
-    var files2 = directory2.listSync(recursive: false, followLinks: false);
-    for (int x = 0; x < files!.length; x++) {
-      print("Delete in Extern: " + files[x].path);
-      files[x].delete();
-    }
-    for (int x = 0; x < files2.length; x++) {
-      print("Delete: " + files2[x].path);
-      files[x].delete();
+    try {
+      Directory? directory = await getExternalStorageDirectory();
+      Directory? directory2 = await getTemporaryDirectory();
+      var files = directory?.listSync(recursive: false, followLinks: false);
+      var files2 = directory2.listSync(recursive: false, followLinks: false);
+      for (int x = 0; x < files!.length; x++) {
+        files[x].delete();
+      }
+      for (int x = 0; x < files2.length; x++) {
+        files[x].delete();
+      }
+    } catch(e){
+      rethrow;
     }
   }
 
   void _processImageForLogo(String imagePath) async {
-    print("Inside processImageForLogo\n");
-    var image = File(imagePath);
-    var buffer = image.readAsBytesSync();
-    var a = base64.encode(buffer);
-    List<LogoObject> logos = await vision.searchImageForLogo(a);
-    var output = '';
-    for (var logo in logos) {
-      output += logo.toJson().toString() + "\n";
+    try {
+      var image = File(imagePath);
+      var buffer = image.readAsBytesSync();
+      var a = base64.encode(buffer);
+      List<LogoObject> logos = await vision.searchImageForLogo(a);
+      var output = '';
+      for (var logo in logos) {
+        output += logo.toJson().toString() + "\n";
+      }
+    } catch(e) {
+      rethrow;
     }
-    print(output);
-    print("Exit ProcessImageForLogo");
+
   }
 
   void _processBarcode() async {
-    print("Inside process barcode\n");
-    _barcodeScannerApi = BarcodeScannerApi();
-    var fLoc = filePath;
-    print(fLoc);
-    File? img = await _barcodeScannerApi?.getImageFileFromAssets(filePath);
+    try{
+      _barcodeScannerApi = BarcodeScannerApi();
+      var fLoc = filePath;
+      File? img = await _barcodeScannerApi?.getImageFileFromAssets(filePath);
 
-    _barcodeScannerApi!.setImageFromFile(img!);
+      _barcodeScannerApi!.setImageFromFile(img!);
 
-    List<CodeObject> codes = await _barcodeScannerApi!.processImage();
-    var output = '';
-    for (var code in codes) {
-      output += code.toJson().toString();
+      List<CodeObject> codes = await _barcodeScannerApi!.processImage();
+      var output = '';
+      for (var code in codes) {
+        output += code.toJson().toString();
+      }
+    } catch(e){
+      rethrow;
     }
-    print(output);
-    print("Exit ProcessBarcode");
+
   }
 
   Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
@@ -223,51 +238,59 @@ class DigestEmailParser {
               isReturnPathOfIOS: true);
         }
         filePath = saveFile.path;
-        print("Directory" + directory.listSync().toString());
         return true;
       }
     } catch (e) {
-      print("Something happened in saveImageFile method");
+      rethrow;
     }
     return false;
   }
 
   Future<bool> _requestPermission(Permission permission) async {
-    if (await permission.isGranted) {
-      return true;
-    } else {
-      var result = await permission.request();
-      if (result == PermissionStatus.granted) {
+    try {
+      if (await permission.isGranted) {
         return true;
       } else {
-        return false;
+        var result = await permission.request();
+        if (result == PermissionStatus.granted) {
+          return true;
+        } else {
+          return false;
+        }
       }
+    } catch(e) {
+      rethrow;
     }
   }
 
   Future<MailResponse> processImage(String imagePath) async {
-    CloudVisionApi vision = CloudVisionApi();
-    print("processImage: " + imagePath);
-    var image = File(imagePath);
-    var imageByte;
-    imageByte = image.readAsBytesSync();
+    try {
+      CloudVisionApi vision = CloudVisionApi();
+      print("processImage: " + imagePath);
+      var image = File(imagePath);
+      var imageByte;
+      imageByte = image.readAsBytesSync();
 
-    var a = base64.encode(imageByte);
-    print(a);
-    var objMr = await vision.search(a);
-    for (var address in objMr.addresses) {
-      address.validated =
-      await UspsAddressVerification().verifyAddressString(address.address);
-    }
-    _barcodeScannerApi = BarcodeScannerApi();
-    File img = File(filePath);
-    _barcodeScannerApi!.setImageFromFile(img);
+      var a = base64.encode(imageByte);
+      print(a);
+      var objMr = await vision.search(a);
+      for (var address in objMr.addresses) {
+        address.validated =
+        await UspsAddressVerification().verifyAddressString(address.address);
+      }
+      _barcodeScannerApi = BarcodeScannerApi();
+      File img = File(filePath);
+      _barcodeScannerApi!.setImageFromFile(img);
 
-    List<CodeObject> codes = await _barcodeScannerApi!.processImage();
-    for (final code in codes) {
-      objMr.codes.add(code);
+      List<CodeObject> codes = await _barcodeScannerApi!.processImage();
+      for (final code in codes) {
+        objMr.codes.add(code);
+      }
+      print(objMr.toJson());
+      return objMr;
+    } catch(e) {
+      rethrow;
     }
-    print(objMr.toJson());
-    return objMr;
+
   }
 }

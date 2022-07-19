@@ -310,6 +310,29 @@ class MainWidgetState extends State<MainWidget> {
     );
   }
 
+  void showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center( child : Text(
+              "An Error Occured"
+          ),
+          ),
+          content: Container(
+            height: 100.0, // Change as per your requirement
+            width: 100.0, // Change as per your requirement
+            child: Center( child : Text(
+              "An Error has occured. Please try again later.",
+              style: TextStyle(color: Colors.black),
+            ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void showNoEmailsDialog() {
     showDialog(
       context: context,
@@ -358,7 +381,12 @@ class MainWidgetState extends State<MainWidget> {
   late List<Digest> emails;
 
   Future<void> getDigest([DateTime? pickedDate]) async {
-    await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword(), pickedDate ?? selectedDate).then((value) => digest = value);
+    try {
+      await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword(), pickedDate ?? selectedDate).then((value) => digest = value);
+    } catch(e) {
+      showErrorDialog();
+      context.loaderOverlay.hide();
+    }
   }
 
   Future<void> getEmails([DateTime? pickedDate]) async {
