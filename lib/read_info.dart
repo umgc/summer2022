@@ -9,20 +9,22 @@ FlutterTts tts = FlutterTts();
 
 Future<void> _speak(String text) async {
   if (text != null && text.isNotEmpty) {
-    await tts.awaitSpeakCompletion(true);
+    print(text);
     await tts.speak(text);
+    await tts.awaitSpeakCompletion(true);
   }
 }
 
-Future _stop() async{
+Future _stop() async {
     var result = await tts.stop();
 }
 
 void initTTS() async {
   await tts.setLanguage("en-US");
-  await tts.setSpeechRate(1.0);
+  await tts.setSpeechRate(0.5); //slower speeds are easier to comprehend
   await tts.setVolume(1.0);
   await tts.setPitch(1.0);
+  await tts.setQueueMode(1); // this needs to be set to queue_add or it will not function correctly
 }
 
 /*
@@ -30,42 +32,63 @@ void initTTS() async {
  */
 class ReadDigestMail {
   MailResponse currentMail;
-  late AddressObject sender;
-  late AddressObject recipient;
+  AddressObject? sender;
+  AddressObject? recipient;
   
   ReadDigestMail(this.currentMail) {
     getSenderAndRecipient(currentMail.addresses);
     initTTS();
   }
 
-  List<AddressObject> getSenderAndRecipient(List<AddressObject> addresses) {
+  void getSenderAndRecipient(List<AddressObject> addresses) {
     /* This code is assuming that there is one address object for the sender
        and one for the recipient. Figure out which one is which. */
-    if (addresses[0].type == "sender") {
-      sender = addresses[0];
-      recipient = addresses[1];
-    } else {
-      sender = addresses[0];
-      recipient = addresses[1];
+    //it is not safe to assume that there is always a sender and/or recipient on the attachment or that it can be properly interpreted
+    for(int x = 0; x < addresses.length; x++) {
+      if(addresses[x].type == "sender" && sender == null) {
+        sender = addresses[x];
+      } else if(addresses[x].type == "recipient" && recipient == null) {
+        recipient = addresses[x];
+      }
     }
-    return [sender, recipient];
+    //if (addresses[0].type == "sender") {
+    //    sender = addresses[0];
+    //    recipient = addresses[1];
+    //  } else {
+    //    sender = addresses[0];
+    //    recipient = addresses[1];
+    //  }
+      //return [sender, recipient];
+  }
+
+  void stop() {
+    _stop();
   }
 
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
   void readDigestInfo() {
-    if (GlobalConfiguration().getValue("sender") == true) {
+    stop(); //need to call stop so we are not queueing lines infinitely for things that are no longer relevant
+    if (GlobalConfiguration().getValue("sender") == true && sender != null) {
       readDigestSenderName();
     }
-    if (GlobalConfiguration().getValue("recipient") == true) {
+    if (GlobalConfiguration().getValue("recipient") == true && recipient != null) {
       readDigestRecipientName();
     }
     if (GlobalConfiguration().getValue("validated") == true) {
-      readDigestSenderAddressValidated();
-      readDigestRecipientAddressValidated();
+      if(sender != null) {
+        readDigestSenderAddressValidated();
+      }
+      if(recipient != null) {
+        readDigestRecipientAddressValidated();
+      }
     }
     if (GlobalConfiguration().getValue("address") == true) {
-      readDigestSenderAddress();
-      readDigestRecipientAddress();
+      if(sender != null) {
+        readDigestSenderAddress();
+      }
+      if(recipient != null) {
+        readDigestRecipientAddress();
+      }
     }
     if (GlobalConfiguration().getValue("logos") == true) {
       readDigestLogos();
@@ -77,26 +100,26 @@ class ReadDigestMail {
 
   void readDigestSenderName(){
     /* Get the name of the sender */
-    String text = "The sender is '${sender.name}'";  
+    String text = "The sender is '${sender!.name}'";
     _speak(text);        
 
   }
 
   void readDigestRecipientName() {
     /* Get the name of the recipient */
-    String text = "The sender is '${recipient.name}'";  
+    String text = "The recipient is '${recipient!.name}'";
     _speak(text);  
   }
 
   void readDigestSenderAddress(){
     /* Get the sender's address */
-    String text = "The sender's address is '${sender.address}'";  
+    String text = "The sender's address is '${sender!.address}'";
     _speak(text);  
   }
 
   void readDigestRecipientAddress(){
     /* Get the recipient's address */
-    String text = "The recipient's address is '${recipient.address}'";  
+    String text = "The recipient's address is '${recipient!.address}'";
     _speak(text);  
   }
 
@@ -121,7 +144,7 @@ class ReadDigestMail {
     /* Get if the sender's address was validated */
     String validated = "was not";
 
-    if (sender.validated) {
+    if (sender!.validated) {
       validated = "was";
     }
     String text = "The sender's address $validated validated";  
@@ -131,7 +154,7 @@ class ReadDigestMail {
   void readDigestRecipientAddressValidated(){
     /* Get if the recipient's address was validated */
     String validated = "was not";
-    if (recipient.validated) {
+    if (recipient!.validated) {
       validated = "was";
     }
     String text = "The recipient's address $validated validated";  

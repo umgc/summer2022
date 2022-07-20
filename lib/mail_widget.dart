@@ -38,6 +38,12 @@ class _MailWidgetState extends State<MailWidget> {
   ReadDigestMail? reader;
 
   @override
+  void dispose() {
+    reader!.stop();
+    super.dispose();
+  }
+
+  @override
   initState() {
       if(widget.digest.attachments.isNotEmpty) {
         reader = ReadDigestMail(widget.digest.attachments[attachmentIndex].detailedInformation);
@@ -238,21 +244,15 @@ class _MailWidgetState extends State<MailWidget> {
     }
   }
 
-  void readMailPiece() async {
-    if(reader != null) {
-      //read sender info
-      reader!.readDigestSenderName();
-      reader!.readDigestSenderAddress();
-      reader!.readDigestSenderAddressValidated();
-      //read recipient info
-      reader!.readDigestRecipientName();
-      reader!.readDigestRecipientAddress();
-      reader!.readDigestRecipientAddressValidated();
-      //read logos
-      reader!.readDigestLogos();
-      //read digest links
-      reader!.readDigestLinks();
+  void readMailPiece() {
+    try{
+      if(reader != null) {
+        reader!.readDigestInfo();
+      }
+    } catch (e) {
+      print(e.toString());
     }
+
   }
 
 }
