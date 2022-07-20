@@ -67,7 +67,7 @@ class Speech {
             case 'details':
               break;
             default:
-              continue alsoGeneral;
+              break;
           }
           break;
         case 'email':
@@ -86,7 +86,7 @@ class Speech {
             case 'details':
               break;
             default:
-              continue alsoGeneral;
+              break;
           }
           break;
         // Main menu commands
@@ -113,7 +113,7 @@ class Speech {
             case 'menu help':
               break;
             default:
-              continue alsoGeneral;
+              break;
           }
           break;
         // settings page commands
@@ -182,7 +182,7 @@ class Speech {
             case 'settings help':
               break;
             default:
-              continue alsoGeneral;
+              break;
           }
           break;
         case 'signIn':
@@ -200,27 +200,25 @@ class Speech {
               break;
           }
           break;
-        alsoGeneral:
-          default:
-            switch (s) {
-              case 'mail help':
-                break;
-              case 'mute':
-                mute = true;
-                break;
-              case 'stop' :
-                break;
-              case 'speakers off':
-                break;
-              case 'speakers on':
-                break;
-              case 'back':
-                navKey.currentState!.pushNamed('/');
-                break;
-              default: // Invalid command
-                break;
-            }
-            break;
+      }
+      // General commands
+      switch (s) {
+        case 'mail help':
+          break;
+        case 'mute':
+          mute = true;
+          break;
+        case 'stop' :
+          break;
+        case 'speakers off':
+          break;
+        case 'speakers on':
+          break;
+        case 'back':
+          navKey.currentState!.pushNamed('/');
+          break;
+        default: // Invalid command
+          break;
       }
     }
   }
