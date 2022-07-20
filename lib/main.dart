@@ -6,17 +6,18 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import './Client.dart';
 import './Keychain.dart';
-import './settings.dart';
-import './main_menu.dart';
-import './sign_in.dart';
+import 'ui/settings.dart';
+import 'ui/main_menu.dart';
+import 'ui/sign_in.dart';
 
 import 'RouteGenerator.dart';
-import 'bottom_app_bar.dart';
-import 'mail_widget.dart';
-import 'other_mail.dart';
+import 'ui/bottom_app_bar.dart';
+import 'ui/mail_widget.dart';
+import 'ui/other_mail.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // needed to access Keychain prior to main finishing
+  WidgetsFlutterBinding
+      .ensureInitialized(); // needed to access Keychain prior to main finishing
   GlobalConfiguration cfg = GlobalConfiguration();
   await cfg.loadFromAsset("app_settings");
   var email_authenticated = false; // default false go to signin page
@@ -38,6 +39,6 @@ void main() async {
 Widget buildScreen(bool email_authenticated) {
   return Scaffold(
     body: email_authenticated == true ? MainWidget() : SignInWidget(),
-    bottomNavigationBar: BottomBar(),
+    bottomNavigationBar: const BottomBar(),
   );
 }
