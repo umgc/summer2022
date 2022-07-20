@@ -11,12 +11,16 @@ import 'package:text_to_speech/text_to_speech.dart';
  */
 class ReadDigestMail {
   late TextToSpeech tts;
-  MailResponse currentMail;
+  late MailResponse currentMail;
   late AddressObject sender;
   late AddressObject recipient;
   
-  ReadDigestMail(this.currentMail) {
+  ReadDigestMail() {
     tts = TextToSpeech();  
+  }
+
+  void setCurrentMail(MailResponse mail) {
+    currentMail = mail;
     getSenderAndRecipient(currentMail.addresses);
   }
 

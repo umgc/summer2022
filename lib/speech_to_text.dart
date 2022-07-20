@@ -1,18 +1,22 @@
+import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:summer2022/read_info.dart';
 
 import './main.dart';
 import './settings.dart';
 
 class Speech {
-  late String currentPage;
+  String currentPage = "settings";
   SpeechToText speech = SpeechToText();
   String words = '';
   String input = '';
   bool speechEnabled = false;
   bool mute = false;
+  ReadDigestMail digestMail = ReadDigestMail();
+  ReadMail mail = ReadMail();
 
-  Speech(String page) {
+  void setCurrentPage(String page) {
     currentPage = page;
   }
 
@@ -38,7 +42,7 @@ class Speech {
     }
   }
 
-// The commands that the user can utilise
+  // The commands that the user can utilise
   command(String s) {
     //General commands
     if (s == 'unmute') {

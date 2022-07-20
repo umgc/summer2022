@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import './Keychain.dart';
 import './Client.dart';
+import './main.dart';
 import 'package:summer2022/speech_to_text.dart';
 
 class SignInWidget extends StatefulWidget {
@@ -18,8 +19,7 @@ class SignInWidgetState extends State<SignInWidget> {
   @override
   void initState() {
     super.initState();
-    Speech stt = Speech("settings");
-    stt.recording();
+    stt.setCurrentPage("settings");
   }
 
   @override

@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:summer2022/main_menu.dart';
+import './main.dart';
 import 'package:summer2022/usps_address_verification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
@@ -40,8 +41,7 @@ class _MailWidgetState extends State<MailWidget> {
   initState() {
       print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
       super.initState();
-      Speech stt = Speech("mail");
-      stt.recording();
+      stt.setCurrentPage("mail");
   }
 
   static Route _buildRoute(BuildContext context, Object? params) {

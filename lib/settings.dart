@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:summer2022/speech_to_text.dart';
+import './main.dart';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({Key? key}) : super(key: key);
@@ -18,8 +19,7 @@ class SettingWidgetState extends State<SettingsWidget> {
   @override
   void initState() {
     super.initState();
-    Speech stt = Speech("settings");
-    stt.recording();
+    stt.setCurrentPage("settings");
   }
 
   @override

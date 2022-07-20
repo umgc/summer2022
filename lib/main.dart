@@ -9,6 +9,7 @@ import './Keychain.dart';
 import './settings.dart';
 import './main_menu.dart';
 import './sign_in.dart';
+import './speech_to_text.dart';
 
 import 'RouteGenerator.dart';
 import 'bottom_app_bar.dart';
@@ -17,6 +18,7 @@ import 'other_mail.dart';
 
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+final Speech stt = Speech();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // needed to access Keychain prior to main finishing
   GlobalConfiguration cfg = GlobalConfiguration();
@@ -28,6 +30,8 @@ void main() async {
     emailAuthenticated = (await Client().getImapClient(
         username, password)); //Replace with config read for credentials
   }
+
+  stt.speechToText();
 
   runApp(GlobalLoaderOverlay(
       child: MaterialApp(

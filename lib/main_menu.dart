@@ -12,11 +12,11 @@ import './Client.dart';
 import './Keychain.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import './backend_testing.dart';
-import './speech_to_text.dart';
 import 'api.dart';
 import 'models/Arguments.dart';
 import 'models/EmailArguments.dart';
 import 'models/Digest.dart';
+import './main.dart';
 
 class MainWidget extends StatefulWidget {
   const MainWidget({Key? key}) : super(key: key);
@@ -38,8 +38,7 @@ class MainWidgetState extends State<MainWidget> {
   @override
   void initState() {
     super.initState();
-    Speech stt = Speech("main");
-    stt.recording();
+    stt.setCurrentPage("main");
   }
 
   @override
