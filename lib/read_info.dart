@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:summer2022/models/MailResponse.dart';
 import 'package:summer2022/models/Address.dart';
@@ -11,7 +12,10 @@ Future<void> _speak(String text) async {
   if (text != null && text.isNotEmpty) {
     print(text);
     await tts.speak(text);
-    await tts.awaitSpeakCompletion(true);
+    if(Platform.isAndroid) {
+      //currently this feature is only supported by android
+      await tts.awaitSpeakCompletion(true);
+    }
   }
 }
 
