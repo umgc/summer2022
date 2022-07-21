@@ -53,7 +53,7 @@ class Speech {
     if (mute == false){
       switch (currentPage) {
         case 'mail':
-          switch(s) {
+          switch(s.toLowerCase()) {
             // mail page commands
             case 'next':
               var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
@@ -63,13 +63,13 @@ class Speech {
               var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
               state.seekBack();
               break;
-            case 'next Digest':
+            case 'next digest':
               var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
               state.setState(() {
                 state.seekForward();
               });
               break;
-            case 'previous Digest':
+            case 'previous digest':
               var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
               state.setState(() {
                 state.seekBack();
