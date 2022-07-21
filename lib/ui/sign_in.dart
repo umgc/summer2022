@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import './Keychain.dart';
-import './Client.dart';
+import 'package:summer2022/speech_to_text.dart';
+import '../Keychain.dart';
+import '../Client.dart';
+import '../main.dart';
+import 'bottom_app_bar.dart';
 
 class SignInWidget extends StatefulWidget {
   const SignInWidget({Key? key}) : super(key: key);
@@ -15,6 +18,12 @@ class SignInWidgetState extends State<SignInWidget> {
   final password_controller = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    stt.setCurrentPage("signIn");
+  }
+
+  @override
   void dispose() {
     email_controller.dispose();
     password_controller.dispose();
@@ -24,31 +33,17 @@ class SignInWidgetState extends State<SignInWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Sign-In"),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.grey,
+      ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
             children: [
-              Container(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: Container(
-                          child: Text(
-                            style: TextStyle(fontSize: 20),
-                            "Sign In",
-                          ),
-                        ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.arrow_back,
-                      size: 50,
-                      color: Color.fromARGB(0, 255, 255, 1),
-                    ),
-                  ],
-                ),
-              ),
               Container(
                 padding: EdgeInsets.only(top: 50),
               ),

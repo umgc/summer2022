@@ -46,27 +46,36 @@ void main() async {
     await cfg.loadFromAsset("app_settings");
     tts = FakeFlutterTts();
   });
-  
+
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group("ReadDigestMail Tests", () {
     
-    test("getSenderAndRecipient", () {
+    test("set/getSenderAndRecipient", () {
       String error = '';
-      ReadDigestMail readMail = ReadDigestMail(mail);
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
+      AddressObject returnedAddress1 = AddressObject();
+      AddressObject returnedAddress2 = AddressObject();
       try {
-        readMail.getSenderAndRecipient([address1, address2]);
+        readMail.setSenderAndRecipient([address1, address2]);
+        var addresses = readMail.getSenderAndRecipient();
+        returnedAddress1 = addresses[0];
+        returnedAddress2 = addresses[1];
       } catch (e) {
         error = e.toString();
       }
       expect(error, '');
       expect(readMail.sender, address1);
       expect(readMail.recipient, address2);
+      expect(returnedAddress1, address1);
+      expect(returnedAddress2, address2);
     });
 
     test("Read All Digest Info", () {
       String error = '';
-      ReadDigestMail readMail = ReadDigestMail(mail);
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
       try {
         readMail.readDigestInfo();
       } catch (e) {
@@ -77,7 +86,8 @@ void main() async {
 
     test("Read Digest Sender Name", () {
       String error = '';
-      ReadDigestMail readMail = ReadDigestMail(mail);
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
       try {
         readMail.readDigestSenderName();
       } catch (e) {
@@ -88,7 +98,8 @@ void main() async {
 
     test("Read Digest Recipient Name", () {
       String error = '';
-      ReadDigestMail readMail = ReadDigestMail(mail);
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
       try {
         readMail.readDigestRecipientName();
       } catch (e) {
@@ -99,7 +110,8 @@ void main() async {
 
     test("Read Digest Sender Address", () {
       String error = '';
-      ReadDigestMail readMail = ReadDigestMail(mail);
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
       try {
         readMail.readDigestSenderAddress();
       } catch (e) {
@@ -110,7 +122,8 @@ void main() async {
 
     test("Read Digest Recipient Address", () {
       String error = '';
-      ReadDigestMail readMail = ReadDigestMail(mail);
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
       try {
         readMail.readDigestRecipientAddress();
       } catch (e) {
@@ -121,7 +134,8 @@ void main() async {
 
     test("Read Digest Logos", () {
       String error = '';
-      ReadDigestMail readMail = ReadDigestMail(mail);
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
       try {
         readMail.readDigestLogos();
       } catch (e) {
@@ -132,7 +146,8 @@ void main() async {
 
     test("Read Digest Links", () {
       String error = '';
-      ReadDigestMail readMail = ReadDigestMail(mail);
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
       try {
         readMail.readDigestLinks();
       } catch (e) {
@@ -143,7 +158,8 @@ void main() async {
 
     test("Read Digest Sender Address Validated", () {
       String error = '';
-      ReadDigestMail readMail = ReadDigestMail(mail);
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
       try {
         readMail.readDigestSenderAddressValidated();
       } catch (e) {
@@ -154,7 +170,8 @@ void main() async {
 
     test("Read Digest Recipient Address Validated", () {
       String error = '';
-      ReadDigestMail readMail = ReadDigestMail(mail);
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
       try {
         readMail.readDigestRecipientAddressValidated();
       } catch (e) {

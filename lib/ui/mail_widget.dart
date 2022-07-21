@@ -10,17 +10,21 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:summer2022/main_menu.dart';
 import 'package:summer2022/read_info.dart';
+import '../main.dart';
+import 'package:summer2022/ui/main_menu.dart';
 import 'package:summer2022/usps_address_verification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:summer2022/api.dart';
-import './models/MailResponse.dart';
-import 'barcode_scanner.dart';
-import 'models/Arguments.dart';
-import 'models/Code.dart';
-import 'models/Digest.dart';
-import 'models/Logo.dart';
+import 'package:summer2022/speech_to_text.dart';
+import '../models/MailResponse.dart';
+import '../barcode_scanner.dart';
+import '../models/Arguments.dart';
+import '../models/Code.dart';
+import '../models/Digest.dart';
+import '../models/Logo.dart';
+import 'bottom_app_bar.dart';
 
 class MailWidget extends StatefulWidget {
   final Digest digest;
@@ -39,22 +43,27 @@ class _MailWidgetState extends State<MailWidget> {
 
   @override
   void dispose() {
-    reader!.stop();
     super.dispose();
   }
 
   @override
   initState() {
       if(widget.digest.attachments.isNotEmpty) {
-        reader = ReadDigestMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+        reader = ReadDigestMail();
+        reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
         readMailPiece();
       }
       super.initState();
+      stt.setCurrentPage("mail");
+  }
+
+  MailResponse getCurrentDigestDetails() {
+    return widget.digest.attachments[attachmentIndex].detailedInformation;
   }
 
   static Route _buildRoute(BuildContext context, Object? params) {
     return MaterialPageRoute<void>(
-      builder: (BuildContext context) => MainWidget(),
+      builder: (BuildContext context) => const MainWidget(),
     );
   }
 
@@ -63,6 +72,12 @@ class _MailWidgetState extends State<MailWidget> {
     // Figma Flutter Generator MailWidget - FRAME
 
     return Scaffold(
+      bottomNavigationBar: BottomBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Digest"),
+        backgroundColor: Colors.grey,
+      ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -90,11 +105,11 @@ class _MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
-                Icon(
-                  Icons.arrow_back,
-                  size: 50,
-                  color: Color.fromARGB(0, 255, 255, 1),
-                ),
+                  Icon(
+                    Icons.arrow_back,
+                    size: 50,
+                    color: Color.fromARGB(0, 255, 255, 1),
+                  ),
                 ],
               ),
             ),
@@ -190,7 +205,7 @@ class _MailWidgetState extends State<MailWidget> {
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
-      reader = ReadDigestMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
       readMailPiece();
     }
   }
@@ -198,7 +213,7 @@ class _MailWidgetState extends State<MailWidget> {
   void seekForward(int max) {
     if (attachmentIndex < max - 1) {
       attachmentIndex = attachmentIndex + 1;
-      reader = ReadDigestMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
       readMailPiece();
     }
   }
