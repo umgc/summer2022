@@ -23,6 +23,8 @@ class MainWidget extends StatefulWidget {
 
   @override
   MainWidgetState createState() => MainWidgetState();
+
+
 }
 
 CloudVisionApi? vision = CloudVisionApi();
@@ -34,148 +36,158 @@ class MainWidgetState extends State<MainWidget> {
   Uint8List? _imageBytes;
   String? _imageName;
   final picker = ImagePicker();
+  double commonFontSize = 34;
+  FontWeight commonFontWt = FontWeight.w700;
+  double commonBorderWidth = 2.5;
+  double commonButtonHeight = 55;
+
+  ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow)
+  {
+    return ElevatedButton.styleFrom(
+      textStyle: TextStyle(fontWeight: FontWeight.w700,fontSize: commonFontSize),
+      primary: primary,
+      shadowColor: shadow,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8))),
+      side: BorderSide( width: commonBorderWidth, color: Colors.black ),
+    );
+  }
+
+  ButtonStyle commonButtonStyleText(Color? primary, Color? shadow)
+  {
+    return TextButton.styleFrom(
+      textStyle: TextStyle(fontWeight: commonFontWt,fontSize: commonFontSize),
+      primary: primary,
+      shadowColor: shadow,
+
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8))),
+      side: BorderSide( width: commonBorderWidth, color: Colors.black ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     String formattedSelectedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
     return Scaffold(
+      appBar: AppBar(
+        title: Center(child: Text("Home", style: TextStyle(fontWeight: commonFontWt, fontSize: commonFontSize))),
+      automaticallyImplyLeading: false,),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
+            Padding(
+              padding: EdgeInsets.only(top:10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                    OutlinedButton.icon(
+                  SizedBox(height: commonButtonHeight,
+                    child: OutlinedButton.icon(
                       onPressed: () => selectDate(context),
-                      icon: Icon(Icons.calendar_month_outlined),
+                      icon: Icon(
+                        Icons.calendar_month_outlined,
+                        size: 35,
+                      ),
                       label: Text("$formattedSelectedDate"),
-                      style: TextButton.styleFrom(
-                        primary: Colors.black,
-                        shadowColor: Colors.grey,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      style: commonButtonStyleText(Colors.black, Colors.grey),
+                    ),
+                  ),
+                  SizedBox(height: commonButtonHeight,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color:Colors.grey.shade300, //background color of dropdown button
+                        borderRadius: BorderRadius.circular(8), //border raiuds of dropdown button
+                      ),
+                      child: OutlinedButton.icon(
+                        onPressed: () => selectDate(context),
+                        icon: Icon(
+                          Icons.search_rounded,
+                          size: 50,
+                        ),
+                        label: Text(""),
+                        style: commonButtonStyleText(Colors.black, Colors.blue),
                       ),
                     ),
-                  Text("Mail Type:"),
-                  DropdownButton(
-                      value: mailType,
-                      items: [
-                        DropdownMenuItem<String>(
-                          value: "Email",
-                          child: Text("Email"),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: "Digest",
-                          child: Text("Digest"),
-                        ),
-                      ],
-                      onChanged: (String? valueSelected) {
-                        setState(() {
-                          mailType = valueSelected!;
-                        });
-                      }),
-                ],
+                  ),
+                ]
               ),
             ),
-            Container(
-              child: Center(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      void _getImage() async {
-                        final PickedFile = await picker.getImage(source: ImageSource.camera);
-                        print(PickedFile!.path);
-                        if (PickedFile != null) {
-                          _image = File(PickedFile.path);
-
-                          _imageBytes = _image!.readAsBytesSync();
-                          String a = base64.encode(_imageBytes!);
-                          var objMailResponse = await vision!.search(a);
-                          for (var address in objMailResponse.addresses) {
-                            address.validated = await UspsAddressVerification()
-                                .verifyAddressString(address.address);
-                          }
-                          setState(() {
-                            if (PickedFile != null) {
-                              _image = File(PickedFile.path);
-                              _imageBytes = _image!.readAsBytesSync();
-                              _imageName = _image!.path.split('/').last;
-                            } else {
-                              print('No image selected.');
-                            }
-                          });
+            Padding(
+              padding: EdgeInsets.only(top:0, left: 55, right: 55),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                          height: commonButtonHeight, width:13 ,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color:Colors.grey.shade200, //background color of dropdown button
+                              border: Border.all(color: Colors.black, width:commonBorderWidth), //border of dropdown button
+                              borderRadius: BorderRadius.circular(8), //border raiuds of dropdown button
+                            ),
+                            child:Padding(
+                              padding: EdgeInsets.only(left:30),
+                              child: DropdownButtonHideUnderline(
+                                  child:DropdownButton(
+                                      value: mailType,
+                                      items: [
+                                        DropdownMenuItem<String>(
+                                          value: "Email",
+                                          child: Text("Email Mode", style: TextStyle(fontWeight: commonFontWt, fontSize: commonFontSize)),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: "Digest",
+                                          child: Text("Digest Mode", style: TextStyle(fontWeight: commonFontWt, fontSize: commonFontSize)),
+                                        ),
+                                      ],
+                                      onChanged: (String? valueSelected) {
+                                        setState(() {
+                                          mailType = valueSelected!;
+                                        });
+                                      })
+                              ),
+                            ),
+                          )
+                      ),
+                    ),
+                  ]
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(height: commonButtonHeight,
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      if (mailType == "Email") {
+                        context.loaderOverlay.show();
+                        await getEmails(false, DateTime.now());
+                        if((emails.isNotEmpty)) {
+                          Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
+                        } else {
+                          showNoEmailsDialog();
                         }
+                        context.loaderOverlay.hide();
+                      } else {
+                        context.loaderOverlay.show();
+                        await getDigest();
+                        if(!digest.isNull()) {
+                          Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
+                        } else {
+                          showNoDigestDialog();
+                        }
+                        context.loaderOverlay.hide();
                       }
                     },
-                    icon: Icon(Icons.camera_alt_outlined),
-                    label: const Text("Scan Mail"),
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                      shadowColor: Colors.grey,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
+                    style: commonButtonStyleElevated(Colors.white, Colors.grey),
+                    child: const Text("Latest",
+                        style: TextStyle(color: Colors.black)),
                   ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/backend_testing');
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => const BackendPage(
-                //               title: "USPS Backend Testing",
-                //             )));
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.grey,
-                shadowColor: Colors.grey,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5))),
-              ),
-              child: const Text("Backend Testing",
-                  style: TextStyle(color: Colors.black)),
-            ),
-            Container(
-              child: Column(
-              children: [
-              Center(
-                child: Column(
-                  children: [
-                  OutlinedButton(
-                  onPressed: () async {
-                    if (mailType == "Email") {
-                      context.loaderOverlay.show();
-                      await getEmails(false, DateTime.now());
-                      if((emails.isNotEmpty)) {
-                        Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
-                      } else {
-                        showNoEmailsDialog();
-                      }
-                      context.loaderOverlay.hide();
-                    } else {
-                      context.loaderOverlay.show();
-                      await getDigest();
-                      if(!digest.isNull()) {
-                        Navigator.pushNamed(context, '/digest_mail', arguments: MailWidgetArguments(digest));
-                      } else {
-                        showNoDigestDialog();
-                      }
-                      context.loaderOverlay.hide();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
-                    shadowColor: Colors.grey,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                  ),
-                  child: const Text("Latest",
-                      style: TextStyle(color: Colors.black)),
-                  ),
-                  OutlinedButton(
+                ),
+                SizedBox(height: commonButtonHeight,
+                  child: OutlinedButton(
                     onPressed: () async {
                       if (mailType == "Email") {
                         context.loaderOverlay.show();
@@ -197,57 +209,98 @@ class MainWidgetState extends State<MainWidget> {
                         context.loaderOverlay.hide();
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      shadowColor: Colors.grey,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                    child: const Text("Unread",
-                      style: TextStyle(color: Colors.black)),
+                    style: commonButtonStyleElevated(Colors.white, Colors.grey),
+                    child: const Text("Unread", style: TextStyle(color: Colors.black)),
                   ),
-                ]
+                ),
+              ]
+            ),
+            Center(
+              child: SizedBox(height: commonButtonHeight,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    void _getImage() async {
+                      final PickedFile = await picker.getImage(source: ImageSource.camera);
+                      print(PickedFile!.path);
+                      if (PickedFile != null) {
+                        _image = File(PickedFile.path);
+                        _imageBytes = _image!.readAsBytesSync();
+                        String a = base64.encode(_imageBytes!);
+                        var objMailResponse = await vision!.search(a);
+                        for (var address in objMailResponse.addresses) {
+                          address.validated = await UspsAddressVerification()
+                              .verifyAddressString(address.address);
+                        }
+                        setState(() {
+                          if (PickedFile != null) {
+                            _image = File(PickedFile.path);
+                            _imageBytes = _image!.readAsBytesSync();
+                            _imageName = _image!.path.split('/').last;
+                          } else {
+                            print('No image selected.');
+                          }
+                        });
+                      }
+                    }
+                  },
+                  icon: Icon(
+                    Icons.camera_alt_outlined,
+                    size: 40,
+                  ),
+                  label: const Text("Scan Mail"),
+                  style: commonButtonStyleText(Colors.black, Colors.grey),
+                ),
               ),
-              ),
-              Center(
-                child : OutlinedButton(
+            ),
+            Center(
+              child : SizedBox(height: commonButtonHeight,
+                child: OutlinedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/settings');
                   },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.grey,
-                    shadowColor: Colors.grey,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                 ),
+                  style: commonButtonStyleElevated(Colors.grey, Colors.grey),
                   child: const Text(
                     "Settings",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.black),
                   ),
                 ),
               ),
-              Center(
+            ),
+            Center(
+              child: SizedBox(height: commonButtonHeight,
                 child: OutlinedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/sign_in');
                   },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
-                    shadowColor: Colors.grey,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                  ),
+                  style: commonButtonStyleElevated(Colors.black, Colors.grey),
                   child: const Text(
                     "Sign Out",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
+            ),
+            //SizedBox( height: 20, width: 20,),
+            SizedBox(height: commonButtonHeight,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/backend_testing');
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => const BackendPage(
+                  //               title: "USPS Backend Testing",
+                  //             )));
+                },
+                style: commonButtonStyleElevated(Colors.grey, Colors.grey),
+                child: const Text("Backend Testing",
+                    style: TextStyle(color: Colors.black)),
+              ),
+            ),
           ] // Children
-          ),
-      ),
-    ])));
+        )));
   }
+
 
   Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
