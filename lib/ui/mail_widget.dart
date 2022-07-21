@@ -8,12 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import '../main.dart';
 import 'package:summer2022/ui/main_menu.dart';
 import 'package:summer2022/usps_address_verification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:summer2022/api.dart';
+import 'package:summer2022/speech_to_text.dart';
 import '../models/MailResponse.dart';
 import '../barcode_scanner.dart';
 import '../models/Arguments.dart';
@@ -41,6 +43,7 @@ class _MailWidgetState extends State<MailWidget> {
     print(widget.digest.attachments[attachmentIndex].detailedInformation
         .toJson()); //TODO Read Mail through tts
     super.initState();
+    stt.setCurrentPage("mail");
   }
 
   MailResponse getCurrentDigestDetails() {
@@ -49,7 +52,7 @@ class _MailWidgetState extends State<MailWidget> {
 
   static Route _buildRoute(BuildContext context, Object? params) {
     return MaterialPageRoute<void>(
-      builder: (BuildContext context) => MainWidget(),
+      builder: (BuildContext context) => const MainWidget(),
     );
   }
 

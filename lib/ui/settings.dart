@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:summer2022/speech_to_text.dart';
+import '../main.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 import 'bottom_app_bar.dart';
@@ -12,8 +14,16 @@ class SettingsWidget extends StatefulWidget {
   SettingWidgetState createState() => SettingWidgetState();
 }
 
+GlobalConfiguration cfg = GlobalConfiguration();
+
 class SettingWidgetState extends State<SettingsWidget> {
   GlobalConfiguration cfg = GlobalConfiguration();
+
+  @override
+  void initState() {
+    super.initState();
+    stt.setCurrentPage("settings");
+  }
 
   @override
   Widget build(BuildContext context) {

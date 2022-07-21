@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:summer2022/speech_to_text.dart';
 import '../Keychain.dart';
 import '../Client.dart';
+import '../main.dart';
 import 'bottom_app_bar.dart';
 
 class SignInWidget extends StatefulWidget {
@@ -14,6 +16,12 @@ class SignInWidget extends StatefulWidget {
 class SignInWidgetState extends State<SignInWidget> {
   final email_controller = TextEditingController();
   final password_controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    stt.setCurrentPage("signIn");
+  }
 
   @override
   void dispose() {

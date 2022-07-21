@@ -13,6 +13,7 @@ import '../Keychain.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import '../backend_testing.dart';
 import '../api.dart';
+import '../main.dart';
 import '../models/Arguments.dart';
 import '../models/EmailArguments.dart';
 import '../models/Digest.dart';
@@ -34,6 +35,12 @@ class MainWidgetState extends State<MainWidget> {
   Uint8List? _imageBytes;
   String? _imageName;
   final picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    stt.setCurrentPage("main");
+  }
 
   @override
   Widget build(BuildContext context) {

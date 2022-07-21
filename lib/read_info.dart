@@ -29,11 +29,16 @@ void initTTS() async {
  * The ReadDigestMail class's purpose is to read the details of a Daily Digest mail 
  */
 class ReadDigestMail {
-  MailResponse currentMail;
+  late MailResponse currentMail;
   late AddressObject sender;
   late AddressObject recipient;
   
-  ReadDigestMail(this.currentMail) {
+  ReadDigestMail() {
+    initTTS();  
+  }
+
+  void setCurrentMail(MailResponse mail) {
+    currentMail = mail;
     getSenderAndRecipient(currentMail.addresses);
     initTTS();
   }

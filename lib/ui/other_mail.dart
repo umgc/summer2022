@@ -6,6 +6,7 @@ import 'main_menu.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/Arguments.dart';
 import '../models/Digest.dart';
+import '../main.dart';
 
 class OtherMailWidget extends StatefulWidget {
   final List<Digest> emails;
@@ -24,7 +25,9 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   @override
   void initState() {
     // index must be initialed before build or emails won't iterate
+    super.initState();
     index = widget.emails.length - 1;
+    stt.setCurrentPage("email");
   }
 
   MimeMessage getCurrentEmailMessage() {
