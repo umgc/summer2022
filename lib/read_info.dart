@@ -24,11 +24,12 @@ Future _stop() async {
 }
 
 void initTTS() async {
+  await tts.setQueueMode(1); // this needs to be set to queue_add or it will not function correctly
   await tts.setLanguage("en-US");
   await tts.setSpeechRate(0.5); //slower speeds are easier to comprehend
   await tts.setVolume(1.0);
   await tts.setPitch(1.0);
-  await tts.setQueueMode(1); // this needs to be set to queue_add or it will not function correctly
+
 }
 
 /*

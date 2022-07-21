@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:summer2022/digest_email_parser.dart';
 import 'package:summer2022/other_mail_parser.dart';
@@ -36,6 +37,7 @@ class MainWidgetState extends State<MainWidget> {
 
   @override
   Widget build(BuildContext context) {
+    String formattedSelectedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -45,12 +47,10 @@ class MainWidgetState extends State<MainWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: OutlinedButton.icon(
+                    OutlinedButton.icon(
                       onPressed: () => selectDate(context),
                       icon: Icon(Icons.calendar_month_outlined),
-                      label: Text("$mailType Date Selection"),
+                      label: Text("$formattedSelectedDate"),
                       style: TextButton.styleFrom(
                         primary: Colors.black,
                         shadowColor: Colors.grey,
@@ -58,7 +58,6 @@ class MainWidgetState extends State<MainWidget> {
                             borderRadius: BorderRadius.all(Radius.circular(5))),
                       ),
                     ),
-                  ),
                   Text("Mail Type:"),
                   DropdownButton(
                       value: mailType,
@@ -82,8 +81,6 @@ class MainWidgetState extends State<MainWidget> {
             ),
             Container(
               child: Center(
-                child: Directionality(
-                  textDirection: TextDirection.rtl,
                   child: OutlinedButton.icon(
                     onPressed: () {
                       void _getImage() async {
@@ -120,7 +117,6 @@ class MainWidgetState extends State<MainWidget> {
                           borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
                   ),
-                ),
               ),
             ),
             ElevatedButton(
@@ -152,7 +148,7 @@ class MainWidgetState extends State<MainWidget> {
                   onPressed: () async {
                     if (mailType == "Email") {
                       context.loaderOverlay.show();
-                      await getEmails();
+                      await getEmails(false, DateTime.now());
                       if((emails.isNotEmpty)) {
                         Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
                       } else {
@@ -183,7 +179,7 @@ class MainWidgetState extends State<MainWidget> {
                     onPressed: () async {
                       if (mailType == "Email") {
                         context.loaderOverlay.show();
-                        await getEmails();
+                        await getEmails(true, DateTime.now());
                         if((emails.isNotEmpty)) {
                           Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
                         } else {
@@ -262,7 +258,7 @@ class MainWidgetState extends State<MainWidget> {
     if ((picked != null) && (picked != selectedDate)) {
       if (mailType == "Email") {
         context.loaderOverlay.show();
-        await getEmails();
+        await getEmails(false, picked);
         if((emails.isNotEmpty)) {
           Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
         } else {
@@ -364,7 +360,7 @@ class MainWidgetState extends State<MainWidget> {
         lastDate: DateTime.now());
     if ((picked != null) && (picked != selectedDate)) {
       context.loaderOverlay.show();
-      await getEmails();
+      await getEmails(false, picked);
       if((emails.isNotEmpty)) {
         Navigator.pushNamed(context, '/other_mail', arguments: EmailWidgetArguments(emails));
       } else {
@@ -389,7 +385,7 @@ class MainWidgetState extends State<MainWidget> {
     }
   }
 
-  Future<void> getEmails([DateTime? pickedDate]) async {
-    await OtherMailParser().createEmailList(await Keychain().getUsername(), await Keychain().getPassword(), pickedDate ?? selectedDate).then((value) => emails = value);
+  Future<void> getEmails(bool isUnread, [DateTime? pickedDate]) async {
+    await OtherMailParser().createEmailList(isUnread, await Keychain().getUsername(), await Keychain().getPassword(), pickedDate ?? selectedDate).then((value) => emails = value);
   }
 }
