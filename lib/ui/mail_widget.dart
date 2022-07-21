@@ -155,6 +155,25 @@ class _MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
+                  Expanded(
+                    //: EdgeInsets.only(right: 10),
+                    child: Center(
+                      child: OutlinedButton(
+                        onPressed: () { showQRCodeDialog(); },
+                        child: const Text(
+                          "QR/Barcodes",
+                          style: TextStyle(color: Colors.black, fontSize: 12),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(5))),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -201,6 +220,38 @@ class _MailWidgetState extends State<MailWidget> {
       reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
       readMailPiece();
     }
+  }
+
+  void showQRCodeDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("QR Code and Barcode Dialog"),
+          content: SizedBox(
+            height: 300.0, // Change as per your requirement
+            width: 300.0, // Change as per your requirement
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: widget.digest.attachments[attachmentIndex].detailedInformation.codes.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: ElevatedButton(
+                    child: Text("${widget.digest.attachments[attachmentIndex].detailedInformation.codes.isNotEmpty
+                        ? widget.digest.attachments[attachmentIndex].detailedInformation.codes[index].type
+                        : ""}: "
+                        "${widget.digest.attachments[attachmentIndex].detailedInformation.codes.isNotEmpty
+                            ? widget.digest.attachments[attachmentIndex].detailedInformation.codes[index].info
+                            : ""}"),
+                    onPressed: () => openLink(widget.digest.attachments[attachmentIndex].detailedInformation.codes[index].info),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void showLinkDialog() {
