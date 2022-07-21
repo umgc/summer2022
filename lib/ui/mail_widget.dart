@@ -85,30 +85,15 @@ class _MailWidgetState extends State<MailWidget> {
             Container(
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/main');
-                      //Navigator.restorablePush(context, _buildRoute);
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 30,
-                    ),
-                  ),
                   Expanded(
                     child: Center(
                       child: Container(
                         child: Text(
                           style: TextStyle(fontSize: 20),
-                          "USPS Informed Delivery Daily Digest",
+                          "",
                         ),
                       ),
                     ),
-                  ),
-                  Icon(
-                    Icons.arrow_back,
-                    size: 50,
-                    color: Color.fromARGB(0, 255, 255, 1),
                   ),
                 ],
               ),
