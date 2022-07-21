@@ -3,6 +3,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:global_configuration/global_configuration.dart';
 
+import 'bottom_app_bar.dart';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({Key? key}) : super(key: key);
@@ -17,38 +18,15 @@ class SettingWidgetState extends State<SettingsWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Settings"),
+        backgroundColor: Colors.grey,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/');
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 30,
-                  ),
-                ),
-                const Expanded(
-                  child: Center(
-                    child: Text(
-                      "Settings",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ),
-                const Icon(
-                  Icons.arrow_back,
-                  size: 50,
-                  color: Color.fromARGB(0, 255, 255, 1),
-                ),
-              ],
-            ),
-            // Container(
-            //   padding: EdgeInsets.only(top: 100),
-            // ),
             Container(
               color: const Color.fromRGBO(228, 228, 228, 0.6),
               child: Column(
@@ -56,12 +34,11 @@ class SettingWidgetState extends State<SettingsWidget> {
                   Row(
                     children: const [
                       Expanded(
-                        child: Text(
-                          "Envelope Details",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        )
-                      )
+                          child: Text(
+                        "Envelope Details",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ))
                     ],
                   ),
                   Container(
