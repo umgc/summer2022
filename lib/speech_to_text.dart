@@ -76,7 +76,15 @@ class Speech {
               });
               break;
             case 'hyperlinks':
-              //TODO need a way to read links from Digest
+              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
+              var links = state.widget.digest.links;
+              links.forEach((link) {
+                //TODO need a way to read links from Digest and prompt the user to open the link
+                var open = false; //replace this with an actual true false
+                if(open) {
+                  state.openLink(link.link);
+                }
+              });
               break;
             case 'details':
               var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
