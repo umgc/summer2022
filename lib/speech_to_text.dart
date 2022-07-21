@@ -5,6 +5,8 @@ import 'package:summer2022/read_info.dart';
 
 import './main.dart';
 import 'ui/settings.dart';
+import 'ui/other_mail.dart';
+import 'ui/mail_widget.dart';
 
 class Speech {
   String currentPage = "settings";
@@ -51,39 +53,71 @@ class Speech {
     } 
     if (mute == false){
       switch (currentPage) {
-        case 'mail':
+        case 'email':
+          mail.setCurrentMail(OtherMailWidgetState().getCurrentEmailMessage());
           switch(s) {
             // mail page commands
             case 'next':
+              OtherMailWidgetState().seekForward();
               break;
             case 'previous':
-              break;
-            case 'next Digest':
-              break;
-            case 'previous Digest':
-              break;
-            case 'hyperlinks':
+              OtherMailWidgetState().seekBack();
               break;
             case 'details':
+              mail.readEmailInfo();
+              break;
+            case 'subject':
+              mail.readEmailSubject();
+              break;
+            case 'text':
+              mail.readEmailText();
+              break;
+            case 'sender':
+              mail.readEmailSender();
+              break;
+            case 'recipients':
+              mail.readEmailRecipients();
               break;
             default:
               break;
           }
           break;
-        case 'email':
+        case 'mail':
+          digestMail.setCurrentMail(MailWidgetState().getCurrentDigestDetails());
           switch(s) {
             // mail page commands
             case 'next':
+              MailWidgetState().seekForward(MailWidgetState().widget.digest.attachments.length);
               break;
             case 'previous':
-              break;
-            case 'next Digest':
-              break;
-            case 'previous Digest':
-              break;
-            case 'hyperlinks':
+              MailWidgetState().seekBack();
               break;
             case 'details':
+              digestMail.readDigestInfo();
+              break;
+            case 'sender name':
+              digestMail.readDigestSenderName();
+              break;
+            case 'recipient name':
+              digestMail.readDigestRecipientName();
+              break;
+            case 'sender address':
+              digestMail.readDigestSenderAddress();
+              break;
+            case 'recipient address':
+              digestMail.readDigestRecipientAddress();
+              break;
+            case 'sender validated':
+              digestMail.readDigestSenderAddressValidated();
+              break;
+            case 'recipient validated':
+              digestMail.readDigestRecipientAddressValidated();
+              break;
+            case 'logos':
+              digestMail.readDigestLogos();
+              break;
+            case 'links':
+              digestMail.readDigestLinks();
               break;
             default:
               break;
@@ -174,10 +208,10 @@ class Speech {
               cfg.updateValue("email_recipients", false);
               break;
             case 'autoplay on':
+              cfg.updateValue("autoplay", true);
               break;
             case 'autoplay off':
-              break;
-            case 'repeat':
+              cfg.updateValue("autoplay", false);
               break;
             case 'settings help':
               break;
@@ -209,10 +243,13 @@ class Speech {
           mute = true;
           break;
         case 'stop' :
+          tts.stop();
           break;
         case 'speakers off':
+          tts.setVolume(0);
           break;
         case 'speakers on':
+          tts.setVolume(1);
           break;
         case 'back':
           navKey.currentState!.pushNamed('/');

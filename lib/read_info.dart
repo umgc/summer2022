@@ -1,3 +1,4 @@
+import 'package:enough_mail/pop.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:summer2022/models/MailResponse.dart';
 import 'package:summer2022/models/Address.dart';
@@ -148,11 +149,14 @@ class ReadDigestMail {
  * The ReadMail class's purpose is to read the details of an email that is not a Daily Digest 
  */
 class ReadMail {
-  // TODO placeholder until we actually parse email
-  var emailDetails = {'email_subject':'Checking in','email_text':'Hi, how are you?', 'email_sender':'myfriend@yahoo.com', 'email_recipients':'someemail@gmail.com'}; 
+  late MimeMessage currentMail;
 
   ReadMail() {
     initTTS();
+  }
+
+  void setCurrentMail(MimeMessage mail) {
+    currentMail = mail;
   }
 
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
@@ -172,7 +176,7 @@ class ReadMail {
   }
 
   void readEmailSubject(){
-    var subject = emailDetails["email_subject"];
+    var subject = currentMail.decodeSubject();
     String text = "The email subject is $subject";
     if (subject != null) {
       _speak(text);
@@ -182,7 +186,7 @@ class ReadMail {
   }
 
   void readEmailText(){
-    var emailText = emailDetails["email_text"];
+    var emailText = currentMail.body;
     String text = "The email text is $emailText";
     if (emailText != null) {
       _speak(text);
@@ -192,7 +196,7 @@ class ReadMail {
   }
 
   void readEmailSender(){
-    var sender = emailDetails["email_sender"];
+    var sender = currentMail.decodeSender();
     String text = "The email sender is $sender";
     if (sender != null) {
       _speak(text);
@@ -202,7 +206,16 @@ class ReadMail {
   }
 
   void readEmailRecipients(){
-    var recipients = emailDetails["email_recipients"];
+    List<String?> recipients = [];
+    for (MailAddress recipient in currentMail.recipients) {
+      if (recipient.hasPersonalName) {
+        recipients.add(recipient.personalName);
+      } else {
+        recipients.add(recipient.mailboxName);
+      }
+    }
+    recipients[-1] = "and ${recipients[-1]}";
+    recipients.join(', ');
     String text = "The email recipients are $recipients";
     if (recipients != null) {
       _speak(text);

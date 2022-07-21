@@ -31,11 +31,11 @@ class MailWidget extends StatefulWidget {
 
   @override
   State<MailWidget> createState() {
-    return _MailWidgetState();
+    return MailWidgetState();
   }
 }
 
-class _MailWidgetState extends State<MailWidget> {
+class MailWidgetState extends State<MailWidget> {
   int attachmentIndex = 0;
 
   @override
