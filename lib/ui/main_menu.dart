@@ -161,7 +161,7 @@ class MainWidgetState extends State<MainWidget> {
                         onPressed: () async {
                           if (mailType == "Email") {
                             context.loaderOverlay.show();
-                            await getEmails();
+                            await getEmails(false, DateTime.now());
                             if ((emails.isNotEmpty)) {
                               Navigator.pushNamed(context, '/other_mail',
                                   arguments: EmailWidgetArguments(emails));
@@ -195,7 +195,7 @@ class MainWidgetState extends State<MainWidget> {
                         onPressed: () async {
                           if (mailType == "Email") {
                             context.loaderOverlay.show();
-                            await getEmails();
+                            await getEmails(true, DateTime.now());
                             if ((emails.isNotEmpty)) {
                               Navigator.pushNamed(context, '/other_mail',
                                   arguments: EmailWidgetArguments(emails));
@@ -276,7 +276,7 @@ class MainWidgetState extends State<MainWidget> {
     if ((picked != null) && (picked != selectedDate)) {
       if (mailType == "Email") {
         context.loaderOverlay.show();
-        await getEmails();
+        await getEmails(false, picked);
         if ((emails.isNotEmpty)) {
           Navigator.pushNamed(context, '/other_mail',
               arguments: EmailWidgetArguments(emails));
@@ -356,7 +356,7 @@ class MainWidgetState extends State<MainWidget> {
         lastDate: DateTime.now());
     if ((picked != null) && (picked != selectedDate)) {
       context.loaderOverlay.show();
-      await getEmails();
+      await getEmails(false, picked);
       if ((emails.isNotEmpty)) {
         Navigator.pushNamed(context, '/other_mail',
             arguments: EmailWidgetArguments(emails));
@@ -380,9 +380,9 @@ class MainWidgetState extends State<MainWidget> {
         .then((value) => digest = value);
   }
 
-  Future<void> getEmails([DateTime? pickedDate]) async {
+  Future<void> getEmails(bool isUnread, [DateTime? pickedDate]) async {
     await OtherMailParser()
-        .createEmailList(await Keychain().getUsername(),
+        .createEmailList(isUnread, await Keychain().getUsername(),
             await Keychain().getPassword(), pickedDate ?? selectedDate)
         .then((value) => emails = value);
   }
