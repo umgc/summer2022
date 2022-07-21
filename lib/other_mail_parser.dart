@@ -16,10 +16,10 @@ class OtherMailParser {
   final int maxUnreadEmails = 30;
 
   Future<List<Digest>> createEmailList(bool isUnread, String userName, String password, [DateTime? targetDate]) async {
-    this._userName = userName;
-    this._password = password;
-    this._targetDate = targetDate;
-    this._isUnread = isUnread;
+    _userName = userName;
+    _password = password;
+    _targetDate = targetDate;
+    _isUnread = isUnread;
 
     // NOTE: this looks like a casting to type digest will need occur within getEmails()
     //Digest digest = Digest(await _getEmails());

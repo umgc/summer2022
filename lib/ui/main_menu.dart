@@ -42,13 +42,17 @@ class MainWidgetState extends State<MainWidget> {
     stt.setCurrentPage("main");
   }
 
+  void setMailType(String type) {
+    mailType = type;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: BottomBar(),
+        bottomNavigationBar: const BottomBar(),
         appBar: AppBar(
           centerTitle: true,
-          title: Text("Main Menu"),
+          title: const Text("Main Menu"),
           automaticallyImplyLeading: false,
           backgroundColor: Colors.grey,
         ),
@@ -56,87 +60,83 @@ class MainWidgetState extends State<MainWidget> {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: OutlinedButton.icon(
-                        onPressed: () => selectDate(context),
-                        icon: Icon(Icons.calendar_month_outlined),
-                        label: Text("$mailType Date Selection"),
-                        style: TextButton.styleFrom(
-                          primary: Colors.black,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                        ),
-                      ),
-                    ),
-                    Text("Mail Type:"),
-                    DropdownButton(
-                        value: mailType,
-                        items: [
-                          DropdownMenuItem<String>(
-                            value: "Email",
-                            child: Text("Email"),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: "Digest",
-                            child: Text("Digest"),
-                          ),
-                        ],
-                        onChanged: (String? valueSelected) {
-                          setState(() {
-                            mailType = valueSelected!;
-                          });
-                        }),
-                  ],
-                ),
-              ),
-              Container(
-                child: Center(
-                  child: Directionality(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Directionality(
                     textDirection: TextDirection.rtl,
                     child: OutlinedButton.icon(
-                      onPressed: () {
-                        void _getImage() async {
-                          final PickedFile =
-                              await picker.getImage(source: ImageSource.camera);
-                          print(PickedFile!.path);
-                          if (PickedFile != null) {
-                            _image = File(PickedFile.path);
-
-                            _imageBytes = _image!.readAsBytesSync();
-                            String a = base64.encode(_imageBytes!);
-                            var objMailResponse = await vision!.search(a);
-                            for (var address in objMailResponse.addresses) {
-                              address.validated =
-                                  await UspsAddressVerification()
-                                      .verifyAddressString(address.address);
-                            }
-                            setState(() {
-                              if (PickedFile != null) {
-                                _image = File(PickedFile.path);
-                                _imageBytes = _image!.readAsBytesSync();
-                                _imageName = _image!.path.split('/').last;
-                              } else {
-                                print('No image selected.');
-                              }
-                            });
-                          }
-                        }
-                      },
-                      icon: Icon(Icons.camera_alt_outlined),
-                      label: const Text("Scan Mail"),
+                      onPressed: () => selectDate(context),
+                      icon: const Icon(Icons.calendar_month_outlined),
+                      label: Text("$mailType Date Selection"),
                       style: TextButton.styleFrom(
                         primary: Colors.black,
                         shadowColor: Colors.grey,
                         shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5))),
                       ),
+                    ),
+                  ),
+                  const Text("Mail Type:"),
+                  DropdownButton(
+                      value: mailType,
+                      items: const [
+                        DropdownMenuItem<String>(
+                          value: "Email",
+                          child: Text("Email"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "Digest",
+                          child: Text("Digest"),
+                        ),
+                      ],
+                      onChanged: (String? valueSelected) {
+                        setState(() {
+                          mailType = valueSelected!;
+                        });
+                      }),
+                ],
+              ),
+              Center(
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      void _getImage() async {
+                        final PickedFile =
+                            await picker.getImage(source: ImageSource.camera);
+                        print(PickedFile!.path);
+                        if (PickedFile != null) {
+                          _image = File(PickedFile.path);
+
+                          _imageBytes = _image!.readAsBytesSync();
+                          String a = base64.encode(_imageBytes!);
+                          var objMailResponse = await vision!.search(a);
+                          for (var address in objMailResponse.addresses) {
+                            address.validated =
+                                await UspsAddressVerification()
+                                    .verifyAddressString(address.address);
+                          }
+                          setState(() {
+                            if (PickedFile != null) {
+                              _image = File(PickedFile.path);
+                              _imageBytes = _image!.readAsBytesSync();
+                              _imageName = _image!.path.split('/').last;
+                            } else {
+                              print('No image selected.');
+                            }
+                          });
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.camera_alt_outlined),
+                    label: const Text("Scan Mail"),
+                    style: TextButton.styleFrom(
+                      primary: Colors.black,
+                      shadowColor: Colors.grey,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
                   ),
                 ),
@@ -160,117 +160,115 @@ class MainWidgetState extends State<MainWidget> {
                 child: const Text("Backend Testing",
                     style: TextStyle(color: Colors.black)),
               ),
-              Container(
-                child: Column(children: [
-                  Center(
-                    child: Column(children: [
-                      OutlinedButton(
-                        onPressed: () async {
-                          if (mailType == "Email") {
-                            context.loaderOverlay.show();
-                            await getEmails(false, DateTime.now());
-                            if ((emails.isNotEmpty)) {
-                              Navigator.pushNamed(context, '/other_mail',
-                                  arguments: EmailWidgetArguments(emails));
-                            } else {
-                              showNoEmailsDialog();
-                            }
-                            context.loaderOverlay.hide();
+              Column(children: [
+                Center(
+                  child: Column(children: [
+                    OutlinedButton(
+                      onPressed: () async {
+                        if (mailType == "Email") {
+                          context.loaderOverlay.show();
+                          await getEmails(false, DateTime.now());
+                          if ((emails.isNotEmpty)) {
+                            Navigator.pushNamed(context, '/other_mail',
+                                arguments: EmailWidgetArguments(emails));
                           } else {
-                            context.loaderOverlay.show();
-                            await getDigest();
-                            if (!digest.isNull()) {
-                              Navigator.pushNamed(context, '/digest_mail',
-                                  arguments: MailWidgetArguments(digest));
-                            } else {
-                              showNoDigestDialog();
-                            }
-                            context.loaderOverlay.hide();
+                            showNoEmailsDialog();
                           }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                        ),
-                        child: const Text("Latest",
-                            style: TextStyle(color: Colors.black)),
-                      ),
-                      OutlinedButton(
-                        onPressed: () async {
-                          if (mailType == "Email") {
-                            context.loaderOverlay.show();
-                            await getEmails(true, DateTime.now());
-                            if ((emails.isNotEmpty)) {
-                              Navigator.pushNamed(context, '/other_mail',
-                                  arguments: EmailWidgetArguments(emails));
-                            } else {
-                              showNoEmailsDialog();
-                            }
-                            context.loaderOverlay.hide();
+                          context.loaderOverlay.hide();
+                        } else {
+                          context.loaderOverlay.show();
+                          await getDigest();
+                          if (!digest.isNull()) {
+                            Navigator.pushNamed(context, '/digest_mail',
+                                arguments: MailWidgetArguments(digest));
                           } else {
-                            context.loaderOverlay.show();
-                            await getDigest();
-                            if (!digest.isNull()) {
-                              Navigator.pushNamed(context, '/digest_mail',
-                                  arguments: MailWidgetArguments(digest));
-                            } else {
-                              showNoDigestDialog();
-                            }
-                            context.loaderOverlay.hide();
+                            showNoDigestDialog();
                           }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                        ),
-                        child: const Text("Unread",
-                            style: TextStyle(color: Colors.black)),
-                      ),
-                    ]),
-                  ),
-                  Center(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/settings');
+                          context.loaderOverlay.hide();
+                        }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.grey,
+                        primary: Colors.white,
                         shadowColor: Colors.grey,
                         shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5))),
                       ),
-                      child: const Text(
-                        "Settings",
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: const Text("Latest",
+                          style: TextStyle(color: Colors.black)),
                     ),
-                  ),
-                  Center(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/sign_in');
+                    OutlinedButton(
+                      onPressed: () async {
+                        if (mailType == "Email") {
+                          context.loaderOverlay.show();
+                          await getEmails(true, DateTime.now());
+                          if ((emails.isNotEmpty)) {
+                            Navigator.pushNamed(context, '/other_mail',
+                                arguments: EmailWidgetArguments(emails));
+                          } else {
+                            showNoEmailsDialog();
+                          }
+                          context.loaderOverlay.hide();
+                        } else {
+                          context.loaderOverlay.show();
+                          await getDigest();
+                          if (!digest.isNull()) {
+                            Navigator.pushNamed(context, '/digest_mail',
+                                arguments: MailWidgetArguments(digest));
+                          } else {
+                            showNoDigestDialog();
+                          }
+                          context.loaderOverlay.hide();
+                        }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.black,
+                        primary: Colors.white,
                         shadowColor: Colors.grey,
                         shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5))),
                       ),
-                      child: const Text(
-                        "Sign Out",
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: const Text("Unread",
+                          style: TextStyle(color: Colors.black)),
+                    ),
+                  ]),
+                ),
+                Center(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/settings');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey,
+                      shadowColor: Colors.grey,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                    ),
+                    child: const Text(
+                      "Settings",
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                ] // Children
+                ),
+                Center(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/sign_in');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.black,
+                      shadowColor: Colors.grey,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
-              ),
+                    child: const Text(
+                      "Sign Out",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ] // Children
+                  ),
             ])));
   }
 
@@ -314,10 +312,10 @@ class MainWidgetState extends State<MainWidget> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Center(
+          title: const Center(
             child: Text("No Digest Available"),
           ),
-          content: Container(
+          content: SizedBox(
             height: 100.0, // Change as per your requirement
             width: 100.0, // Change as per your requirement
             child: Center(
@@ -337,16 +335,16 @@ class MainWidgetState extends State<MainWidget> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Center(
+          title: const Center(
             child: Text("No Emails Available"),
           ),
-          content: Container(
+          content: SizedBox(
             height: 100.0, // Change as per your requirement
             width: 100.0, // Change as per your requirement
             child: Center(
               child: Text(
                 "There are no emails available for the selected date: ${selectedDate.month}/${selectedDate.day}/${selectedDate.year}",
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
           ),

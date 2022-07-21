@@ -91,17 +91,17 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
               width: double.infinity,
             ),
-            new Expanded(
+            Expanded(
               flex: 1,
-              child: new SingleChildScrollView(
+              child: SingleChildScrollView(
                 scrollDirection: Axis.vertical, //.horizontal
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
-                    TextSpan(
+                    const TextSpan(
                         text: 'SUBJECT: ',
                         style: TextStyle(
                             color: Colors.black,
@@ -112,11 +112,11 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                         text: widget.emails[index].message
                             .decodeSubject()
                             .toString(),
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.normal,
                             fontSize: 16)),
-                    TextSpan(
+                    const TextSpan(
                         text: '\nSENDER: ',
                         style: TextStyle(
                             color: Colors.black,
@@ -127,11 +127,11 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                         text: widget.emails[index].message
                             .decodeSender()
                             .toString(),
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.normal,
                             fontSize: 16)),
-                    TextSpan(
+                    const TextSpan(
                         text: '\nSENT: ',
                         style: TextStyle(
                             color: Colors.black,
@@ -139,14 +139,14 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                             fontSize: 16,
                             height: 2)),
                     TextSpan(
-                        text: timeAgo + '\n\n',
-                        style: TextStyle(
+                        text: '$timeAgo\n\n',
+                        style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.normal,
                             fontSize: 16)),
                     TextSpan(
                         text: removeLinks(widget.emails[index]),
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.normal,
                             fontSize: 16)),
@@ -154,7 +154,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
               width: double.infinity,
             ),
@@ -167,7 +167,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                   onPressed: () {
                     seekBack();
                   },
-                  child: Icon(Icons.skip_previous),
+                  child: const Icon(Icons.skip_previous),
                 ),
                 Text(
                   (emailsLen - (index)).toString() + '/' + emailsLen.toString(),
@@ -179,11 +179,11 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                   onPressed: () {
                     seekForward();
                   },
-                  child: Icon(Icons.skip_next),
+                  child: const Icon(Icons.skip_next),
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
               width: double.infinity,
             ),

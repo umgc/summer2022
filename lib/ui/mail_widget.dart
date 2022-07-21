@@ -1,27 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// ignore: unused_import
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 import '../main.dart';
 import 'package:summer2022/ui/main_menu.dart';
-import 'package:summer2022/usps_address_verification.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:summer2022/api.dart';
-import 'package:summer2022/speech_to_text.dart';
 import '../models/MailResponse.dart';
-import '../barcode_scanner.dart';
-import '../models/Arguments.dart';
-import '../models/Code.dart';
 import '../models/Digest.dart';
-import '../models/Logo.dart';
 import 'bottom_app_bar.dart';
 
 class MailWidget extends StatefulWidget {
@@ -61,46 +44,42 @@ class MailWidgetState extends State<MailWidget> {
     // Figma Flutter Generator MailWidget - FRAME
 
     return Scaffold(
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: const BottomBar(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Digest"),
+        title: const Text("Digest"),
         backgroundColor: Colors.grey,
       ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/main');
-                      //Navigator.restorablePush(context, _buildRoute);
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 30,
-                    ),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Container(
-                        child: Text(
-                          style: TextStyle(fontSize: 20),
-                          "USPS Informed Delivery Daily Digest",
-                        ),
-                      ),
-                    ),
-                  ),
-                  Icon(
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/main');
+                    //Navigator.restorablePush(context, _buildRoute);
+                  },
+                  icon: const Icon(
                     Icons.arrow_back,
-                    size: 50,
-                    color: Color.fromARGB(0, 255, 255, 1),
+                    size: 30,
                   ),
-                ],
-              ),
+                ),
+                const Expanded(
+                  child: Center(
+                    child: Text(
+                      style: TextStyle(fontSize: 20),
+                      "USPS Informed Delivery Daily Digest",
+                    ),
+                  ),
+                ),
+                const Icon(
+                  Icons.arrow_back,
+                  size: 50,
+                  color: Color.fromARGB(0, 255, 255, 1),
+                ),
+              ],
             ),
             Row(
               children: [
@@ -117,50 +96,48 @@ class MailWidgetState extends State<MailWidget> {
                 ),
               ],
             ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    //padding: EdgeInsets.only(left: 20),
-                    child: Center(
-                      child: OutlinedButton(
-                        onPressed: () => showLinkDialog(),
-                        child: const Text(
-                          "Links",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                        ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  //padding: EdgeInsets.only(left: 20),
+                  child: Center(
+                    child: OutlinedButton(
+                      onPressed: () => showLinkDialog(),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5))),
+                      ),
+                      child: const Text(
+                        "Links",
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
-                  Expanded(
-                    //: EdgeInsets.only(right: 10),
-                    child: Center(
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "All Details",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                        ),
+                ),
+                Expanded(
+                  //: EdgeInsets.only(right: 10),
+                  child: Center(
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        shadowColor: Colors.grey,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5))),
+                      ),
+                      child: const Text(
+                        "All Details",
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             Container(
               padding: const EdgeInsets.only(bottom: 60),
@@ -173,11 +150,9 @@ class MailWidgetState extends State<MailWidget> {
                             seekBack();
                           });
                         },
-                        child: Icon(Icons.skip_previous, size: 50)),
+                        child: const Icon(Icons.skip_previous, size: 50)),
                     Text(widget.digest.attachments.isNotEmpty
-                        ? (attachmentIndex + 1).toString() +
-                            "/" +
-                            widget.digest.attachments.length.toString()
+                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}"
                         : "0/0"),
                     ElevatedButton(
                         onPressed: () {
@@ -185,7 +160,7 @@ class MailWidgetState extends State<MailWidget> {
                             seekForward(widget.digest.attachments.length);
                           });
                         },
-                        child: Icon(Icons.skip_next, size: 50))
+                        child: const Icon(Icons.skip_next, size: 50))
                   ]),
             )
           ],
@@ -246,8 +221,9 @@ class MailWidgetState extends State<MailWidget> {
   void openLink(String link) async {
     if (link != "") {
       Uri uri = Uri.parse(link);
-      if (!await launchUrl(uri, mode: LaunchMode.externalApplication))
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
         throw 'Could not launch $uri';
+      }
     }
   }
 }

@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:summer2022/read_info.dart';
 
 import './main.dart';
+import 'ui/main_menu.dart';
 import 'ui/settings.dart';
 import 'ui/other_mail.dart';
 import 'ui/mail_widget.dart';
@@ -44,12 +45,43 @@ class Speech {
     }
   }
 
+  DateTime processDate(String theDate) {
+    //TODO add error handling for an invalid date/date format
+    var numberSuffixes = {
+      "1st": "1", "2nd": "2", "3rd": "3", "4th": "4", "5th": "5", "6th": "6",
+      "7th": "7", "8th": "8", "9th": "9", "10th": "10", "11th": "11",
+      "12th": "12", "13th": "13", "14th": "14", "15th": "15", "16th": "16",
+      "17th": "17", "18th": "18", "19th": "19", "20th": "20", "21st": "21",
+      "22nd": "22", "23rd": "23", "24th": "24", "25th": "25", "26th": "26",
+      "27th": "27", "28th": "28", "29th": "29", "30th": "30", "31st": "31"
+    };
+    for (var key in numberSuffixes.keys) {
+      if(theDate.contains(key)) {
+        String? val = numberSuffixes[key];
+        if (val != null) {
+          theDate.replaceFirst(key, val);
+        }
+      }
+    }
+
+    DateTime dt = DateFormat('yyyy/MM/dd').parse(theDate);
+    return dt;
+  }
+
   // The commands that the user can utilise
   command(String s) {
     //General commands
     if (s == 'unmute') {
         mute = false;
         return;
+    } 
+    if(s.contains("email date")) {
+      // TODO
+      processDate(s.split("date ")[1]);
+    } 
+    if(s.contains("digest date")) {
+      // TODO
+      processDate(s.split("date ")[1]);
     } 
     if (mute == false){
       switch (currentPage) {
@@ -85,7 +117,7 @@ class Speech {
         case 'mail':
           digestMail.setCurrentMail(MailWidgetState().getCurrentDigestDetails());
           switch(s) {
-            // mail page commands
+            // digest page commands
             case 'next':
               MailWidgetState().seekForward(MailWidgetState().widget.digest.attachments.length);
               break;
@@ -126,11 +158,13 @@ class Speech {
         // Main menu commands
         case 'main':
           switch (s) {
-            case "today's mail":
+            case "unread emails":
               break;
-            case 'unread mail':
+            case 'latest email':
               break;
-            case 'email date':
+            case "unread digest":
+              break;
+            case 'latest digest':
               break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
@@ -139,10 +173,12 @@ class Speech {
               navKey.currentState!.pushNamed('/sign_in');
               break;
             case 'switch email':
-              navKey.currentState!.pushNamed('/other_mail');
+              MainWidgetState().setMailType("Email");
+              //navKey.currentState!.pushNamed('/other_mail');
               break;
             case 'switch Digest':
-              navKey.currentState!.pushNamed('/digest_mail');
+              MainWidgetState().setMailType("Digest");
+              //navKey.currentState!.pushNamed('/digest_mail');
               break;
             case 'menu help':
               break;
