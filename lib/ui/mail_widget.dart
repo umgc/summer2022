@@ -28,17 +28,19 @@ import 'bottom_app_bar.dart';
 
 class MailWidget extends StatefulWidget {
   final Digest digest;
+  int attachmentIndex = 0;
+  late State<MailWidget> state;
 
-  const MailWidget({required this.digest});
+  MailWidget({required this.digest});
 
   @override
   State<MailWidget> createState() {
-    return _MailWidgetState();
+    state = MailWidgetState();
+    return state;
   }
 }
 
-class _MailWidgetState extends State<MailWidget> {
-  int attachmentIndex = 0;
+class MailWidgetState extends State<MailWidget> {
   ReadDigestMail? reader;
 
   @override
@@ -50,7 +52,7 @@ class _MailWidgetState extends State<MailWidget> {
   initState() {
       if(widget.digest.attachments.isNotEmpty) {
         reader = ReadDigestMail();
-        reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+        reader!.setCurrentMail(widget.digest.attachments[widget.attachmentIndex].detailedInformation);
         readMailPiece();
       }
       super.initState();
@@ -58,7 +60,7 @@ class _MailWidgetState extends State<MailWidget> {
   }
 
   MailResponse getCurrentDigestDetails() {
-    return widget.digest.attachments[attachmentIndex].detailedInformation;
+    return widget.digest.attachments[widget.attachmentIndex].detailedInformation;
   }
 
   static Route _buildRoute(BuildContext context, Object? params) {
@@ -107,7 +109,7 @@ class _MailWidgetState extends State<MailWidget> {
                           child: widget.digest.attachments.isNotEmpty
                               ? Image.memory(base64Decode(widget
                                   .digest
-                                  .attachments[attachmentIndex]
+                                  .attachments[widget.attachmentIndex]
                                   .attachmentNoFormatting))
                               : Image.asset('assets/NoAttachments.png'))),
                 ),
@@ -190,11 +192,11 @@ class _MailWidgetState extends State<MailWidget> {
                         },
                         child: Icon(Icons.skip_previous, size: 50)),
                     Text(widget.digest.attachments.isNotEmpty
-                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
+                        ? "${widget.attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
                     ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            seekForward(widget.digest.attachments.length);
+                            seekForward();
                           });
                         },
                         child: Icon(Icons.skip_next, size: 50))
@@ -207,17 +209,17 @@ class _MailWidgetState extends State<MailWidget> {
   }
 
   void seekBack() {
-    if (attachmentIndex != 0) {
-      attachmentIndex = attachmentIndex - 1;
-      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+    if (widget.attachmentIndex != 0) {
+      widget.attachmentIndex = widget.attachmentIndex - 1;
+      reader!.setCurrentMail(widget.digest.attachments[widget.attachmentIndex].detailedInformation);
       readMailPiece();
     }
   }
 
-  void seekForward(int max) {
-    if (attachmentIndex < max - 1) {
-      attachmentIndex = attachmentIndex + 1;
-      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+  void seekForward() {
+    if (widget.attachmentIndex < widget.digest.attachments.length) {
+      widget.attachmentIndex = widget.attachmentIndex + 1;
+      reader!.setCurrentMail(widget.digest.attachments[widget.attachmentIndex].detailedInformation);
       readMailPiece();
     }
   }
@@ -233,17 +235,17 @@ class _MailWidgetState extends State<MailWidget> {
             width: 300.0, // Change as per your requirement
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: widget.digest.attachments[attachmentIndex].detailedInformation.codes.length,
+              itemCount: widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   title: ElevatedButton(
-                    child: Text("${widget.digest.attachments[attachmentIndex].detailedInformation.codes.isNotEmpty
-                        ? widget.digest.attachments[attachmentIndex].detailedInformation.codes[index].type
+                    child: Text("${widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes.isNotEmpty
+                        ? widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes[index].type
                         : ""}: "
-                        "${widget.digest.attachments[attachmentIndex].detailedInformation.codes.isNotEmpty
-                            ? widget.digest.attachments[attachmentIndex].detailedInformation.codes[index].info
+                        "${widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes.isNotEmpty
+                            ? widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes[index].info
                             : ""}"),
-                    onPressed: () => openLink(widget.digest.attachments[attachmentIndex].detailedInformation.codes[index].info),
+                    onPressed: () => openLink(widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes[index].info),
                   ),
                 );
               },

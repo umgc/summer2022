@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:summer2022/read_info.dart';
+import 'package:summer2022/ui/mail_widget.dart';
 
 import './main.dart';
 import 'ui/settings.dart';
@@ -55,16 +56,31 @@ class Speech {
           switch(s) {
             // mail page commands
             case 'next':
+              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
+              state.seekForward();
               break;
             case 'previous':
+              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
+              state.seekBack();
               break;
             case 'next Digest':
+              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
+              state.setState(() {
+                state.seekForward();
+              });
               break;
             case 'previous Digest':
+              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
+              state.setState(() {
+                state.seekBack();
+              });
               break;
             case 'hyperlinks':
+              //TODO need a way to read links from Digest
               break;
             case 'details':
+              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
+              state.readMailPiece();
               break;
             default:
               break;
