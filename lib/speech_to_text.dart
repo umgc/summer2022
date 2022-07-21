@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -45,8 +46,26 @@ class Speech {
     }
   }
 
-  DateTime processDate(String theDate) {
-    //TODO add error handling for an invalid date/date format
+  DateTime? processDate(String theDate) {
+    // TODO add error handling for an invalid date/date format
+    // Expected input example: June 8th 2022
+
+    // Validate input
+    List months = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    bool foundMonth = false;
+    for (String month in months) {
+      if (theDate.contains(month)) {
+        foundMonth = true;
+        break;
+      }
+    }
+    if (!foundMonth){
+      throw Exception('The specified date is invalid.');
+    }
+
     var numberSuffixes = {
       "1st": "1", "2nd": "2", "3rd": "3", "4th": "4", "5th": "5", "6th": "6",
       "7th": "7", "8th": "8", "9th": "9", "10th": "10", "11th": "11",
@@ -64,7 +83,13 @@ class Speech {
       }
     }
 
-    DateTime dt = DateFormat('yyyy/MM/dd').parse(theDate);
+    DateTime? dt;
+    try {
+      dt = DateFormat('yyyy/MM/dd').parse(theDate);
+    } on FormatException {
+      tts.speak('The specified date is invalid.');
+      return null;
+    }
     return dt;
   }
 
@@ -76,12 +101,16 @@ class Speech {
         return;
     } 
     if(s.contains("email date")) {
-      // TODO
-      processDate(s.split("date ")[1]);
+      DateTime? dt = processDate(s.split("date ")[1]);
+      if (dt != null) {
+        //TODO
+      }
     } 
     if(s.contains("digest date")) {
-      // TODO
-      processDate(s.split("date ")[1]);
+      DateTime? dt = processDate(s.split("date ")[1]);
+      if (dt != null) {
+        //TODO
+      }
     } 
     if (mute == false){
       switch (currentPage) {
