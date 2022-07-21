@@ -4,7 +4,7 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:summer2022/read_info.dart';
 
 import './main.dart';
-import './settings.dart';
+import 'ui/settings.dart';
 
 class Speech {
   String currentPage = "settings";

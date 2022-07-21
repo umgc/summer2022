@@ -8,20 +8,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:summer2022/main_menu.dart';
-import './main.dart';
+import '../main.dart';
+import 'package:summer2022/ui/main_menu.dart';
 import 'package:summer2022/usps_address_verification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:summer2022/api.dart';
-import './models/MailResponse.dart';
-import 'barcode_scanner.dart';
-import 'models/Arguments.dart';
-import 'models/Code.dart';
-import 'models/Digest.dart';
-import 'models/Logo.dart';
 import 'package:summer2022/speech_to_text.dart';
+import '../models/MailResponse.dart';
+import '../barcode_scanner.dart';
+import '../models/Arguments.dart';
+import '../models/Code.dart';
+import '../models/Digest.dart';
+import '../models/Logo.dart';
+import 'bottom_app_bar.dart';
 
 class MailWidget extends StatefulWidget {
   final Digest digest;
@@ -39,14 +40,19 @@ class _MailWidgetState extends State<MailWidget> {
 
   @override
   initState() {
-      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
-      super.initState();
-      stt.setCurrentPage("mail");
+    print(widget.digest.attachments[attachmentIndex].detailedInformation
+        .toJson()); //TODO Read Mail through tts
+    super.initState();
+    stt.setCurrentPage("mail");
+  }
+
+  MailResponse getCurrentDigestDetails() {
+    return widget.digest.attachments[attachmentIndex].detailedInformation;
   }
 
   static Route _buildRoute(BuildContext context, Object? params) {
     return MaterialPageRoute<void>(
-      builder: (BuildContext context) => MainWidget(),
+      builder: (BuildContext context) => const MainWidget(),
     );
   }
 
@@ -55,6 +61,12 @@ class _MailWidgetState extends State<MailWidget> {
     // Figma Flutter Generator MailWidget - FRAME
 
     return Scaffold(
+      bottomNavigationBar: BottomBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Digest"),
+        backgroundColor: Colors.grey,
+      ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,11 +94,11 @@ class _MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
-                Icon(
-                  Icons.arrow_back,
-                  size: 50,
-                  color: Color.fromARGB(0, 255, 255, 1),
-                ),
+                  Icon(
+                    Icons.arrow_back,
+                    size: 50,
+                    color: Color.fromARGB(0, 255, 255, 1),
+                  ),
                 ],
               ),
             ),
@@ -185,14 +197,16 @@ class _MailWidgetState extends State<MailWidget> {
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
-      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
+      print(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson()); //TODO Read Mail through tts
     }
   }
 
   void seekForward(int max) {
     if (attachmentIndex < max - 1) {
       attachmentIndex = attachmentIndex + 1;
-      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
+      print(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson()); //TODO Read Mail through tts
     }
   }
 
