@@ -16,7 +16,6 @@ import 'package:summer2022/usps_address_verification.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class DigestEmailParser {
-
   String _userName = ''; // Add your credentials
   String _password = ''; // Add your credentials
   DateTime? _targetDate;
@@ -26,12 +25,13 @@ class DigestEmailParser {
   String imagePath =
       '/storage/emulated/0/Android/data/com.example.summer2022/files';
 
-  Future<Digest> createDigest(String userName, String password, [DateTime? targetDate]) async {
+  Future<Digest> createDigest(String userName, String password,
+      [DateTime? targetDate]) async {
     this._userName = userName;
     this._password = password;
     this._targetDate = targetDate;
     Digest digest = Digest(await _getDigestEmail());
-    if(!digest.isNull()) {
+    if (!digest.isNull()) {
       digest.attachments = await _getAttachments(digest.message);
       digest.links = _getLinks(digest.message);
     }
@@ -42,27 +42,36 @@ class DigestEmailParser {
   Future<List<Attachment>> _getAttachments(MimeMessage m) async {
     List<Attachment> list = [];
     await deleteImageFiles();
-    for(int x = 0; x < m.mimeData!.parts!.length; x++) {
-        if(m.mimeData!.parts!.elementAt(x).contentType?.value.toString().contains("image") ?? false) {
-          var attachment = Attachment();
-          attachment.attachment = m.mimeData!.parts!.elementAt(x).decodeMessageData()
-              .toString(); //These are base64 encoded images with formatting
-          attachment.attachmentNoFormatting =
-              attachment.attachment.toString().replaceAll(
-                  "\r\n", ""); //These are base64 encoded images with formatting
-          await saveImageFile(
-              base64Decode(attachment.attachmentNoFormatting),
-              "mailpiece" + x.toString() + ".jpg");
-          attachment.detailedInformation = await processImage(filePath);
-          list.add(attachment);
-        }
+    for (int x = 0; x < m.mimeData!.parts!.length; x++) {
+      if (m.mimeData!.parts!
+              .elementAt(x)
+              .contentType
+              ?.value
+              .toString()
+              .contains("image") ??
+          false) {
+        var attachment = Attachment();
+        attachment.attachment = m.mimeData!.parts!
+            .elementAt(x)
+            .decodeMessageData()
+            .toString(); //These are base64 encoded images with formatting
+        attachment.attachmentNoFormatting = attachment.attachment
+            .toString()
+            .replaceAll(
+                "\r\n", ""); //These are base64 encoded images with formatting
+        await saveImageFile(base64Decode(attachment.attachmentNoFormatting),
+            "mailpiece" + x.toString() + ".jpg");
+        attachment.detailedInformation = await processImage(filePath);
+        list.add(attachment);
+      }
     }
     return list;
   }
 
   List<Link> _getLinks(MimeMessage m) {
     List<Link> list = [];
-    RegExp linkExp = RegExp(r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
+    RegExp linkExp = RegExp(
+        r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
     String text = m.decodeTextPlainPart() ?? ""; //get body text of email
     //remove encoding to make text easier to interpret
     text = text.replaceAll('\r\n', " ");
@@ -71,13 +80,22 @@ class DigestEmailParser {
     text = text.replaceAll(']', " ");
     text = text.replaceAll('[', " ");
 
-    while(linkExp.hasMatch(text)) {
+    while (linkExp.hasMatch(text)) {
       var match = linkExp.firstMatch(text)?.group(0);
       Link link = Link();
       link.link = match.toString();
-      link.info = text.split(match.toString())[0].toString().split('.').last.toString().trim(); //attempt to get information about the link
+      link.info = text
+          .split(match.toString())[0]
+          .toString()
+          .split('.')
+          .last
+          .toString()
+          .trim(); //attempt to get information about the link
       list.add(link);
-      text = text.substring(text.indexOf(match.toString()) + match.toString().length); //remove the found link and continue searching
+      text = text.substring(text.indexOf(match.toString()) +
+          match
+              .toString()
+              .length); //remove the found link and continue searching
     }
     return list;
   }
@@ -96,40 +114,40 @@ class DigestEmailParser {
       if (config == null) {
         return MimeMessage();
       } else {
-          var imapServerConfig = config.preferredIncomingImapServer;
-          await client.connectToServer(
-              imapServerConfig!.hostname as String, imapServerConfig.port as int,
-              isSecure: imapServerConfig.isSecureSocket);
-          await client.login(_userName, _password);
-          await client.selectInbox();
-          //Search for sequence id of the Email
-          String searchCriteria = 'FROM USPSInformeddelivery@email.informeddelivery.usps.com ON ${_formatTargetDateForSearch(targetDate)} SUBJECT "Your Daily Digest"';
-          List<ReturnOption> returnOptions = [];
-          ReturnOption option = ReturnOption("all");
-          returnOptions.add(option);
-          final searchResult = await client.searchMessages(
-              searchCriteria: searchCriteria, returnOptions: returnOptions);
-          //extract sequence id
-          int? seqID;
-          final matchingSequence = searchResult.matchingSequence;
-          if (matchingSequence != null) {
-            seqID = matchingSequence.isNotEmpty
-                ? matchingSequence.elementAt(0)
-                : null; // this gets the sequence id of the desired email
-          }
-          if (seqID != null) {
-            //Fetch Email Results
-            final fetchedMessage = await client.fetchMessage(
-                seqID, 'BODY.PEEK[]');
-            return fetchedMessage.messages.first;
-          }
-          return MimeMessage();
+        var imapServerConfig = config.preferredIncomingImapServer;
+        await client.connectToServer(
+            imapServerConfig!.hostname as String, imapServerConfig.port as int,
+            isSecure: imapServerConfig.isSecureSocket);
+        await client.login(_userName, _password);
+        await client.selectInbox();
+        //Search for sequence id of the Email
+        String searchCriteria =
+            'FROM USPSInformeddelivery@email.informeddelivery.usps.com ON ${_formatTargetDateForSearch(targetDate)} SUBJECT "Your Daily Digest"';
+        List<ReturnOption> returnOptions = [];
+        ReturnOption option = ReturnOption("all");
+        returnOptions.add(option);
+        final searchResult = await client.searchMessages(
+            searchCriteria: searchCriteria, returnOptions: returnOptions);
+        //extract sequence id
+        int? seqID;
+        final matchingSequence = searchResult.matchingSequence;
+        if (matchingSequence != null) {
+          seqID = matchingSequence.isNotEmpty
+              ? matchingSequence.elementAt(0)
+              : null; // this gets the sequence id of the desired email
         }
-      } catch (e) {
+        if (seqID != null) {
+          //Fetch Email Results
+          final fetchedMessage =
+              await client.fetchMessage(seqID, 'BODY.PEEK[]');
+          return fetchedMessage.messages.first;
+        }
+        return MimeMessage();
+      }
+    } catch (e) {
       rethrow;
-    }
-    finally {
-      if(client.isLoggedIn) {
+    } finally {
+      if (client.isLoggedIn) {
         await client.logout();
       }
     }
@@ -138,13 +156,10 @@ class DigestEmailParser {
   String _formatDateTime(DateTime? date) {
     if (date != null) {
       return "${date.year}-${date.month}-${date.day}";
-    }
-    else{
+    } else {
       return "";
     }
   }
-
-
 
   deleteImageFiles() async {
     Directory? directory = await getExternalStorageDirectory();
@@ -152,12 +167,20 @@ class DigestEmailParser {
     var files = directory?.listSync(recursive: false, followLinks: false);
     var files2 = directory2.listSync(recursive: false, followLinks: false);
     for (int x = 0; x < files!.length; x++) {
-      print("Delete in Extern: " + files[x].path);
-      files[x].delete();
+      try {
+        files[x].delete();
+        print("Delete in Extern: " + files[x].path);
+      } catch (e) {
+        print("File" + x.toString() + " does not exist");
+      }
     }
     for (int x = 0; x < files2.length; x++) {
-      print("Delete: " + files2[x].path);
-      files[x].delete();
+      try {
+        files[x].delete();
+        print("Delete: " + files2[x].path);
+      } catch (e) {
+        print("File" + x.toString() + " does not exist");
+      }
     }
   }
 
@@ -257,7 +280,7 @@ class DigestEmailParser {
     var objMr = await vision.search(a);
     for (var address in objMr.addresses) {
       address.validated =
-      await UspsAddressVerification().verifyAddressString(address.address);
+          await UspsAddressVerification().verifyAddressString(address.address);
     }
     _barcodeScannerApi = BarcodeScannerApi();
     File img = File(filePath);

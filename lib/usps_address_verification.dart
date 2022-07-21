@@ -55,7 +55,9 @@ class UspsAddressVerification {
           strAddr1 = list[0];
         }
       } else {
-        throw Exception('Address format not considered for validation');
+        print(
+            "Exception Msg Triggered: Address format not considered for validation");
+        // throw Exception('Address format not considered for validation');
       }
 
       //City, State Zip will always be the last line of the list

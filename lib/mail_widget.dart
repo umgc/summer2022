@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:summer2022/main_menu.dart';
 import 'package:summer2022/usps_address_verification.dart';
@@ -34,11 +35,16 @@ class MailWidget extends StatefulWidget {
 
 class _MailWidgetState extends State<MailWidget> {
   int attachmentIndex = 0;
-
+  bool attachment = true;
   @override
   initState() {
-      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
-      super.initState();
+    if (widget.digest.attachments.isNotEmpty) {
+      print(widget.digest.attachments[attachmentIndex]
+          .detailedInformation //TODO Read Mail through tts
+
+          .toJson());
+    }
+    super.initState();
   }
 
   static Route _buildRoute(BuildContext context, Object? params) {
@@ -74,16 +80,16 @@ class _MailWidgetState extends State<MailWidget> {
                       child: Container(
                         child: Text(
                           style: TextStyle(fontSize: 20),
-                          "USPS Informed Delivery Daily Digest",
+                          "USPS Informed Delivery Daily Digest for ${DateFormat("EEE, MM/dd/yyyy").format(this.widget.digest.message.decodeDate()!)}",
                         ),
                       ),
                     ),
                   ),
-                Icon(
-                  Icons.arrow_back,
-                  size: 50,
-                  color: Color.fromARGB(0, 255, 255, 1),
-                ),
+                  Icon(
+                    Icons.arrow_back,
+                    size: 50,
+                    color: Color.fromARGB(0, 255, 255, 1),
+                  )
                 ],
               ),
             ),
@@ -182,14 +188,16 @@ class _MailWidgetState extends State<MailWidget> {
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
-      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
+      print(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson()); //TODO Read Mail through tts
     }
   }
 
   void seekForward(int max) {
     if (attachmentIndex < max - 1) {
       attachmentIndex = attachmentIndex + 1;
-      print(widget.digest.attachments[attachmentIndex].detailedInformation.toJson()); //TODO Read Mail through tts
+      print(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson()); //TODO Read Mail through tts
     }
   }
 
