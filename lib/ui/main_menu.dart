@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:io';
+import '../imageProcessing.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,6 +18,7 @@ import '../main.dart';
 import '../models/Arguments.dart';
 import '../models/EmailArguments.dart';
 import '../models/Digest.dart';
+import '../models/MailResponse.dart';
 import 'bottom_app_bar.dart';
 
 class MainWidget extends StatefulWidget {
@@ -101,32 +103,18 @@ class MainWidgetState extends State<MainWidget> {
                   child: Directionality(
                     textDirection: TextDirection.rtl,
                     child: OutlinedButton.icon(
-                      onPressed: () {
-                        void _getImage() async {
-                          final PickedFile =
-                              await picker.getImage(source: ImageSource.camera);
-                          print(PickedFile!.path);
-                          if (PickedFile != null) {
-                            _image = File(PickedFile.path);
-
-                            _imageBytes = _image!.readAsBytesSync();
-                            String a = base64.encode(_imageBytes!);
-                            var objMailResponse = await vision!.search(a);
-                            for (var address in objMailResponse.addresses) {
-                              address.validated =
-                                  await UspsAddressVerification()
-                                      .verifyAddressString(address.address);
-                            }
-                            setState(() {
-                              if (PickedFile != null) {
-                                _image = File(PickedFile.path);
-                                _imageBytes = _image!.readAsBytesSync();
-                                _imageName = _image!.path.split('/').last;
-                              } else {
-                                print('No image selected.');
-                              }
-                            });
-                          }
+                      onPressed: () async {
+                        final PickedFile =
+                            await picker.getImage(source: ImageSource.camera);
+                        print(PickedFile!.path);
+                        if (PickedFile != null) {
+                          _image = File(PickedFile.path);
+                          _imageBytes = _image!.readAsBytesSync();
+                          await deleteImageFiles();
+                          await saveImageFile(_imageBytes!, "mailpiece.jpg");
+                          MailResponse s =
+                              await processImage("${imagePath}/mailpiece.jpg");
+                          print(s.toJson());
                         }
                       },
                       icon: Icon(Icons.camera_alt_outlined),
