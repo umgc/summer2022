@@ -1,8 +1,38 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:summer2022/models/Address.dart';
 import 'package:summer2022/models/MailResponse.dart';
 import 'package:summer2022/read_info.dart';
 import 'dart:io' as io;
+
+class FakeFlutterTts extends Fake implements FlutterTts {
+  @override
+  Future<dynamic> awaitSpeakCompletion(bool? awaitCompletion) {
+    return Future.value(true);
+  }
+  @override
+  Future<dynamic> speak(String? text) {
+    print(text);
+    return Future.value(true);
+  }
+  @override
+  Future<dynamic> setLanguage(String? language) {
+    return Future.value(true);
+  }
+  @override
+  Future<dynamic> setSpeechRate(double? rate) {
+    return Future.value(true);
+  }
+  @override
+  Future<dynamic> setVolume(double? volume) {
+    return Future.value(true);
+  }
+  @override
+  Future<dynamic> setPitch(double? pitch) {
+    return Future.value(true);
+  }
+}
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -11,6 +41,13 @@ void main() async {
   AddressObject address2 = AddressObject.fromJson({"type": "recipient", "name": "Deborah Keenan", "address": "1006 Morgan Station Dr; Severn, MD 21144-1245", "validated": true});
   MailResponse mail = MailResponse.fromJson({"addresses": [{"type": "sender", "name": "GEICO", "address": "2563 Forest Dr; Annapolis, MD 21401", "validated": false}, {"type": "recipient", "name": "Deborah Keenan", "address": "1006 Morgan Station Dr; Severn, MD 21144-1245", "validated": true}], "logos": [{"name": "GEICO"}, {"name": "GEICO"}], "codes": [{"type": "url", "info": "https://geico.com"}]});
   
+  setUp(() async {
+    GlobalConfiguration cfg = GlobalConfiguration();
+    await cfg.loadFromAsset("app_settings");
+    tts = FakeFlutterTts();
+  });
+  
+  TestWidgetsFlutterBinding.ensureInitialized();
 
   group("ReadDigestMail Tests", () {
     
@@ -25,6 +62,17 @@ void main() async {
       expect(error, '');
       expect(readMail.sender, address1);
       expect(readMail.recipient, address2);
+    });
+
+    test("Read All Digest Info", () {
+      String error = '';
+      ReadDigestMail readMail = ReadDigestMail(mail);
+      try {
+        readMail.readDigestInfo();
+      } catch (e) {
+        error = e.toString();
+      }
+      expect(error, '');
     });
 
     test("Read Digest Sender Name", () {
@@ -117,6 +165,18 @@ void main() async {
   });
 
   group("ReadMail Tests", () {
+
+    test("Read All Email Info", () {
+      String error = '';
+      ReadMail readMail = ReadMail();
+      try {
+        readMail.readEmailInfo();
+      } catch (e) {
+        error = e.toString();
+      }
+      expect(error, '');
+    });
+
     test("Read Sender", () {
       String error = '';
       ReadMail readMail = ReadMail();
