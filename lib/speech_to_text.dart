@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:summer2022/Keychain.dart';
+import 'package:summer2022/digest_email_parser.dart';
+import 'package:summer2022/models/Arguments.dart';
+import 'package:summer2022/models/Digest.dart';
+import 'package:summer2022/models/EmailArguments.dart';
+import 'package:summer2022/models/MailResponse.dart';
+import 'package:summer2022/other_mail_parser.dart';
 import 'package:summer2022/read_info.dart';
+import 'package:summer2022/daily_digest_files.dart';
 
 import './main.dart';
 import 'ui/main_menu.dart';
@@ -17,11 +25,30 @@ class Speech {
   String input = '';
   bool speechEnabled = false;
   bool mute = false;
-  ReadDigestMail digestMail = ReadDigestMail();
-  ReadMail mail = ReadMail();
+  DailyDigestFiles digestFiles = DailyDigestFiles();
+  ReadDigestMail digestMail = ReadDigestMail();  // text to speech
+  ReadMail mail = ReadMail();  // text to speech
+  var formatter = DateFormat('yyy-MM-dd');
+  dynamic username;
+  dynamic password;
 
   void setCurrentPage(String page) {
     currentPage = page;
+  }
+
+  void setAccountInfo() async {
+    username = await Keychain().getUsername();
+    password = await Keychain().getPassword();
+  }
+
+  Future<List<Digest>> getEmail(bool unread) async {
+    setAccountInfo();
+    List<Digest> digest = await OtherMailParser().createEmailList(unread, username, password, DateTime.now());
+    if (digest.isEmpty) { // If don't have one for today, try yesterday
+      DateTime date = DateTime.now().subtract(const Duration(days:1));
+      digest = await OtherMailParser().createEmailList(false, username, password, date);
+    }
+    return digest;
   }
 
   String recording() {
@@ -33,7 +60,7 @@ class Speech {
     words = result.recognizedWords;
   }
 
-// The loop that allows for constant speech recognition
+  // The loop that allows for constant speech recognition
   Future<void> speechToText() async {
     speechEnabled = await speech.initialize();
     while (true) {
@@ -93,7 +120,7 @@ class Speech {
   }
 
   // The commands that the user can utilise
-  command(String s) {
+  command(String s) async {
     //General commands
     if (s == 'unmute') {
         mute = false;
@@ -142,6 +169,8 @@ class Speech {
             case 'recipients':
               mail.readEmailRecipients();
               break;
+            case 'help':
+              break;
             default:
               break;
           }
@@ -183,6 +212,8 @@ class Speech {
             case 'links':
               digestMail.readDigestLinks();
               break;
+            case 'help':
+              break;
             default:
               break;
           }
@@ -190,14 +221,22 @@ class Speech {
         // Main menu commands
         case 'main':
           switch (s) {
-            case "unread emails":
+            case 'unread emails':
+              List<Digest> digest = await getEmail(true);
+              navKey.currentState!.pushNamed('/other_mail', arguments: EmailWidgetArguments(digest));
               break;
             case 'latest email':
-              break;
-            case "unread digest":
+              List<Digest> digest = await getEmail(false);
+              navKey.currentState!.pushNamed('/other_mail', arguments: EmailWidgetArguments(digest));
               break;
             case 'latest digest':
-              navKey.currentState!.pushNamed('/digest_mail');
+              setAccountInfo();
+              Digest digest = await DigestEmailParser().createDigest(username, password, DateTime.now());
+              if (digest.isNull()) { // If don't have one for today, try yesterday
+                DateTime date = DateTime.now().subtract(const Duration(days:1));
+                digest = await DigestEmailParser().createDigest(username, password, date);
+              }
+              navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
               break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
@@ -213,7 +252,7 @@ class Speech {
               MainWidgetState().setMailType("Digest");
               //navKey.currentState!.pushNamed('/digest_mail');
               break;
-            case 'menu help':
+            case 'help':
               break;
             default:
               break;
@@ -222,9 +261,11 @@ class Speech {
         // settings page commands
         case 'settings':
           switch (s) {
+            case 'sender on':
             case 'send her on':
               cfg.updateValue("sender", true);
               break;
+            case 'sender off':
             case 'send her off':
               cfg.updateValue("sender", false);
               break;
@@ -282,7 +323,13 @@ class Speech {
             case 'autoplay off':
               cfg.updateValue("autoplay", false);
               break;
-            case 'settings help':
+            case 'tutorial on':
+              cfg.updateValue("tutorial", true);
+              break;
+            case 'tutorial off':
+              cfg.updateValue("tutorial", false);
+              break;
+            case 'help':
               break;
             default:
               break;
@@ -290,14 +337,7 @@ class Speech {
           break;
         case 'signIn':
           switch (s) {
-            // Sign in page commands
-            case 'email address':
-              break;
-            case 'password':
-              break;
-            case 'login':
-              break;
-            case 'sign in help':
+            case 'help':
               break;
             default: // Invalid command
               break;
@@ -306,8 +346,6 @@ class Speech {
       }
       // General commands
       switch (s) {
-        case 'mail help':
-          break;
         case 'mute':
           mute = true;
           break;
