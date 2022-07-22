@@ -321,7 +321,7 @@ class Speech {
           tts.setVolume(1);
           break;
         case 'back':
-          navKey.currentState!.pushNamed('/');
+          navKey.currentState!.pop();
           break;
         default: // Invalid command
           break;
