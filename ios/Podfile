@@ -51,6 +51,15 @@ post_install do |installer|
       if Gem::Version.new($iOSVersion) > Gem::Version.new(config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'])
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = $iOSVersion
       end
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+        '$(inherited)',
+        ## dart: PermissionGroup.camera
+        'PERMISSION_CAMERA=1',
+        ## dart: PermissionGroup.photos
+        'PERMISSION_PHOTOS=1',
+        ## dart: PermissionGroup.mediaLibrary
+        'PERMISSION_MEDIA_LIBRARY=1',
+      ]
     end
     
   end
