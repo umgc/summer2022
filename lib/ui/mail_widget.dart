@@ -24,6 +24,23 @@ class MailWidgetState extends State<MailWidget> {
   ReadDigestMail? reader;
   int attachmentIndex = 0;
   List<Link> links = <Link>[];
+  FontWeight commonFontWt = FontWeight.w700;
+  double commonFontSize = 32;
+  double commonBorderWidth = 2;
+  double commonButtonHeight = 60;
+  double commonCornerRadius = 8;
+
+  ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow)
+  {
+    return ElevatedButton.styleFrom(
+      textStyle: TextStyle(fontWeight: FontWeight.w700,fontSize: commonFontSize),
+      primary: primary,
+      shadowColor: shadow,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(commonCornerRadius))),
+      side: BorderSide( width: commonBorderWidth, color: Colors.black ),
+    );
+  }
 
   @override
   void dispose() {
@@ -103,49 +120,27 @@ class MailWidgetState extends State<MailWidget> {
                 ),
               ],
             ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    //padding: EdgeInsets.only(left: 20),
-                    child: Center(
+            Padding( // MODE Dialog Box
+              padding: EdgeInsets.only(top:0, left: 30, right: 30),
+              child: Row( // LATEST and UNREAD Buttons
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(height: commonButtonHeight, // LATEST Button
                       child: OutlinedButton(
-                        onPressed: () => showLinkDialog(),
-                        child: const Text(
-                          "Links",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                        ),
+                        onPressed: () { showLinkDialog(); },
+                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
+                        child: const Text("Links",
+                            style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    //: EdgeInsets.only(right: 10),
-                    child: Center(
+                    SizedBox(height: commonButtonHeight, // UNREAD Button
                       child: OutlinedButton(
                         onPressed: () { readMailPiece(); },
-                        child: const Text(
-                          "All Details",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(5))),
-                        ),
+                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
+                        child: const Text("All Details", style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                  ),
-                ],
+                  ]
               ),
             ),
             Container(
@@ -153,22 +148,24 @@ class MailWidgetState extends State<MailWidget> {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            seekBack();
-                          });
-                        },
-                        child: Icon(Icons.skip_previous, size: 50)),
+                    FloatingActionButton(
+                      backgroundColor: Colors.grey,
+                      heroTag: "f1",
+                      onPressed: () {
+                        setState(() { seekBack(); });
+                      },
+                      child: Icon(Icons.skip_previous),
+                    ),
                     Text(widget.digest.attachments.isNotEmpty
                         ? "${attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
-                    ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            seekForward();
-                          });
-                        },
-                        child: Icon(Icons.skip_next, size: 50))
+                    FloatingActionButton(
+                      backgroundColor: Colors.grey,
+                      heroTag: "f2",
+                      onPressed: () {
+                        setState(() { seekForward(); });
+                      },
+                      child: Icon(Icons.skip_next),
+                    ),
                   ]),
             )
           ],
