@@ -1,29 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// ignore: unused_import
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:loader_overlay/loader_overlay.dart';
-import 'package:summer2022/main_menu.dart';
 import 'package:summer2022/read_info.dart';
 import '../main.dart';
 import 'package:summer2022/ui/main_menu.dart';
-import 'package:summer2022/usps_address_verification.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:summer2022/api.dart';
-import 'package:summer2022/speech_to_text.dart';
 import '../models/MailResponse.dart';
-import '../barcode_scanner.dart';
-import '../models/Arguments.dart';
-import '../models/Code.dart';
 import '../models/Digest.dart';
-import '../models/Logo.dart';
 import 'bottom_app_bar.dart';
 
 class MailWidget extends StatefulWidget {
@@ -40,6 +23,7 @@ class MailWidget extends StatefulWidget {
 class MailWidgetState extends State<MailWidget> {
   ReadDigestMail? reader;
   int attachmentIndex = 0;
+  List<Link> links = <Link>[];
 
   @override
   void dispose() {
@@ -51,6 +35,7 @@ class MailWidgetState extends State<MailWidget> {
       if(widget.digest.attachments.isNotEmpty) {
         reader = ReadDigestMail();
         reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+        buildLinks();
         readMailPiece();
       }
       super.initState();
@@ -191,6 +176,7 @@ class MailWidgetState extends State<MailWidget> {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
       reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      buildLinks();
       readMailPiece();
     }
   }
@@ -199,6 +185,7 @@ class MailWidgetState extends State<MailWidget> {
     if (attachmentIndex < widget.digest.attachments.length - 1) {
       attachmentIndex = attachmentIndex + 1;
       reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      buildLinks();
       readMailPiece();
     }
   }
@@ -214,17 +201,17 @@ class MailWidgetState extends State<MailWidget> {
             width: 300.0, // Change as per your requirement
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: widget.digest.links.length,
+              itemCount: links.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   title: ElevatedButton(
-                    child: Text(widget.digest.links.isNotEmpty
-                        ? widget.digest.links[index].info == ""
-                            ? widget.digest.links[index].link
-                            : widget.digest.links[index].info
+                    child: Text(links.isNotEmpty
+                        ? links[index].info == ""
+                            ? links[index].link
+                            : links[index].info
                         : ""),
-                    onPressed: () => openLink(widget.digest.links.isNotEmpty
-                        ? widget.digest.links[index].link
+                    onPressed: () => openLink(links.isNotEmpty
+                        ? links[index].link
                         : ""),
                   ),
                 );
@@ -243,6 +230,23 @@ class MailWidgetState extends State<MailWidget> {
         throw 'Could not launch $uri';
       }
     }
+  }
+
+  void buildLinks() {
+    List<Link> newLinks = <Link>[];
+    widget.digest.links.forEach((link) {
+      newLinks.add(link);
+    });
+    if(widget.digest.attachments.isNotEmpty) {
+      widget.digest.attachments[attachmentIndex].detailedInformation.codes.forEach((code) {
+        Link newLink = Link();
+        newLink.info = "";
+        newLink.link = code.info;
+        newLinks.add(newLink);
+      });
+    }
+
+    links = newLinks;
   }
 
   void readMailPiece() {
