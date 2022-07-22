@@ -4,12 +4,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import './models/Logo.dart';
-import 'barcode_scanner.dart';
+import './image_processing/barcode_scanner.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import './/usps_address_verification.dart';
-import 'api.dart';
-import 'models/Code.dart';
+import './image_processing/usps_address_verification.dart';
+import './image_processing/google_cloud_vision_api.dart';
+import './models/Code.dart';
 
 void main() {
   runApp(const MyApp());

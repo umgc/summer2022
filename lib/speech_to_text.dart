@@ -46,13 +46,13 @@ class Speech {
   command(String s) {
     //General commands
     if (s == 'unmute') {
-        mute = false;
-        return;
-    } 
-    if (mute == false){
+      mute = false;
+      return;
+    }
+    if (mute == false) {
       switch (currentPage) {
         case 'mail':
-          switch(s) {
+          switch (s) {
             // mail page commands
             case 'next':
               break;
@@ -71,7 +71,7 @@ class Speech {
           }
           break;
         case 'email':
-          switch(s) {
+          switch (s) {
             // mail page commands
             case 'next':
               break;
@@ -208,7 +208,7 @@ class Speech {
         case 'mute':
           mute = true;
           break;
-        case 'stop' :
+        case 'stop':
           break;
         case 'speakers off':
           break;

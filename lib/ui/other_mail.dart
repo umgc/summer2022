@@ -2,7 +2,7 @@ import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'bottom_app_bar.dart';
-import 'main_menu.dart';
+import './main_menu.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/Arguments.dart';
 import '../models/Digest.dart';
@@ -38,7 +38,8 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
 
   String removeLinks(Digest d) {
     String bodyText = '';
-    RegExp linkExp = RegExp(r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
+    RegExp linkExp = RegExp(
+        r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
     RegExp carotsExpn = RegExp(r"\<https.+?\>");
     RegExp squaresExpn = RegExp(r"\[.+?\]");
     RegExp squaresExpn2 = RegExp(r"\[(.|\n|\r)*\]");
@@ -86,7 +87,10 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
       bottomNavigationBar: BottomBar(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text(formatted, style: TextStyle(fontWeight: commonFontWt,fontSize: commonFontSize),),
+        title: Text(
+          formatted,
+          style: TextStyle(fontWeight: commonFontWt, fontSize: commonFontSize),
+        ),
         backgroundColor: Colors.grey,
       ),
       body: SafeArea(
