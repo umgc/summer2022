@@ -20,11 +20,27 @@ class Speech {
   bool speechEnabled = false;
   bool mute = false;
   Digest digest = Digest();
-  ReadDigestMail digestMail = ReadDigestMail();
   ReadMail mail = ReadMail();
   late MailWidgetState _mailWidgetState;
 
-  void setCurrentPage(String page) {
+  void setCurrentPage(String page, [Object? obj]) {
+    switch (page) {
+      case 'mail':
+        if(obj != null) {
+          _mailWidgetState = obj as MailWidgetState;
+        }
+        break;
+      case 'email':
+        break;
+      case 'main':
+        break;
+      case 'settings':
+        break;
+      case 'login':
+        break;
+      default:
+        break;
+    }
     currentPage = page;
   }
 
@@ -43,15 +59,11 @@ class Speech {
     while (true) {
       input = recording();
       print(input);
-      command(input);
+      await command(input);
       input = '';
       words = '';
       await Future.delayed(const Duration(seconds: 6));
     }
-  }
-
-  void setMailWidgetState(MailWidgetState state) {
-    _mailWidgetState = state;
   }
 
   // The commands that the user can utilise
@@ -108,7 +120,7 @@ class Speech {
           }
           break;
         case 'email':
-          switch(s) {
+          switch(s.toLowerCase()) {
             // mail page commands
             case 'next':
               break;
@@ -140,16 +152,12 @@ class Speech {
                 digest = await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword());
                 if(!digest.isNull()) {
                   navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
-                  if(digest.attachments.isNotEmpty) {
-                    digestMail.setCurrentMail(digest.attachments[0].detailedInformation);
-                  }
                 } else {
                   //TODO tts to tell the user there is no digest available
                 }
               } catch(e) {
                 //TODO tts to tell the user there was an error
               }
-
               break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
@@ -171,7 +179,7 @@ class Speech {
           break;
         // settings page commands
         case 'settings':
-          switch (s) {
+          switch (s.toLowerCase()) {
             case 'send her on':
               cfg.updateValue("sender", true);
               break;
