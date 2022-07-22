@@ -57,7 +57,6 @@ class Speech {
     if (mute == false){
       switch (currentPage) {
         case 'mail':
-          print(navKey.currentState?.widget.pages.toString());
           switch(s.toLowerCase()) {
             // mail page commands
             case 'next':
