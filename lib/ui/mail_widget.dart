@@ -56,6 +56,7 @@ class MailWidgetState extends State<MailWidget> {
       }
       super.initState();
       stt.setCurrentPage("mail");
+      stt.setMailWidgetState(this);
   }
 
   MailResponse getCurrentDigestDetails() {

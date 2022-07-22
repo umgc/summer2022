@@ -9,6 +9,7 @@ import './main.dart';
 import 'Keychain.dart';
 import 'digest_email_parser.dart';
 import 'models/Arguments.dart';
+import 'models/Digest.dart';
 import 'ui/settings.dart';
 
 class Speech {
@@ -18,8 +19,10 @@ class Speech {
   String input = '';
   bool speechEnabled = false;
   bool mute = false;
+  Digest digest = Digest();
   ReadDigestMail digestMail = ReadDigestMail();
   ReadMail mail = ReadMail();
+  late MailWidgetState _mailWidgetState;
 
   void setCurrentPage(String page) {
     currentPage = page;
@@ -47,6 +50,10 @@ class Speech {
     }
   }
 
+  void setMailWidgetState(MailWidgetState state) {
+    _mailWidgetState = state;
+  }
+
   // The commands that the user can utilise
   command(String s) async {
     //General commands
@@ -60,37 +67,41 @@ class Speech {
           switch(s.toLowerCase()) {
             // mail page commands
             case 'next':
-              MailWidgetState().seekForward();
+              _mailWidgetState.setState(() {
+                _mailWidgetState.seekForward();
+              });
               break;
             case 'previous':
-              MailWidgetState().seekBack();
+              _mailWidgetState.setState(() {
+                _mailWidgetState.seekBack();
+              });
               break;
             case 'details':
-              digestMail.readDigestInfo();
+              _mailWidgetState.readMailPiece();
               break;
             case 'sender name':
-              digestMail.readDigestSenderName();
+              _mailWidgetState.reader!.readDigestSenderName();
               break;
             case 'recipient name':
-              digestMail.readDigestRecipientName();
+              _mailWidgetState.reader!.readDigestRecipientName();
               break;
             case 'sender address':
-              digestMail.readDigestSenderAddress();
+              _mailWidgetState.reader!.readDigestSenderAddress();
               break;
             case 'recipient address':
-              digestMail.readDigestRecipientAddress();
+              _mailWidgetState.reader!.readDigestRecipientAddress();
               break;
             case 'sender validated':
-              digestMail.readDigestSenderAddressValidated();
+              _mailWidgetState.reader!.readDigestSenderAddressValidated();
               break;
             case 'recipient validated':
-              digestMail.readDigestRecipientAddressValidated();
+              _mailWidgetState.reader!.readDigestRecipientAddressValidated();
               break;
             case 'logos':
-              digestMail.readDigestLogos();
+              _mailWidgetState.reader!.readDigestLogos();
               break;
             case 'links':
-              digestMail.readDigestLinks();
+              _mailWidgetState.reader!.readDigestLinks();
               break;
             default:
               break;
@@ -125,8 +136,20 @@ class Speech {
             case 'email date':
               break;
             case 'latest digest':
-              var digest = await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword()); //TODO pass date as the last parameter, passing no date will only get today's digest
-              navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
+              try {
+                digest = await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword());
+                if(!digest.isNull()) {
+                  navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
+                  if(digest.attachments.isNotEmpty) {
+                    digestMail.setCurrentMail(digest.attachments[0].detailedInformation);
+                  }
+                } else {
+                  //TODO tts to tell the user there is no digest available
+                }
+              } catch(e) {
+                //TODO tts to tell the user there was an error
+              }
+
               break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
