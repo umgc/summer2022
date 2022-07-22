@@ -25,9 +25,11 @@ Future _stop() async{
 }
 
 void initTTS() async {
-  await tts.setQueueMode(1); // this needs to be set to queue_add or it will not function correctly
+  if(Platform.isAndroid) {
+    await tts.setQueueMode(1);
+  }
   await tts.setLanguage("en-US");
-  await tts.setSpeechRate(0.5); //slower speeds are easier to comprehend
+  await tts.setSpeechRate(1.0);
   await tts.setVolume(1.0);
   await tts.setPitch(1.0);
 }
@@ -51,7 +53,6 @@ class ReadDigestMail {
   }
 
   void setSenderAndRecipient(List<AddressObject> addresses) {
-    //it is not safe to assume that there is always a sender and/or recipient on the attachment or that it can be properly interpreted
     sender = null;
     recipient = null;
     for(int x = 0; x < addresses.length; x++) {
@@ -66,7 +67,6 @@ class ReadDigestMail {
   List<AddressObject> getSenderAndRecipient() {
     /* This code is assuming that there is one address object for the sender
        and one for the recipient. Figure out which one is which. */
-    //getters do not assign variables
     //if (addresses[0].type == "sender") {
     //  sender = addresses[0];
     //  recipient = addresses[1];
@@ -118,7 +118,7 @@ class ReadDigestMail {
 
   void readDigestRecipientName() {
     /* Get the name of the recipient */
-    String text = "The sender is '${recipient!.name}'";
+    String text = "The recipient is '${recipient!.name}'";
     _speak(text);
   }
 

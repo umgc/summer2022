@@ -3,8 +3,12 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:summer2022/read_info.dart';
 import 'package:summer2022/ui/mail_widget.dart';
+import 'package:summer2022/ui/main_menu.dart';
 
 import './main.dart';
+import 'Keychain.dart';
+import 'digest_email_parser.dart';
+import 'models/Arguments.dart';
 import 'ui/settings.dart';
 
 class Speech {
@@ -44,7 +48,7 @@ class Speech {
   }
 
   // The commands that the user can utilise
-  command(String s) {
+  command(String s) async {
     //General commands
     if (s == 'unmute') {
         mute = false;
@@ -53,42 +57,41 @@ class Speech {
     if (mute == false){
       switch (currentPage) {
         case 'mail':
+          print(navKey.currentState?.widget.pages.toString());
           switch(s.toLowerCase()) {
             // mail page commands
             case 'next':
-              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
-              state.seekForward();
+              MailWidgetState().seekForward();
               break;
             case 'previous':
-              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
-              state.seekBack();
-              break;
-            case 'next digest':
-              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
-              state.setState(() {
-                state.seekForward();
-              });
-              break;
-            case 'previous digest':
-              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
-              state.setState(() {
-                state.seekBack();
-              });
-              break;
-            case 'hyperlinks':
-              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
-              var links = state.widget.digest.links;
-              links.forEach((link) {
-                //TODO need a way to read links from Digest and prompt the user to open the link
-                var open = false; //replace this with an actual true false
-                if(open) {
-                  state.openLink(link.link);
-                }
-              });
+              MailWidgetState().seekBack();
               break;
             case 'details':
-              var state = (navKey.currentWidget as MailWidget).state as MailWidgetState;
-              state.readMailPiece();
+              digestMail.readDigestInfo();
+              break;
+            case 'sender name':
+              digestMail.readDigestSenderName();
+              break;
+            case 'recipient name':
+              digestMail.readDigestRecipientName();
+              break;
+            case 'sender address':
+              digestMail.readDigestSenderAddress();
+              break;
+            case 'recipient address':
+              digestMail.readDigestRecipientAddress();
+              break;
+            case 'sender validated':
+              digestMail.readDigestSenderAddressValidated();
+              break;
+            case 'recipient validated':
+              digestMail.readDigestRecipientAddressValidated();
+              break;
+            case 'logos':
+              digestMail.readDigestLogos();
+              break;
+            case 'links':
+              digestMail.readDigestLinks();
               break;
             default:
               break;
@@ -115,12 +118,16 @@ class Speech {
           break;
         // Main menu commands
         case 'main':
-          switch (s) {
+          switch (s.toLowerCase()) {
             case "today's mail":
               break;
             case 'unread mail':
               break;
             case 'email date':
+              break;
+            case 'latest digest':
+              var digest = await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword()); //TODO pass date as the last parameter, passing no date will only get today's digest
+              navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
               break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
@@ -131,7 +138,7 @@ class Speech {
             case 'switch email':
               navKey.currentState!.pushNamed('/other_mail');
               break;
-            case 'switch Digest':
+            case 'switch digest':
               navKey.currentState!.pushNamed('/digest_mail');
               break;
             case 'menu help':

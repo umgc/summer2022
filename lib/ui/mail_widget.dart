@@ -35,8 +35,7 @@ class MailWidget extends StatefulWidget {
 
   @override
   State<MailWidget> createState() {
-    state = MailWidgetState();
-    return state;
+    return MailWidgetState();
   }
 }
 
@@ -142,9 +141,9 @@ class MailWidgetState extends State<MailWidget> {
                     //: EdgeInsets.only(right: 10),
                     child: Center(
                       child: OutlinedButton(
-                        onPressed: () { readMailPiece(); },
+                        onPressed: () { showQRCodeDialog(); },
                         child: const Text(
-                          "All Details",
+                          "QR/Barcodes",
                           style: TextStyle(color: Colors.black),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -152,19 +151,26 @@ class MailWidgetState extends State<MailWidget> {
                           shadowColor: Colors.grey,
                           shape: const RoundedRectangleBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
+                              BorderRadius.all(Radius.circular(5))),
                         ),
                       ),
                     ),
                   ),
+                ],
+              ),
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
                   Expanded(
                     //: EdgeInsets.only(right: 10),
                     child: Center(
                       child: OutlinedButton(
-                        onPressed: () { showQRCodeDialog(); },
+                        onPressed: () { readMailPiece(); },
                         child: const Text(
-                          "QR/Barcodes",
-                          style: TextStyle(color: Colors.black, fontSize: 12),
+                          "All Details",
+                          style: TextStyle(color: Colors.black),
                         ),
                         style: ElevatedButton.styleFrom(
                           primary: Colors.white,
@@ -217,7 +223,7 @@ class MailWidgetState extends State<MailWidget> {
   }
 
   void seekForward() {
-    if (widget.attachmentIndex < widget.digest.attachments.length) {
+    if (widget.attachmentIndex < widget.digest.attachments.length - 1) {
       widget.attachmentIndex = widget.attachmentIndex + 1;
       reader!.setCurrentMail(widget.digest.attachments[widget.attachmentIndex].detailedInformation);
       readMailPiece();
