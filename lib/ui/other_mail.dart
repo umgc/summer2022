@@ -36,7 +36,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
 
   String removeLinks(Digest d) {
     String bodyText = '';
-    List<Link> list = [];
+    RegExp linkExp = RegExp(r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
     RegExp carotsExpn = RegExp(r"\<https.+?\>");
     RegExp squaresExpn = RegExp(r"\[.+?\]");
     RegExp squaresExpn2 = RegExp(r"\[(.|\n|\r)*\]");
@@ -44,6 +44,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     String text =
         d.message.decodeTextPlainPart() ?? ""; //get body text of email
 
+    text = text.replaceAll(linkExp, '');
     text = text.replaceAll('\r', '');
     text = text.replaceAll('\r\n', '\n');
     text = text.replaceAll('\n\n', '');
