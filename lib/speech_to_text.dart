@@ -63,7 +63,7 @@ class Speech {
       }
     }
     if (!foundMonth){
-      throw Exception('The specified date is invalid.');
+      return null;
     }
 
     var numberSuffixes = {
@@ -87,7 +87,6 @@ class Speech {
     try {
       dt = DateFormat('yyyy/MM/dd').parse(theDate);
     } on FormatException {
-      tts.speak('The specified date is invalid.');
       return null;
     }
     return dt;
@@ -104,12 +103,16 @@ class Speech {
       DateTime? dt = processDate(s.split("date ")[1]);
       if (dt != null) {
         //TODO
+      } else{
+        tts.speak('The specified date is invalid. Please say the month, day of the month, and then the year.');
       }
     } 
     if(s.contains("digest date")) {
       DateTime? dt = processDate(s.split("date ")[1]);
       if (dt != null) {
         //TODO
+      } else{
+        tts.speak('The specified date is invalid. Please say the month, day of the month, and then the year.');
       }
     } 
     if (mute == false){
@@ -194,6 +197,7 @@ class Speech {
             case "unread digest":
               break;
             case 'latest digest':
+              navKey.currentState!.pushNamed('/digest_mail');
               break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
