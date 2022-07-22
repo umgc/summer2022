@@ -82,7 +82,7 @@ class MainWidgetState extends State<MainWidget> {
         bottomNavigationBar: BottomBar(),
         appBar: AppBar(
           centerTitle: true,
-          title: Text("Main Menu"),
+          title: Text("Main Menu", style: TextStyle(fontWeight: commonFontWt,fontSize: commonFontSize),),
           automaticallyImplyLeading: false,
           backgroundColor: Colors.grey,
         ),
