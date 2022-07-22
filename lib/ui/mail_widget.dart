@@ -80,6 +80,11 @@ class MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
+                  Icon(
+                    Icons.arrow_back,
+                    size: 50,
+                    color: Color.fromARGB(0, 255, 255, 1),
+                  ),
                 ],
               ),
             ),

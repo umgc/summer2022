@@ -10,6 +10,8 @@ import 'Keychain.dart';
 import 'digest_email_parser.dart';
 import 'models/Arguments.dart';
 import 'models/Digest.dart';
+
+import './main.dart';
 import 'ui/settings.dart';
 
 class Speech {

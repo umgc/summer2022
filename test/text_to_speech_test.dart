@@ -84,6 +84,18 @@ void main() async {
       expect(error, '');
     });
 
+    test("Read All Digest Info", () {
+      String error = '';
+      ReadDigestMail readMail = ReadDigestMail();
+      readMail.setCurrentMail(mail);
+      try {
+        readMail.readDigestInfo();
+      } catch (e) {
+        error = e.toString();
+      }
+      expect(error, '');
+    });
+
     test("Read Digest Sender Name", () {
       String error = '';
       ReadDigestMail readMail = ReadDigestMail();

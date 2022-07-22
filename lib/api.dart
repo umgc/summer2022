@@ -1,3 +1,4 @@
+import 'package:googleapis/trafficdirector/v2.dart';
 import 'package:googleapis/vision/v1.dart';
 import 'models/MailResponse.dart';
 import './models/Address.dart';
@@ -19,8 +20,8 @@ class Block {
 class CloudVisionApi {
   final _client = CredentialsProvider().client;
   Future<MailResponse> search(String image) async {
-    List<AddressObject>? addresses = await searchImageForText(image);
-    List<LogoObject>? logos = await searchImageForLogo(image);
+    List<AddressObject> addresses = await searchImageForText(image);
+    List<LogoObject> logos = await searchImageForLogo(image);
     MailResponse response = MailResponse(addresses: addresses, logos: logos);
     // print(response.toJson().toString());
     return response;
@@ -125,15 +126,19 @@ class CloudVisionApi {
     //   }
     //   print("--------------------------");
     // }
-    List<int> sB = findBlocksWithAddresses(blocks);
+    List<int> sB = _findBlocksWithAddresses(blocks);
     for (int sb = 0; sb < sB.length; sb++) {
       int z = sB[sb];
-      if (blockHasPostage(blocks.elementAt(z))) {
+      if (_blockHasPostage(blocks.elementAt(z))) {
         sB.removeAt(sb);
       }
     }
-
-    List<AddressObject> pB = parseBlocksForAddresses2(blocks, sB);
+    List<AddressObject> pB = [];
+    try {
+      pB = _parseBlocksForAddresses2(blocks, sB);
+    } catch (e) {
+      print("Empty List; no mailpiece that successfully parsed");
+    }
 
     // pB.forEach((a) {
     //   print("--------Address----------");
@@ -149,7 +154,7 @@ class CloudVisionApi {
   }
 
   // //This function goes through all blocks using the index provided to find all addresses and put them into a List of AddressObject
-  List<AddressObject> parseBlocksForAddresses2(
+  List<AddressObject> _parseBlocksForAddresses2(
       List<Block> blocks, List<int> b) {
     List<AddressObject> addresses = [];
     // print(b.length);
@@ -157,37 +162,31 @@ class CloudVisionApi {
       String name1 = '';
       String address1 = '';
       String type1 = x == 0 ? 'sender' : 'recipient';
+
       int cityStateZipIndex =
-          findLineWithCityStateZip(blocks.elementAt(b.elementAt(x)));
+          _findLineWithCityStateZip(blocks.elementAt(b.elementAt(x)));
       try {
-        if (validateCityStateZip(blocks
+        if (_validateCityStateZip(blocks
             .elementAt(b.elementAt(x))
             .getList()
             .elementAt(cityStateZipIndex + 1))) cityStateZipIndex++;
-      } catch (e) {}
-      int addy1 = findLineWithAddress1(blocks.elementAt(b.elementAt(x)));
+      } catch (e) {
+        print("Address " +
+            x.toString() +
+            "/" +
+            b.length.toString() +
+            ": No additional lines in block");
+      }
+
+      int addy1 = _findLineWithAddress1(blocks.elementAt(b.elementAt(x)));
       // 1 line block
       if (blocks.elementAt(b.elementAt(x)).getList().length == 1) {
         if (addy1 == 0 &&
-            validateNameHasNoSpecialSymbols(
+            (x > 0) &&
+            _validateNameHasNoSpecialSymbols(
                 blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
           if (x > 0) {
             name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
-          }
-        }
-        if (addy1 == -1 &&
-            (validateAddress1(
-                blocks.elementAt(b.elementAt(x) - 1).getList().last)) &&
-            cityStateZipIndex != -1) {
-          address1 = blocks.elementAt(b.elementAt(x) - 1).getList().last +
-              ' ' +
-              blocks.elementAt(b.elementAt(x)).getList().last;
-          int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
-          if (size >= 2) {
-            name1 = blocks
-                .elementAt(b.elementAt(x) - 1)
-                .getList()
-                .elementAt(size - 2);
           }
         }
         if (addy1 == cityStateZipIndex &&
@@ -231,7 +230,7 @@ class CloudVisionApi {
               address1 = result[0].toString() +
                   '; ' +
                   result.input.substring(result.end + 1, result.input.length);
-            } else if (validateAddress1(
+            } else if (_validateAddress1(
                 blocks.elementAt(b.elementAt(x)).getList().elementAt(addy1))) {
               address1 =
                   blocks.elementAt(b.elementAt(x)).getList().elementAt(addy1);
@@ -242,14 +241,16 @@ class CloudVisionApi {
           }
 
           if (addy1 == 0 &&
-              validateNameHasNoSpecialSymbols(
+              (x > 0) &&
+              _validateNameHasNoSpecialSymbols(
                   blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
             name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
           } else {
-            if (validateNameHasNoSpecialSymbols(blocks
-                .elementAt(b.elementAt(x))
-                .getList()
-                .elementAt(addy1 - 1))) {
+            if ((addy1 != 0) &&
+                _validateNameHasNoSpecialSymbols(blocks
+                    .elementAt(b.elementAt(x))
+                    .getList()
+                    .elementAt(addy1 - 1))) {
               name1 = blocks
                   .elementAt(b.elementAt(x))
                   .getList()
@@ -260,18 +261,42 @@ class CloudVisionApi {
 
         if (cityStateZipIndex >= 0 && addy1 == -1) {
           int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
-
-          address1 = blocks
+          if (size >= 3) {
+            if (_checkForUnits(blocks
+                .elementAt(b.elementAt(x) - 1)
+                .getList()
+                .elementAt(size - 1))) {
+              if (_validateAddress1(blocks
                   .elementAt(b.elementAt(x) - 1)
                   .getList()
-                  .elementAt(size - 1) +
-              '; ' +
-              blocks
-                  .elementAt(b.elementAt(x))
-                  .getList()
-                  .elementAt(cityStateZipIndex);
-          if (size > 2 &&
-              validateNameHasNoSpecialSymbols(blocks
+                  .elementAt(size - 2))) {
+                address1 = blocks
+                        .elementAt(b.elementAt(x) - 1)
+                        .getList()
+                        .elementAt(size - 2) +
+                    " " +
+                    blocks
+                        .elementAt(b.elementAt(x) - 1)
+                        .getList()
+                        .elementAt(size - 1) +
+                    '; ' +
+                    blocks
+                        .elementAt(b.elementAt(x))
+                        .getList()
+                        .elementAt(cityStateZipIndex);
+                if (_validateNameHasNoSpecialSymbols(blocks
+                    .elementAt(b.elementAt(x) - 1)
+                    .getList()
+                    .elementAt(size - 3))) {
+                  name1 = blocks
+                      .elementAt(b.elementAt(x) - 1)
+                      .getList()
+                      .elementAt(size - 3);
+                }
+              }
+            }
+          } else if (size > 2 &&
+              _validateNameHasNoSpecialSymbols(blocks
                   .elementAt(b.elementAt(x) - 1)
                   .getList()
                   .elementAt(size - 2))) {
@@ -279,9 +304,23 @@ class CloudVisionApi {
                 .elementAt(b.elementAt(x) - 1)
                 .getList()
                 .elementAt(size - 2);
+          } else if (size > 1 &&
+              _validateNameHasNoSpecialSymbols(
+                  blocks.elementAt(b.elementAt(x) - 2).getList().last)) {
+            name1 = blocks.elementAt(b.elementAt(x) - 2).getList().last;
+          } else {
+            address1 = blocks
+                    .elementAt(b.elementAt(x) - 1)
+                    .getList()
+                    .elementAt(size - 1) +
+                '; ' +
+                blocks
+                    .elementAt(b.elementAt(x))
+                    .getList()
+                    .elementAt(cityStateZipIndex);
           }
           if (size == 1 &&
-              validateNameHasNoSpecialSymbols(
+              _validateNameHasNoSpecialSymbols(
                   blocks.elementAt(b.elementAt(x) - 2).getList().last)) {
             name1 = blocks.elementAt(b.elementAt(x) - 2).getList().last;
           }
@@ -301,6 +340,17 @@ class CloudVisionApi {
                 .elementAt(size - 2);
           }
         }
+        if (name1 == "") {
+          var addressholder = address1.split(';');
+          if (addressholder.length == 2) {
+            int index = address1.indexOf(RegExp("PO"));
+            if (address1.indexOf(RegExp("PO")) != 0 ||
+                !address1.contains(RegExp("PO"))) {
+              address1 = address1.substring(index, address1.length);
+              name1 = addressholder[0].substring(0, index).trim();
+            }
+          }
+        }
       } // 2 Line Block
       else if (blocks.elementAt(b.elementAt(x)).getList().length == 2) {
         if (cityStateZipIndex != -1 && addy1 != -1) {
@@ -314,7 +364,7 @@ class CloudVisionApi {
             }
 
             if (addy1 == 0 && b.elementAt(x) != 0) {
-              if (validateNameHasNoSpecialSymbols(
+              if (_validateNameHasNoSpecialSymbols(
                   blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
                 name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
               }
@@ -335,11 +385,11 @@ class CloudVisionApi {
 
           int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
           int prevAddrIndex =
-              findLineWithAddress1(blocks.elementAt(b.elementAt(x) - 1));
+              _findLineWithAddress1(blocks.elementAt(b.elementAt(x) - 1));
           if (prevAddrIndex != -1) {
             for (int z = prevAddrIndex; z <= size; z++) {
               if (z == prevAddrIndex &&
-                  validateAddress1(blocks
+                  _validateAddress1(blocks
                       .elementAt(b.elementAt(x) - 1)
                       .getList()
                       .elementAt(z))) {
@@ -370,7 +420,7 @@ class CloudVisionApi {
                   .elementAt(cityStateZipIndex);
           int size = blocks.elementAt(b.elementAt(x) - 1).getList().length;
           if (size == 2 &&
-              validateAddress1(blocks
+              _validateAddress1(blocks
                   .elementAt(b.elementAt(x) - 1)
                   .getList()
                   .elementAt(size - 1))) {
@@ -379,7 +429,7 @@ class CloudVisionApi {
                     .getList()
                     .elementAt(size - 1) +
                 address1;
-            if (validateNameHasNoSpecialSymbols(blocks
+            if (_validateNameHasNoSpecialSymbols(blocks
                 .elementAt(b.elementAt(x) - 1)
                 .getList()
                 .elementAt(size - 1))) {
@@ -390,7 +440,7 @@ class CloudVisionApi {
             }
           }
           if (size == 1 &&
-              validateAddress1(blocks
+              _validateAddress1(blocks
                   .elementAt(b.elementAt(x) - 1)
                   .getList()
                   .elementAt(size - 1))) {
@@ -399,7 +449,7 @@ class CloudVisionApi {
                     .getList()
                     .elementAt(size - 1) +
                 address1;
-            if (validateNameHasNoSpecialSymbols(blocks
+            if (_validateNameHasNoSpecialSymbols(blocks
                 .elementAt(b.elementAt(x) - 1)
                 .getList()
                 .elementAt(size - 1))) {
@@ -428,11 +478,11 @@ class CloudVisionApi {
       } // 3 Line Block
       else if (blocks.elementAt(b.elementAt(x)).getList().length == 3) {
         if (addy1 == 0 &&
-            validateNameHasNoSpecialSymbols(
+            _validateNameHasNoSpecialSymbols(
                 blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
           name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
         } else if (addy1 >= 1 &&
-            validateNameHasNoSpecialSymbols(blocks
+            _validateNameHasNoSpecialSymbols(blocks
                 .elementAt(b.elementAt(x))
                 .getList()
                 .elementAt(addy1 - 1))) {
@@ -468,11 +518,11 @@ class CloudVisionApi {
       } // 4 Line Block
       else if (blocks.elementAt(b.elementAt(x)).getList().length == 4) {
         if (addy1 == 0 &&
-            validateAddress1(
+            _validateAddress1(
                 blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
           name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
         } else if (addy1 >= 1 &&
-            validateNameHasNoSpecialSymbols(blocks
+            _validateNameHasNoSpecialSymbols(blocks
                 .elementAt(b.elementAt(x))
                 .getList()
                 .elementAt(addy1 - 1))) {
@@ -493,11 +543,11 @@ class CloudVisionApi {
       } // 5 Line Block
       else if (blocks.elementAt(b.elementAt(x)).getList().length == 5) {
         if (addy1 == 0 &&
-            validateAddress1(
+            _validateAddress1(
                 blocks.elementAt(b.elementAt(x) - 1).getList().last)) {
           name1 = blocks.elementAt(b.elementAt(x) - 1).getList().last;
         } else if (addy1 >= 1 &&
-            validateNameHasNoSpecialSymbols(blocks
+            _validateNameHasNoSpecialSymbols(blocks
                 .elementAt(b.elementAt(x))
                 .getList()
                 .elementAt(addy1 - 1))) {
@@ -519,11 +569,19 @@ class CloudVisionApi {
         // print("did not fit into mail category");
       }
       if (name1.isNotEmpty || address1.isNotEmpty) {
+        if (RegExp(r'^;').hasMatch(address1)) {
+          address1 = address1.substring(1, address1.length);
+        }
+        if (RegExp(r'^s+').hasMatch(address1)) {
+          address1 = address1.substring(1, address1.length);
+        }
+
         AddressObject aO = AddressObject(
             type: (b.length == 1) ? 'recipient' : type1,
             name: name1,
             address: address1,
             validated: false);
+
         addresses.add(aO);
       }
     }
@@ -538,7 +596,7 @@ class CloudVisionApi {
   }
 
   // Validates whether a block contains a postage stamp
-  bool blockHasPostage(Block block) {
+  bool _blockHasPostage(Block block) {
     RegExp regExp1 = new RegExp(r'U.S. POSTAGE');
     RegExp regExp2 = new RegExp(r'US POSTAGE');
     RegExp regExp3 = new RegExp(r'USPOSTAGE');
@@ -558,7 +616,7 @@ class CloudVisionApi {
   }
 
   // Validates name has no special Symbols
-  bool validateNameHasNoSpecialSymbols(String line) {
+  bool _validateNameHasNoSpecialSymbols(String line) {
     RegExp regExp1 = new RegExp(r'[a-zA-Z0-9.\ ]+$');
     RegExp regExp3 = new RegExp(r'[\!\@\#\$\%\^\&\*\(\)\{\}\[\]\<\>\/\?\~\+]');
     if (regExp3.hasMatch(line.toUpperCase())) {
@@ -571,7 +629,7 @@ class CloudVisionApi {
   }
 
   // Validates city follows city, state, zip guidelines
-  bool validateCityStateZip(String line) {
+  bool _validateCityStateZip(String line) {
     RegExp regExp1 = new RegExp(r'\w+\s[A-z]+\s\d{5}$');
     RegExp regExp2 = new RegExp(r'\w+\s[A-z]+\s\d{5}-(\d{4})$');
     RegExp regExp3 = new RegExp(r'\w+,\s[A-z]+\s\d{5}$');
@@ -594,7 +652,7 @@ class CloudVisionApi {
   }
 
   // Find line that contains city state zip within a block and returns the line index
-  int findLineWithCityStateZip(Block block) {
+  int _findLineWithCityStateZip(Block block) {
     RegExp regExp1 = new RegExp(r'[A-z]+\s[A-z]+\s\d{5}$');
     RegExp regExp2 = new RegExp(r'[A-z]+\s[A-z]+\s\d{5}-(\d{4})$');
     RegExp regExp3 = new RegExp(r'[A-z]+,\s[A-z]+\s\d{5}$');
@@ -627,7 +685,7 @@ class CloudVisionApi {
   }
 
   // Validates address has follows mail guidelines
-  bool validateAddress1(String line) {
+  bool _validateAddress1(String line) {
     RegExp regExp1 = new RegExp(r'^\d+\s[a-zA-Z]+');
     RegExp regExp2 = new RegExp(r'BOX\s\d+');
     RegExp regExp3 = new RegExp(r'[\!\@\#\$\%\^\&\*\(\)\{\}\[\]\<\>\/\?\~\+]');
@@ -640,7 +698,7 @@ class CloudVisionApi {
       return false;
   }
 
-  int findLineWithAddress1(Block block) {
+  int _findLineWithAddress1(Block block) {
     RegExp regExp1 = new RegExp(r'^\d+\s[a-zA-Z]+');
     RegExp regExp2 = new RegExp(r'BOX\s\d+');
     RegExp regExp3 = new RegExp(r'Street');
@@ -666,7 +724,7 @@ class CloudVisionApi {
   }
 
   // This function checks and determines which blocks contains zip and returns a list of potential blocks with addresses.
-  List<int> findBlocksWithAddresses(List<Block> blocks) {
+  List<int> _findBlocksWithAddresses(List<Block> blocks) {
     RegExp regExp1 = new RegExp(r'[A-z]+\s[A-z]+\s\d{5}$');
     RegExp regExp2 = new RegExp(r'[A-z]+\s[A-z]+\s\d{5}-(\d{4})$');
     RegExp regExp3 = new RegExp(r'[A-z]+,\s[A-z]+\s\d{5}$');
@@ -703,8 +761,26 @@ class CloudVisionApi {
     return s;
   }
 
+  bool _checkForUnits(String line) {
+    RegExp regExp1 = new RegExp(r'^SUITE\s+');
+    RegExp regExp2 = new RegExp(r'^APT\s+');
+    RegExp regExp3 = new RegExp(r'^FL\s+');
+    RegExp regExp4 = new RegExp(r'^STE\s+');
+    RegExp regExp5 = new RegExp(r'^RM\s+');
+    RegExp regExp6 = new RegExp(r'^DEPT\s+');
+    if (regExp1.hasMatch(line.toUpperCase()) ||
+        regExp2.hasMatch(line.toUpperCase()) ||
+        regExp3.hasMatch(line.toUpperCase()) ||
+        regExp4.hasMatch(line.toUpperCase()) ||
+        regExp5.hasMatch(line.toUpperCase()) ||
+        regExp6.hasMatch(line.toUpperCase())) {
+      return true;
+    }
+    return false;
+  }
+
   // This function checks and determines which blocks contains an address line and returns a list of potential blocks with addresses.
-  List<int> findBlocksWithAddresses1(List<Block> blocks) {
+  List<int> _findBlocksWithAddresses1(List<Block> blocks) {
     RegExp regExp1 = new RegExp(r'^\d+\s\w+');
     RegExp regExp2 = new RegExp(r'\BOX\s\d+');
     List<int> s = [];
@@ -725,7 +801,7 @@ class CloudVisionApi {
     return s;
   }
 
-  //This function searches for Logos. If none are found, it returns a List of LogoObject with one Object with the 'None' value.
+  //This function searches for Logos.
   Future<List<LogoObject>> searchImageForLogo(String image) async {
     List<LogoObject> logos = [];
     var _vision = VisionApi(await _client);
