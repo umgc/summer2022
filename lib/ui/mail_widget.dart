@@ -28,8 +28,6 @@ import 'bottom_app_bar.dart';
 
 class MailWidget extends StatefulWidget {
   final Digest digest;
-  int attachmentIndex = 0;
-  late State<MailWidget> state;
 
   MailWidget({required this.digest});
 
@@ -41,6 +39,7 @@ class MailWidget extends StatefulWidget {
 
 class MailWidgetState extends State<MailWidget> {
   ReadDigestMail? reader;
+  int attachmentIndex = 0;
 
   @override
   void dispose() {
@@ -51,7 +50,7 @@ class MailWidgetState extends State<MailWidget> {
   initState() {
       if(widget.digest.attachments.isNotEmpty) {
         reader = ReadDigestMail();
-        reader!.setCurrentMail(widget.digest.attachments[widget.attachmentIndex].detailedInformation);
+        reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
         readMailPiece();
       }
       super.initState();
@@ -60,7 +59,7 @@ class MailWidgetState extends State<MailWidget> {
   }
 
   MailResponse getCurrentDigestDetails() {
-    return widget.digest.attachments[widget.attachmentIndex].detailedInformation;
+    return widget.digest.attachments[attachmentIndex].detailedInformation;
   }
 
   static Route _buildRoute(BuildContext context, Object? params) {
@@ -109,7 +108,7 @@ class MailWidgetState extends State<MailWidget> {
                           child: widget.digest.attachments.isNotEmpty
                               ? Image.memory(base64Decode(widget
                                   .digest
-                                  .attachments[widget.attachmentIndex]
+                                  .attachments[attachmentIndex]
                                   .attachmentNoFormatting))
                               : Image.asset('assets/NoAttachments.png'))),
                 ),
@@ -138,32 +137,6 @@ class MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
-                  Expanded(
-                    //: EdgeInsets.only(right: 10),
-                    child: Center(
-                      child: OutlinedButton(
-                        onPressed: () { showQRCodeDialog(); },
-                        child: const Text(
-                          "QR/Barcodes",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(5))),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
                   Expanded(
                     //: EdgeInsets.only(right: 10),
                     child: Center(
@@ -199,7 +172,7 @@ class MailWidgetState extends State<MailWidget> {
                         },
                         child: Icon(Icons.skip_previous, size: 50)),
                     Text(widget.digest.attachments.isNotEmpty
-                        ? "${widget.attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
+                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
                     ElevatedButton(
                         onPressed: () {
                           setState(() {
@@ -215,52 +188,25 @@ class MailWidgetState extends State<MailWidget> {
     );
   }
 
+  //this function allows us to set the variable on the ui from a single place and reduce reuse of code
+  void setStateVariables() {
+
+  }
+
   void seekBack() {
-    if (widget.attachmentIndex != 0) {
-      widget.attachmentIndex = widget.attachmentIndex - 1;
-      reader!.setCurrentMail(widget.digest.attachments[widget.attachmentIndex].detailedInformation);
+    if (attachmentIndex != 0) {
+      attachmentIndex = attachmentIndex - 1;
+      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
       readMailPiece();
     }
   }
 
   void seekForward() {
-    if (widget.attachmentIndex < widget.digest.attachments.length - 1) {
-      widget.attachmentIndex = widget.attachmentIndex + 1;
-      reader!.setCurrentMail(widget.digest.attachments[widget.attachmentIndex].detailedInformation);
+    if (attachmentIndex < widget.digest.attachments.length - 1) {
+      attachmentIndex = attachmentIndex + 1;
+      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
       readMailPiece();
     }
-  }
-
-  void showQRCodeDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("QR Code and Barcode Dialog"),
-          content: SizedBox(
-            height: 300.0, // Change as per your requirement
-            width: 300.0, // Change as per your requirement
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: ElevatedButton(
-                    child: Text("${widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes.isNotEmpty
-                        ? widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes[index].type
-                        : ""}: "
-                        "${widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes.isNotEmpty
-                            ? widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes[index].info
-                            : ""}"),
-                    onPressed: () => openLink(widget.digest.attachments[widget.attachmentIndex].detailedInformation.codes[index].info),
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void showLinkDialog() {
