@@ -7,22 +7,23 @@ import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../main.dart';
 import 'package:summer2022/ui/main_menu.dart';
-import 'package:summer2022/usps_address_verification.dart';
+import 'package:summer2022/image_processing/usps_address_verification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:summer2022/api.dart';
+import 'package:summer2022/image_processing/google_cloud_vision_api.dart';
 import 'package:summer2022/speech_to_text.dart';
 import '../models/MailResponse.dart';
-import '../barcode_scanner.dart';
+import '../image_processing/barcode_scanner.dart';
 import '../models/Arguments.dart';
 import '../models/Code.dart';
 import '../models/Digest.dart';
 import '../models/Logo.dart';
-import 'bottom_app_bar.dart';
+import './bottom_app_bar.dart';
 
 class MailWidget extends StatefulWidget {
   final Digest digest;
@@ -74,22 +75,12 @@ class _MailWidgetState extends State<MailWidget> {
             Container(
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/main');
-                      //Navigator.restorablePush(context, _buildRoute);
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 30,
-                    ),
-                  ),
                   Expanded(
                     child: Center(
                       child: Container(
                         child: Text(
                           style: TextStyle(fontSize: 20),
-                          "USPS Informed Delivery Daily Digest",
+                          "USPS Informed Delivery Daily Digest for ${DateFormat("EEEE MMMM dd, yyyy").format(widget.digest.message.decodeDate()!)}",
                         ),
                       ),
                     ),

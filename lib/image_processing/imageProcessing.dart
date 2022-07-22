@@ -6,14 +6,14 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import './ui/main_menu.dart';
+import '../ui/main_menu.dart';
 
-import 'api.dart';
-import 'barcode_scanner.dart';
-import 'models/Code.dart';
-import 'models/Logo.dart';
-import 'models/MailResponse.dart';
-import 'usps_address_verification.dart';
+import './google_cloud_vision_api.dart';
+import './barcode_scanner.dart';
+import '../models/Code.dart';
+import '../models/Logo.dart';
+import '../models/MailResponse.dart';
+import './usps_address_verification.dart';
 
 File? _image;
 Uint8List? _imageBytes;

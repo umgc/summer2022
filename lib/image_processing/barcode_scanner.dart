@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:async';
-import './models/Code.dart';
+import '../models/Code.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
