@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/usps_address_verification.dart';
-import '../lib/usps_web_api.dart';
+import '../lib/image_processing/usps_address_verification.dart';
+import '../lib/image_processing/usps_web_api.dart';
 
 void main() async {
   bool result;

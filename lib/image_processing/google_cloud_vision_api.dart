@@ -1,9 +1,9 @@
 import 'package:googleapis/trafficdirector/v2.dart';
 import 'package:googleapis/vision/v1.dart';
-import 'models/MailResponse.dart';
-import './models/Address.dart';
-import './models/Logo.dart';
-import 'credentials_provider.dart';
+import '../models/MailResponse.dart';
+import '../models/Address.dart';
+import '../models/Logo.dart';
+import './google_credentials_provider.dart';
 
 class Block {
   List<String> list = [];

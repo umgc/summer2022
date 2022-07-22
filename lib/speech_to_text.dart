@@ -72,10 +72,10 @@ class Speech {
   command(String s) async {
     //General commands
     if (s == 'unmute') {
-        mute = false;
-        return;
-    } 
-    if (mute == false){
+      mute = false;
+      return;
+    }
+    if (mute == false) {
       switch (currentPage) {
         case 'mail':
           switch(s.toLowerCase()) {
@@ -271,7 +271,7 @@ class Speech {
         case 'mute':
           mute = true;
           break;
-        case 'stop' :
+        case 'stop':
           break;
         case 'speakers off':
           break;

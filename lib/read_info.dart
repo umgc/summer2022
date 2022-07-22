@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:summer2022/models/MailResponse.dart';
-import 'package:summer2022/models/Address.dart';
-import 'package:summer2022/models/Logo.dart';
-import 'package:summer2022/models/Code.dart';
+import './models/MailResponse.dart';
+import './models/Address.dart';
+import './models/Logo.dart';
+import './models/Code.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 FlutterTts tts = FlutterTts();
 
 Future<void> _speak(String text) async {
   if (text != null && text.isNotEmpty) {
-    print(text); //TODO Remove print
+    await tts.awaitSpeakCompletion(true);
     await tts.speak(text);
     if(Platform.isAndroid) {
       //currently this feature is only supported by android
@@ -19,8 +19,8 @@ Future<void> _speak(String text) async {
   }
 }
 
-Future _stop() async{
-    var result = await tts.stop();
+Future _stop() async {
+  var result = await tts.stop();
 }
 
 void initTTS() async {
@@ -108,7 +108,7 @@ class ReadDigestMail {
     }
   }
 
-  void readDigestSenderName(){
+  void readDigestSenderName() {
     /* Get the name of the sender */
     String text = "The sender is '${sender!.name}'";
     _speak(text);
@@ -121,19 +121,19 @@ class ReadDigestMail {
     _speak(text);
   }
 
-  void readDigestSenderAddress(){
+  void readDigestSenderAddress() {
     /* Get the sender's address */
     String text = "The sender's address is '${sender!.address}'";
     _speak(text);
   }
 
-  void readDigestRecipientAddress(){
+  void readDigestRecipientAddress() {
     /* Get the recipient's address */
     String text = "The recipient's address is '${recipient!.address}'";
     _speak(text);
   }
 
-  void readDigestLogos(){
+  void readDigestLogos() {
     /* Get the logos */
     for (LogoObject logo in currentMail.logos) {
       String text = "The logo says '${logo.name}'";
@@ -141,16 +141,17 @@ class ReadDigestMail {
     }
   }
 
-  void readDigestLinks(){
+  void readDigestLinks() {
     /* Get the links */
     for (CodeObject code in currentMail.codes) {
-      String text = "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
+      String text =
+          "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
       _speak(text);
       // TODO.. needs to listen for response and then display link
     }
   }
 
-  void readDigestSenderAddressValidated(){
+  void readDigestSenderAddressValidated() {
     /* Get if the sender's address was validated */
     String validated = "was not";
 
@@ -161,7 +162,7 @@ class ReadDigestMail {
     _speak(text);
   }
 
-  void readDigestRecipientAddressValidated(){
+  void readDigestRecipientAddressValidated() {
     /* Get if the recipient's address was validated */
     String validated = "was not";
     if (recipient!.validated) {
@@ -177,7 +178,12 @@ class ReadDigestMail {
  */
 class ReadMail {
   // TODO placeholder until we actually parse email
-  var emailDetails = {'email_subject':'Checking in','email_text':'Hi, how are you?', 'email_sender':'myfriend@yahoo.com', 'email_recipients':'someemail@gmail.com'}; 
+  var emailDetails = {
+    'email_subject': 'Checking in',
+    'email_text': 'Hi, how are you?',
+    'email_sender': 'myfriend@yahoo.com',
+    'email_recipients': 'someemail@gmail.com'
+  };
 
   ReadMail() {
     initTTS();
@@ -199,7 +205,7 @@ class ReadMail {
     }
   }
 
-  void readEmailSubject(){
+  void readEmailSubject() {
     var subject = emailDetails["email_subject"];
     String text = "The email subject is $subject";
     if (subject != null) {
@@ -209,7 +215,7 @@ class ReadMail {
     }
   }
 
-  void readEmailText(){
+  void readEmailText() {
     var emailText = emailDetails["email_text"];
     String text = "The email text is $emailText";
     if (emailText != null) {
@@ -219,7 +225,7 @@ class ReadMail {
     }
   }
 
-  void readEmailSender(){
+  void readEmailSender() {
     var sender = emailDetails["email_sender"];
     String text = "The email sender is $sender";
     if (sender != null) {
@@ -229,7 +235,7 @@ class ReadMail {
     }
   }
 
-  void readEmailRecipients(){
+  void readEmailRecipients() {
     var recipients = emailDetails["email_recipients"];
     String text = "The email recipients are $recipients";
     if (recipients != null) {

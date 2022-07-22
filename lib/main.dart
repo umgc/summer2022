@@ -7,15 +7,14 @@ import 'package:loader_overlay/loader_overlay.dart';
 import './Client.dart';
 import './Keychain.dart';
 import './speech_to_text.dart';
-import 'ui/settings.dart';
-import 'ui/main_menu.dart';
-import 'ui/sign_in.dart';
+import './ui/settings.dart';
+import './ui/main_menu.dart';
+import './ui/sign_in.dart';
 
 import 'RouteGenerator.dart';
-import 'ui/bottom_app_bar.dart';
-import 'ui/mail_widget.dart';
-import 'ui/other_mail.dart';
-
+import './ui/bottom_app_bar.dart';
+import './ui/mail_widget.dart';
+import './ui/other_mail.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 final Speech stt = Speech();
@@ -36,16 +35,18 @@ void main() async {
 
   runApp(GlobalLoaderOverlay(
       child: MaterialApp(
-          title: "USPS Informed Delivery Visual Assistance App",
-          initialRoute: emailAuthenticated == true ? "/main" : "/sign_in",
-          onGenerateRoute: RouteGenerator.generateRoute,
-          home: buildScreen(emailAuthenticated),
-          navigatorKey: navKey,)));
+    title: "USPS Informed Delivery Visual Assistance App",
+    initialRoute: emailAuthenticated == true ? "/main" : "/sign_in",
+    onGenerateRoute: RouteGenerator.generateRoute,
+    home: buildScreen(emailAuthenticated),
+    navigatorKey: navKey,
+  )));
 }
 
 Widget buildScreen(bool emailAuthenticated) {
   return Scaffold(
-    body: emailAuthenticated == true ? const MainWidget() : const SignInWidget(),
+    body:
+        emailAuthenticated == true ? const MainWidget() : const SignInWidget(),
     bottomNavigationBar: const BottomBar(),
   );
 }
