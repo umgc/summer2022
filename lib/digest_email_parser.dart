@@ -5,7 +5,7 @@ import 'package:enough_mail/enough_mail.dart';
 import 'package:googleapis/cloudsearch/v1.dart';
 import 'package:intl/intl.dart';
 import 'package:summer2022/models/MailResponse.dart';
-import 'image_processing/google_cloud_vision_api.dart';
+import './image_processing/google_cloud_vision_api.dart';
 import './models/Digest.dart';
 import './models/Code.dart';
 import './models/Logo.dart';
