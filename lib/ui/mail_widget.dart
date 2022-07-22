@@ -188,11 +188,6 @@ class MailWidgetState extends State<MailWidget> {
     );
   }
 
-  //this function allows us to set the variable on the ui from a single place and reduce reuse of code
-  void setStateVariables() {
-
-  }
-
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
@@ -245,8 +240,9 @@ class MailWidgetState extends State<MailWidget> {
   void openLink(String link) async {
     if (link != "") {
       Uri uri = Uri.parse(link);
-      if (!await launchUrl(uri, mode: LaunchMode.externalApplication))
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
         throw 'Could not launch $uri';
+      }
     }
   }
 
