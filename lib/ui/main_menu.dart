@@ -40,8 +40,8 @@ class MainWidgetState extends State<MainWidget> {
   final picker = ImagePicker();
   FontWeight commonFontWt = FontWeight.w700;
   double commonFontSize = 32;
-  double commonBorderWidth = 2.5;
-  double commonButtonHeight = 55;
+  double commonBorderWidth = 2;
+  double commonButtonHeight = 60;
   double commonCornerRadius = 8;
 
   @override
@@ -129,7 +129,7 @@ class MainWidgetState extends State<MainWidget> {
                     ),
                   ),
                   Padding( // MODE Dialog Box
-                    padding: EdgeInsets.only(top:0, left: 55, right: 55),
+                    padding: EdgeInsets.only(top:0, left: 65, right: 65),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -170,7 +170,10 @@ class MainWidgetState extends State<MainWidget> {
                       ]
                     ),
                   ),
-                  Row( // LATEST and UNREAD Buttons
+
+                  Padding( // MODE Dialog Box
+                    padding: EdgeInsets.only(top:0, left: 30, right: 30),
+                    child: Row( // LATEST and UNREAD Buttons
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(height: commonButtonHeight, // LATEST Button
@@ -229,50 +232,54 @@ class MainWidgetState extends State<MainWidget> {
                           ),
                         ),
                       ]
+                    ),
                   ),
                   SizedBox(height: commonButtonHeight, // SCAN MAIL Button
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color:Colors.grey.shade400, //background color of dropdown button
-                          borderRadius: BorderRadius.circular(commonCornerRadius), //border raiuds of dropdown button
-                        ),
-                        child: OutlinedButton.icon(
-                          onPressed: () async {
-                            final PickedFile =
-                            await picker.getImage(source: ImageSource.camera);
-                            print(PickedFile!.path);
-                            if (PickedFile != null) {
-                              _image = File(PickedFile.path);
-                              _imageBytes = _image!.readAsBytesSync();
-                              await deleteImageFiles();
-                              await saveImageFile(_imageBytes!, "mailpiece.jpg");
-                              MailResponse s =
-                              await processImage("${imagePath}/mailpiece.jpg");
-                              print(s.toJson());
-                            }
-                          },
-                          icon: Icon(
-                            Icons.camera_alt_outlined,
-                            size: 40,
-                          ),
-                          label: const Text("Scan Mail"),
-                          style: commonButtonStyleText(Colors.black, Colors.grey),
-                        ),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color:Colors.grey.shade400, //background color of dropdown button
+                        borderRadius: BorderRadius.circular(commonCornerRadius), //border raiuds of dropdown button
                       ),
-                    ),
-                  SizedBox(height: commonButtonHeight,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/sign_in');
-                      },
-                      style: commonButtonStyleElevated(Colors.black, Colors.grey),
-                      child: const Text(
-                        "Sign Out",
-                        style: TextStyle(color: Colors.white),
+                      child: OutlinedButton.icon(
+                        onPressed: () async {
+                          final PickedFile =
+                          await picker.getImage(source: ImageSource.camera);
+                          print(PickedFile!.path);
+                          if (PickedFile != null) {
+                            _image = File(PickedFile.path);
+                            _imageBytes = _image!.readAsBytesSync();
+                            await deleteImageFiles();
+                            await saveImageFile(_imageBytes!, "mailpiece.jpg");
+                            MailResponse s =
+                            await processImage("${imagePath}/mailpiece.jpg");
+                            print(s.toJson());
+                          }
+                        },
+                        icon: Icon(
+                          Icons.camera_alt_outlined,
+                          size: 40,
+                        ),
+                        label: const Text("Scan Mail"),
+                        style: commonButtonStyleText(Colors.black, Colors.grey),
                       ),
                     ),
                   ),
-                  SizedBox(height: commonButtonHeight,
+                  Padding( // MODE Dialog Box
+                    padding: EdgeInsets.only(top:0, bottom: 20),
+                    child: SizedBox(height: commonButtonHeight,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/sign_in');
+                        },
+                        style: commonButtonStyleElevated(Colors.black, Colors.grey),
+                        child: const Text(
+                          "  Sign Out  ",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  /*SizedBox(height: commonButtonHeight,
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/backend_testing');
@@ -287,7 +294,7 @@ class MainWidgetState extends State<MainWidget> {
                       child: const Text("Backend Testing",
                           style: TextStyle(color: Colors.black)),
                     ),
-                  ),
+                  ),*/
             ])));
   }
 

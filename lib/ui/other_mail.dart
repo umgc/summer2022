@@ -21,6 +21,8 @@ class OtherMailWidget extends StatefulWidget {
 
 class OtherMailWidgetState extends State<OtherMailWidget> {
   late int index;
+  FontWeight commonFontWt = FontWeight.w500;
+  double commonFontSize = 28;
 
   @override
   void initState() {
@@ -74,9 +76,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //index = widget.emails.length-1;
     int emailsLen = widget.emails.length;
-    //index = widget.emails.length-1;
     var parsedDate =
         DateTime.parse(widget.emails[index].message.decodeDate().toString());
     final DateFormat formatter = DateFormat('yyyy-MM-dd h:mm:ss');
@@ -86,7 +86,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
       bottomNavigationBar: BottomBar(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text(formatted),
+        title: Text(formatted, style: TextStyle(fontWeight: commonFontWt,fontSize: commonFontSize),),
         backgroundColor: Colors.grey,
       ),
       body: SafeArea(
