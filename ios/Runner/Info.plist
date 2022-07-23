@@ -45,7 +45,10 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
-
+    <key>NSSpeechRecognitionUsageDescription</key>
+	<string>Speech commands</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Speech commands</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 	<string>sms</string>

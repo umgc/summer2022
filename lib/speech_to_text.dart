@@ -65,8 +65,10 @@ class Speech {
     speechEnabled = await speech.initialize();
     while (true) {
       input = recording();
-      print(input);
-      command(input);
+      if (input.isNotEmpty){
+        print(input);
+        command(input);
+      }
       input = '';
       words = '';
       await Future.delayed(const Duration(seconds: 6));
