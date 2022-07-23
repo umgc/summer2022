@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/api.dart';
+import '../lib/image_processing/google_cloud_vision_api.dart';
 import '../lib/models/Address.dart';
 import '../lib/models/Logo.dart';
 import '../lib/models/MailResponse.dart';

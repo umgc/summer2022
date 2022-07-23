@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:summer2022/models/Address.dart';
-import 'package:summer2022/models/MailResponse.dart';
-import 'package:summer2022/read_info.dart';
+import '../lib/models/Address.dart';
+import '../lib/models/MailResponse.dart';
+import '../lib/read_info.dart';
 import 'dart:io' as io;
 
 class FakeFlutterTts extends Fake implements FlutterTts {
@@ -11,23 +11,28 @@ class FakeFlutterTts extends Fake implements FlutterTts {
   Future<dynamic> awaitSpeakCompletion(bool? awaitCompletion) {
     return Future.value(true);
   }
+
   @override
   Future<dynamic> speak(String? text) {
     print(text);
     return Future.value(true);
   }
+
   @override
   Future<dynamic> setLanguage(String? language) {
     return Future.value(true);
   }
+
   @override
   Future<dynamic> setSpeechRate(double? rate) {
     return Future.value(true);
   }
+
   @override
   Future<dynamic> setVolume(double? volume) {
     return Future.value(true);
   }
+
   @override
   Future<dynamic> setPitch(double? pitch) {
     return Future.value(true);
@@ -37,20 +42,51 @@ class FakeFlutterTts extends Fake implements FlutterTts {
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   io.HttpOverrides.global = null;
-  AddressObject address1 = AddressObject.fromJson({"type": "sender", "name": "GEICO", "address": "2563 Forest Dr; Annapolis, MD 21401", "validated": false});
-  AddressObject address2 = AddressObject.fromJson({"type": "recipient", "name": "Deborah Keenan", "address": "1006 Morgan Station Dr; Severn, MD 21144-1245", "validated": true});
-  MailResponse mail = MailResponse.fromJson({"addresses": [{"type": "sender", "name": "GEICO", "address": "2563 Forest Dr; Annapolis, MD 21401", "validated": false}, {"type": "recipient", "name": "Deborah Keenan", "address": "1006 Morgan Station Dr; Severn, MD 21144-1245", "validated": true}], "logos": [{"name": "GEICO"}, {"name": "GEICO"}], "codes": [{"type": "url", "info": "https://geico.com"}]});
-  
+  AddressObject address1 = AddressObject.fromJson({
+    "type": "sender",
+    "name": "GEICO",
+    "address": "2563 Forest Dr; Annapolis, MD 21401",
+    "validated": false
+  });
+  AddressObject address2 = AddressObject.fromJson({
+    "type": "recipient",
+    "name": "Deborah Keenan",
+    "address": "1006 Morgan Station Dr; Severn, MD 21144-1245",
+    "validated": true
+  });
+  MailResponse mail = MailResponse.fromJson({
+    "addresses": [
+      {
+        "type": "sender",
+        "name": "GEICO",
+        "address": "2563 Forest Dr; Annapolis, MD 21401",
+        "validated": false
+      },
+      {
+        "type": "recipient",
+        "name": "Deborah Keenan",
+        "address": "1006 Morgan Station Dr; Severn, MD 21144-1245",
+        "validated": true
+      }
+    ],
+    "logos": [
+      {"name": "GEICO"},
+      {"name": "GEICO"}
+    ],
+    "codes": [
+      {"type": "url", "info": "https://geico.com"}
+    ]
+  });
+
   setUp(() async {
     GlobalConfiguration cfg = GlobalConfiguration();
     await cfg.loadFromAsset("app_settings");
     tts = FakeFlutterTts();
   });
-  
+
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group("ReadDigestMail Tests", () {
-    
     test("getSenderAndRecipient", () {
       String error = '';
       ReadDigestMail readMail = ReadDigestMail();
@@ -175,7 +211,6 @@ void main() async {
   });
 
   group("ReadMail Tests", () {
-
     test("Read All Email Info", () {
       String error = '';
       ReadMail readMail = ReadMail();
@@ -230,6 +265,5 @@ void main() async {
       }
       expect(error, '');
     });
-
   });
 }

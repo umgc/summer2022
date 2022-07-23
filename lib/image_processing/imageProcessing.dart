@@ -2,18 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import './ui/main_menu.dart';
 
-import 'api.dart';
-import 'barcode_scanner.dart';
-import 'models/Code.dart';
-import 'models/Logo.dart';
-import 'models/MailResponse.dart';
-import 'usps_address_verification.dart';
+import './google_cloud_vision_api.dart';
+import './barcode_scanner.dart';
+import '../models/Code.dart';
+import '../models/Logo.dart';
+import '../models/MailResponse.dart';
+import './usps_address_verification.dart';
 
 File? _image;
 Uint8List? _imageBytes;
@@ -22,12 +20,18 @@ DateTime? _targetDate;
 CloudVisionApi vision = CloudVisionApi();
 BarcodeScannerApi? _barcodeScannerApi;
 String filePath = '';
-String imagePath =
-    '/storage/emulated/0/Android/data/com.example.summer2022/files';
+String imagePath = '';
 final picker = ImagePicker();
 
 deleteImageFiles() async {
-  Directory? directory = await getExternalStorageDirectory();
+  Directory? directory;
+  if (Platform.isIOS) {
+    directory = await getApplicationDocumentsDirectory();
+  }
+  if (Platform.isAndroid) {
+    directory = await getExternalStorageDirectory();
+  }
+
   Directory? directory2 = await getTemporaryDirectory();
   var files = directory?.listSync(recursive: false, followLinks: false);
   var files2 = directory2.listSync(recursive: false, followLinks: false);
@@ -99,6 +103,13 @@ Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
         }
       }
     }
+    if (Platform.isIOS) {
+      if (imageBytes != null) {
+        directory = await getApplicationDocumentsDirectory();
+        imagePath = directory.path;
+        print(directory.path);
+      }
+    }
     if (!await directory!.exists()) {
       await directory.create(recursive: true);
     }
@@ -106,10 +117,6 @@ Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
       File saveFile = File(directory.path + "/$fileName");
       saveFile.writeAsBytesSync(imageBytes);
 
-      if (Platform.isIOS) {
-        await ImageGallerySaver.saveFile(saveFile.path,
-            isReturnPathOfIOS: true);
-      }
       filePath = saveFile.path;
       print("Directory" + directory.listSync().toString());
       return true;

@@ -2,7 +2,7 @@ import 'package:enough_mail/enough_mail.dart';
 import './EmailContent.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'enough_mail.dart';
+import './enough_mail.dart';
 import 'package:intl/date_time_patterns.dart';
 
 void main() {

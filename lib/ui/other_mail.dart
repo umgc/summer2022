@@ -2,7 +2,7 @@ import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'bottom_app_bar.dart';
-import 'main_menu.dart';
+import './main_menu.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/Arguments.dart';
 import '../models/Digest.dart';
@@ -21,6 +21,8 @@ class OtherMailWidget extends StatefulWidget {
 
 class OtherMailWidgetState extends State<OtherMailWidget> {
   late int index;
+  FontWeight commonFontWt = FontWeight.w500;
+  double commonFontSize = 28;
 
   @override
   void initState() {
@@ -36,7 +38,8 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
 
   String removeLinks(Digest d) {
     String bodyText = '';
-    List<Link> list = [];
+    RegExp linkExp = RegExp(
+        r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
     RegExp carotsExpn = RegExp(r"\<https.+?\>");
     RegExp squaresExpn = RegExp(r"\[.+?\]");
     RegExp squaresExpn2 = RegExp(r"\[(.|\n|\r)*\]");
@@ -44,6 +47,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     String text =
         d.message.decodeTextPlainPart() ?? ""; //get body text of email
 
+    text = text.replaceAll(linkExp, '');
     text = text.replaceAll('\r', '');
     text = text.replaceAll('\r\n', '\n');
     text = text.replaceAll('\n\n', '');
@@ -73,9 +77,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //index = widget.emails.length-1;
     int emailsLen = widget.emails.length;
-    //index = widget.emails.length-1;
     var parsedDate =
         DateTime.parse(widget.emails[index].message.decodeDate().toString());
     final DateFormat formatter = DateFormat('yyyy-MM-dd h:mm:ss');
@@ -85,7 +87,10 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
       bottomNavigationBar: BottomBar(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text(formatted),
+        title: Text(
+          formatted,
+          style: TextStyle(fontWeight: commonFontWt, fontSize: commonFontSize),
+        ),
         backgroundColor: Colors.grey,
       ),
       body: SafeArea(

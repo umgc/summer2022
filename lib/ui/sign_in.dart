@@ -4,7 +4,7 @@ import 'package:summer2022/speech_to_text.dart';
 import '../Keychain.dart';
 import '../Client.dart';
 import '../main.dart';
-import 'bottom_app_bar.dart';
+import './bottom_app_bar.dart';
 
 class SignInWidget extends StatefulWidget {
   const SignInWidget({Key? key}) : super(key: key);

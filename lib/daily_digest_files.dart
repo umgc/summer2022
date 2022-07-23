@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider_android/path_provider_android.dart';
 import 'package:path_provider_ios/path_provider_ios.dart';
-import 'package:summer2022/models/MailResponse.dart';
+import './models/MailResponse.dart';
 
 class DailyDigestFiles {
   late List<MailResponse> files;
@@ -37,10 +37,10 @@ class DailyDigestFiles {
     // Create a list of files to load
     List<String> fileList = [];
     for (var i = 0; i < 7; i++) {
-        DateTime date = dateNow.subtract(Duration(days:i));
-        String formattedDate = formatter.format(date);
-        String fileName = "$formattedDate.json";
-        fileList.add(fileName);
+      DateTime date = dateNow.subtract(Duration(days: i));
+      String formattedDate = formatter.format(date);
+      String fileName = "$formattedDate.json";
+      fileList.add(fileName);
     }
 
     for (String jsonFile in fileList) {
