@@ -87,18 +87,26 @@ void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group("ReadDigestMail Tests", () {
-    test("getSenderAndRecipient", () {
+    
+    test("set/getSenderAndRecipient", () {
       String error = '';
       ReadDigestMail readMail = ReadDigestMail();
       readMail.setCurrentMail(mail);
+      AddressObject returnedAddress1 = AddressObject();
+      AddressObject returnedAddress2 = AddressObject();
       try {
-        readMail.getSenderAndRecipient([address1, address2]);
+        readMail.setSenderAndRecipient([address1, address2]);
+        var addresses = readMail.getSenderAndRecipient();
+        returnedAddress1 = addresses[0];
+        returnedAddress2 = addresses[1];
       } catch (e) {
         error = e.toString();
       }
       expect(error, '');
       expect(readMail.sender, address1);
       expect(readMail.recipient, address2);
+      expect(returnedAddress1, address1);
+      expect(returnedAddress2, address2);
     });
 
     test("Read All Digest Info", () {

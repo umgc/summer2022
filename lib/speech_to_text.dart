@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:summer2022/read_info.dart';
+import 'package:summer2022/ui/mail_widget.dart';
+import 'package:summer2022/ui/main_menu.dart';
+
+import './main.dart';
+import 'Keychain.dart';
+import 'digest_email_parser.dart';
+import 'models/Arguments.dart';
+import 'models/Digest.dart';
 
 import './main.dart';
 import 'ui/settings.dart';
@@ -13,10 +21,28 @@ class Speech {
   String input = '';
   bool speechEnabled = false;
   bool mute = false;
-  ReadDigestMail digestMail = ReadDigestMail();
+  Digest digest = Digest();
   ReadMail mail = ReadMail();
+  late MailWidgetState _mailWidgetState;
 
-  void setCurrentPage(String page) {
+  void setCurrentPage(String page, [Object? obj]) {
+    switch (page) {
+      case 'mail':
+        if(obj != null) {
+          _mailWidgetState = obj as MailWidgetState;
+        }
+        break;
+      case 'email':
+        break;
+      case 'main':
+        break;
+      case 'settings':
+        break;
+      case 'login':
+        break;
+      default:
+        break;
+    }
     currentPage = page;
   }
 
@@ -35,7 +61,7 @@ class Speech {
     while (true) {
       input = recording();
       print(input);
-      command(input);
+      await command(input);
       input = '';
       words = '';
       await Future.delayed(const Duration(seconds: 6));
@@ -43,7 +69,7 @@ class Speech {
   }
 
   // The commands that the user can utilise
-  command(String s) {
+  command(String s) async {
     //General commands
     if (s == 'unmute') {
       mute = false;
@@ -52,26 +78,51 @@ class Speech {
     if (mute == false) {
       switch (currentPage) {
         case 'mail':
-          switch (s) {
+          switch(s.toLowerCase()) {
             // mail page commands
             case 'next':
+              _mailWidgetState.setState(() {
+                _mailWidgetState.seekForward();
+              });
               break;
             case 'previous':
-              break;
-            case 'next Digest':
-              break;
-            case 'previous Digest':
-              break;
-            case 'hyperlinks':
+              _mailWidgetState.setState(() {
+                _mailWidgetState.seekBack();
+              });
               break;
             case 'details':
+              _mailWidgetState.readMailPiece();
+              break;
+            case 'sender name':
+              _mailWidgetState.reader!.readDigestSenderName();
+              break;
+            case 'recipient name':
+              _mailWidgetState.reader!.readDigestRecipientName();
+              break;
+            case 'sender address':
+              _mailWidgetState.reader!.readDigestSenderAddress();
+              break;
+            case 'recipient address':
+              _mailWidgetState.reader!.readDigestRecipientAddress();
+              break;
+            case 'sender validated':
+              _mailWidgetState.reader!.readDigestSenderAddressValidated();
+              break;
+            case 'recipient validated':
+              _mailWidgetState.reader!.readDigestRecipientAddressValidated();
+              break;
+            case 'logos':
+              _mailWidgetState.reader!.readDigestLogos();
+              break;
+            case 'links':
+              _mailWidgetState.reader!.readDigestLinks();
               break;
             default:
               break;
           }
           break;
         case 'email':
-          switch (s) {
+          switch(s.toLowerCase()) {
             // mail page commands
             case 'next':
               break;
@@ -91,12 +142,24 @@ class Speech {
           break;
         // Main menu commands
         case 'main':
-          switch (s) {
+          switch (s.toLowerCase()) {
             case "today's mail":
               break;
             case 'unread mail':
               break;
             case 'email date':
+              break;
+            case 'latest digest':
+              try {
+                digest = await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword());
+                if(!digest.isNull()) {
+                  navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
+                } else {
+                  //TODO tts to tell the user there is no digest available
+                }
+              } catch(e) {
+                //TODO tts to tell the user there was an error
+              }
               break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
@@ -107,7 +170,7 @@ class Speech {
             case 'switch email':
               navKey.currentState!.pushNamed('/other_mail');
               break;
-            case 'switch Digest':
+            case 'switch digest':
               navKey.currentState!.pushNamed('/digest_mail');
               break;
             case 'menu help':
@@ -118,7 +181,7 @@ class Speech {
           break;
         // settings page commands
         case 'settings':
-          switch (s) {
+          switch (s.toLowerCase()) {
             case 'send her on':
               cfg.updateValue("sender", true);
               break;
