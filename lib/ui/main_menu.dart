@@ -277,11 +277,14 @@ class MainWidgetState extends State<MainWidget> {
                       if (PickedFile != null) {
                         _image = File(PickedFile.path);
                         _imageBytes = _image!.readAsBytesSync();
+
                         await deleteImageFiles();
                         await saveImageFile(_imageBytes!, "mailpiece.jpg");
                         MailResponse s =
                             await processImage("${imagePath}/mailpiece.jpg");
                         print(s.toJson());
+                      } else {
+                        return;
                       }
                     },
                     icon: Icon(
