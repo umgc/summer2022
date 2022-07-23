@@ -78,6 +78,10 @@ PODS:
     - Flutter
   - PromisesObjC (2.1.1)
   - Protobuf (3.21.2)
+  - speech_to_text (0.0.1):
+    - Flutter
+    - Try
+  - Try (2.1.1)
   - url_launcher_ios (0.0.1):
     - Flutter
 
@@ -92,6 +96,7 @@ DEPENDENCIES:
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
@@ -109,6 +114,7 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - Protobuf
+    - Try
 
 EXTERNAL SOURCES:
   camera_avfoundation:
@@ -131,6 +137,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_ios/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  speech_to_text:
+    :path: ".symlinks/plugins/speech_to_text/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
@@ -158,8 +166,10 @@ SPEC CHECKSUMS:
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   Protobuf: 818c6a87e44193a77f56b87c6a1c106efda7e062
+  speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
+  Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
 
-PODFILE CHECKSUM: 0c4c75d951e240cd395f916e71a8007492241d77
+PODFILE CHECKSUM: af928d817bb985a9ae2e2f5f92abb18f5c534af0
 
 COCOAPODS: 1.11.3
