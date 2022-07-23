@@ -11,6 +11,14 @@ import 'package:summer2022/models/MailResponse.dart';
 import 'package:summer2022/other_mail_parser.dart';
 import 'package:summer2022/read_info.dart';
 import 'package:summer2022/daily_digest_files.dart';
+import 'package:summer2022/ui/mail_widget.dart';
+import 'package:summer2022/ui/main_menu.dart';
+
+import './main.dart';
+import 'Keychain.dart';
+import 'digest_email_parser.dart';
+import 'models/Arguments.dart';
+import 'models/Digest.dart';
 
 import './main.dart';
 import 'ui/main_menu.dart';
@@ -31,8 +39,27 @@ class Speech {
   var formatter = DateFormat('yyy-MM-dd');
   dynamic username;
   dynamic password;
+  Digest digest = Digest();
+  late MailWidgetState _mailWidgetState;
 
-  void setCurrentPage(String page) {
+  void setCurrentPage(String page, [Object? obj]) {
+    switch (page) {
+      case 'mail':
+        if(obj != null) {
+          _mailWidgetState = obj as MailWidgetState;
+        }
+        break;
+      case 'email':
+        break;
+      case 'main':
+        break;
+      case 'settings':
+        break;
+      case 'login':
+        break;
+      default:
+        break;
+    }
     currentPage = page;
   }
 
@@ -67,7 +94,7 @@ class Speech {
       input = recording();
       if (input.isNotEmpty){
         print(input);
-        command(input);
+        await command(input);
       }
       input = '';
       words = '';
@@ -146,41 +173,53 @@ class Speech {
     } 
     if (mute == false){
       switch (currentPage) {
-        case 'email':
-          mail.setCurrentMail(OtherMailWidgetState().getCurrentEmailMessage());
-          switch(s) {
+        case 'mail':
+          switch(s.toLowerCase()) {
             // mail page commands
             case 'next':
-              OtherMailWidgetState().seekForward();
+              _mailWidgetState.setState(() {
+                _mailWidgetState.seekForward(1);
+              });
               break;
             case 'previous':
-              OtherMailWidgetState().seekBack();
+              _mailWidgetState.setState(() {
+                _mailWidgetState.seekBack();
+              });
               break;
             case 'details':
-              mail.readEmailInfo();
+              _mailWidgetState.readMailPiece();
               break;
-            case 'subject':
-              mail.readEmailSubject();
+            case 'sender name':
+              _mailWidgetState.reader!.readDigestSenderName();
               break;
-            case 'text':
-              mail.readEmailText();
+            case 'recipient name':
+              _mailWidgetState.reader!.readDigestRecipientName();
               break;
-            case 'sender':
-              mail.readEmailSender();
+            case 'sender address':
+              _mailWidgetState.reader!.readDigestSenderAddress();
               break;
-            case 'recipients':
-              mail.readEmailRecipients();
+            case 'recipient address':
+              _mailWidgetState.reader!.readDigestRecipientAddress();
               break;
-            case 'help':
+            case 'sender validated':
+              _mailWidgetState.reader!.readDigestSenderAddressValidated();
+              break;
+            case 'recipient validated':
+              _mailWidgetState.reader!.readDigestRecipientAddressValidated();
+              break;
+            case 'logos':
+              _mailWidgetState.reader!.readDigestLogos();
+              break;
+            case 'links':
+              _mailWidgetState.reader!.readDigestLinks();
               break;
             default:
               break;
           }
           break;
-        case 'mail':
-          digestMail.setCurrentMail(MailWidgetState().getCurrentDigestDetails());
-          switch(s) {
-            // digest page commands
+        case 'email':
+          switch(s.toLowerCase()) {
+            // mail page commands
             case 'next':
               MailWidgetState().seekForward(MailWidgetState().widget.digest.attachments.length);
               break;
@@ -222,23 +261,24 @@ class Speech {
           break;
         // Main menu commands
         case 'main':
-          switch (s) {
-            case 'unread emails':
-              List<Digest> digest = await getEmail(true);
-              navKey.currentState!.pushNamed('/other_mail', arguments: EmailWidgetArguments(digest));
+          switch (s.toLowerCase()) {
+            case "today's mail":
               break;
             case 'latest email':
               List<Digest> digest = await getEmail(false);
               navKey.currentState!.pushNamed('/other_mail', arguments: EmailWidgetArguments(digest));
               break;
             case 'latest digest':
-              setAccountInfo();
-              Digest digest = await DigestEmailParser().createDigest(username, password, DateTime.now());
-              if (digest.isNull()) { // If don't have one for today, try yesterday
-                DateTime date = DateTime.now().subtract(const Duration(days:1));
-                digest = await DigestEmailParser().createDigest(username, password, date);
+              try {
+                digest = await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword());
+                if(!digest.isNull()) {
+                  navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
+                } else {
+                  //TODO tts to tell the user there is no digest available
+                }
+              } catch(e) {
+                //TODO tts to tell the user there was an error
               }
-              navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
               break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
@@ -262,8 +302,7 @@ class Speech {
           break;
         // settings page commands
         case 'settings':
-          switch (s) {
-            case 'sender on':
+          switch (s.toLowerCase()) {
             case 'send her on':
               cfg.updateValue("sender", true);
               break;

@@ -6,6 +6,7 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../main.dart';
+import '../read_info.dart';
 import '../ui/main_menu.dart';
 import '../image_processing/usps_address_verification.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,7 +25,7 @@ import './bottom_app_bar.dart';
 class MailWidget extends StatefulWidget {
   final Digest digest;
 
-  const MailWidget({required this.digest});
+  MailWidget({required this.digest});
 
   @override
   State<MailWidget> createState() {
@@ -33,14 +34,42 @@ class MailWidget extends StatefulWidget {
 }
 
 class MailWidgetState extends State<MailWidget> {
+  ReadDigestMail? reader;
   int attachmentIndex = 0;
+  List<Link> links = <Link>[];
+  FontWeight commonFontWt = FontWeight.w700;
+  double commonFontSize = 32;
+  double commonBorderWidth = 2;
+  double commonButtonHeight = 60;
+  double commonCornerRadius = 8;
+
+  ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow)
+  {
+    return ElevatedButton.styleFrom(
+      textStyle: TextStyle(fontWeight: FontWeight.w700,fontSize: commonFontSize),
+      primary: primary,
+      shadowColor: shadow,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(commonCornerRadius))),
+      side: BorderSide( width: commonBorderWidth, color: Colors.black ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   initState() {
-    print(widget.digest.attachments[attachmentIndex].detailedInformation
-        .toJson()); //TODO Read Mail through tts
-    super.initState();
-    stt.setCurrentPage("mail");
+      if(widget.digest.attachments.isNotEmpty) {
+        reader = ReadDigestMail();
+        reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+        buildLinks();
+        readMailPiece();
+      }
+      super.initState();
+      stt.setCurrentPage("mail", this);
   }
 
   MailResponse getCurrentDigestDetails() {
@@ -68,16 +97,19 @@ class MailWidgetState extends State<MailWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      style: const TextStyle(fontSize: 20),
-                      "USPS Informed Delivery Daily Digest for ${DateFormat("EEEE MMMM dd, yyyy").format(widget.digest.message.decodeDate()!)}",
+            Container(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Container(
+                        child: Text(
+                          style: TextStyle(fontSize: 20),
+                          "",
+                        ),
+                      ),
                     ),
                   ),
-                ),
                 const Icon(
                   Icons.arrow_back,
                   size: 30,
@@ -95,7 +127,6 @@ class MailWidgetState extends State<MailWidget> {
                 size: 50,
                 color: Color.fromARGB(0, 255, 255, 1),
               ),
-            ]),
             Row(
               children: [
                 Expanded(
@@ -111,92 +142,75 @@ class MailWidgetState extends State<MailWidget> {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  //padding: EdgeInsets.only(left: 20),
-                  child: Center(
-                    child: OutlinedButton(
-                      onPressed: () => showLinkDialog(),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
-                        shadowColor: Colors.grey,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5))),
-                      ),
-                      child: const Text(
-                        "Links",
-                        style: TextStyle(color: Colors.black),
+            Padding( // MODE Dialog Box
+              padding: const EdgeInsets.only(top:0, left: 30, right: 30),
+              child: Row( // LATEST and UNREAD Buttons
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(height: commonButtonHeight, // LATEST Button
+                      child: OutlinedButton(
+                        onPressed: () { showLinkDialog(); },
+                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
+                        child: const Text("Links",
+                            style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  //: EdgeInsets.only(right: 10),
-                  child: Center(
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
-                        shadowColor: Colors.grey,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5))),
-                      ),
-                      child: const Text(
-                        "All Details",
-                        style: TextStyle(color: Colors.black),
+                    SizedBox(height: commonButtonHeight, // UNREAD Button
+                      child: OutlinedButton(
+                        onPressed: () { readMailPiece(); },
+                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
+                        child: const Text("All Details", style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                  ),
-                ),
-              ],
+                  ]
+              ),
             ),
             Container(
               padding: const EdgeInsets.only(bottom: 60),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            seekBack();
-                          });
-                        },
-                        child: const Icon(Icons.skip_previous, size: 50)),
+                    FloatingActionButton(
+                      backgroundColor: Colors.grey,
+                      heroTag: "f1",
+                      onPressed: () {
+                        setState(() { seekBack(); });
+                      },
+                      child: const Icon(Icons.skip_previous),
+                    ),
                     Text(widget.digest.attachments.isNotEmpty
-                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}"
-                        : "0/0"),
-                    ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            seekForward(widget.digest.attachments.length);
-                          });
-                        },
-                        child: const Icon(Icons.skip_next, size: 50))
+                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
+                    FloatingActionButton(
+                      backgroundColor: Colors.grey,
+                      heroTag: "f2",
+                      onPressed: () {
+                        setState(() { seekForward(1); });
+                      },
+                      child: const Icon(Icons.skip_next),
+                    ),
                   ]),
             )
           ],
         ),
       ),
-    );
+    ])));
   }
 
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
-      print(widget.digest.attachments[attachmentIndex].detailedInformation
-          .toJson()); //TODO Read Mail through tts
+      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      buildLinks();
+      readMailPiece();
     }
   }
 
-  void seekForward(int max) {
-    if (attachmentIndex < max - 1) {
+  void seekForward(int length) {
+    if (attachmentIndex < widget.digest.attachments.length - 1) {
       attachmentIndex = attachmentIndex + 1;
-      print(widget.digest.attachments[attachmentIndex].detailedInformation
-          .toJson()); //TODO Read Mail through tts
+      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      buildLinks();
+      readMailPiece();
     }
   }
 
@@ -211,17 +225,17 @@ class MailWidgetState extends State<MailWidget> {
             width: 300.0, // Change as per your requirement
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: widget.digest.links.length,
+              itemCount: links.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   title: ElevatedButton(
-                    child: Text(widget.digest.links.isNotEmpty
-                        ? widget.digest.links[index].info == ""
-                            ? widget.digest.links[index].link
-                            : widget.digest.links[index].info
+                    child: Text(links.isNotEmpty
+                        ? links[index].info == ""
+                            ? links[index].link
+                            : links[index].info
                         : ""),
-                    onPressed: () => openLink(widget.digest.links.isNotEmpty
-                        ? widget.digest.links[index].link
+                    onPressed: () => openLink(links.isNotEmpty
+                        ? links[index].link
                         : ""),
                   ),
                 );
@@ -241,4 +255,33 @@ class MailWidgetState extends State<MailWidget> {
       }
     }
   }
+
+  void buildLinks() {
+    List<Link> newLinks = <Link>[];
+    widget.digest.links.forEach((link) {
+      newLinks.add(link);
+    });
+    if(widget.digest.attachments.isNotEmpty) {
+      widget.digest.attachments[attachmentIndex].detailedInformation.codes.forEach((code) {
+        Link newLink = Link();
+        newLink.info = "";
+        newLink.link = code.info;
+        newLinks.add(newLink);
+      });
+    }
+
+    links = newLinks;
+  }
+
+  void readMailPiece() {
+    try{
+      if(reader != null) {
+        reader!.readDigestInfo();
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+  }
+
 }

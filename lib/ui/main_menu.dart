@@ -416,6 +416,29 @@ class MainWidgetState extends State<MainWidget> {
     );
   }
 
+  void showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center(
+            child: Text("Error Dialog"),
+          ),
+          content: Container(
+            height: 100.0,
+            width: 100.0,
+            child: const Center(
+              child: Text(
+                "An Unexpected Error has occurred, please try again later.",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> selectOtherMailDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -442,16 +465,26 @@ class MainWidgetState extends State<MainWidget> {
   late List<Digest> emails;
 
   Future<void> getDigest([DateTime? pickedDate]) async {
-    await DigestEmailParser()
-        .createDigest(await Keychain().getUsername(),
-            await Keychain().getPassword(), pickedDate ?? selectedDate)
-        .then((value) => digest = value);
+    try {
+      await DigestEmailParser()
+          .createDigest(await Keychain().getUsername(),
+          await Keychain().getPassword(), pickedDate ?? selectedDate)
+          .then((value) => digest = value);
+    } catch(e) {
+      showErrorDialog();
+      context.loaderOverlay.hide();
+    }
   }
 
   Future<void> getEmails(bool isUnread, [DateTime? pickedDate]) async {
-    await OtherMailParser()
-        .createEmailList(isUnread, await Keychain().getUsername(),
-            await Keychain().getPassword(), pickedDate ?? selectedDate)
-        .then((value) => emails = value);
+    try {
+      await OtherMailParser()
+          .createEmailList(isUnread, await Keychain().getUsername(),
+          await Keychain().getPassword(), pickedDate ?? selectedDate)
+          .then((value) => emails = value);
+    } catch(e) {
+      showErrorDialog();
+      context.loaderOverlay.hide();
+    }
   }
 }
