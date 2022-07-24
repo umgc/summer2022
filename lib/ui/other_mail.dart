@@ -169,6 +169,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                 FloatingActionButton(
                   backgroundColor: Colors.grey,
                   heroTag: "f1",
+                  key: Key('otherMailBackButton'),
                   onPressed: () {
                     seekBack();
                   },
@@ -181,6 +182,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                 FloatingActionButton(
                   backgroundColor: Colors.grey,
                   heroTag: "f2",
+                  key: Key('otherMailForwardButton'),
                   onPressed: () {
                     seekForward();
                   },
