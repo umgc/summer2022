@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -7,24 +6,13 @@ import 'package:summer2022/digest_email_parser.dart';
 import 'package:summer2022/models/Arguments.dart';
 import 'package:summer2022/models/Digest.dart';
 import 'package:summer2022/models/EmailArguments.dart';
-import 'package:summer2022/models/MailResponse.dart';
 import 'package:summer2022/other_mail_parser.dart';
 import 'package:summer2022/read_info.dart';
-import 'package:summer2022/daily_digest_files.dart';
 import 'package:summer2022/ui/mail_widget.dart';
 import 'package:summer2022/ui/main_menu.dart';
-
-import './main.dart';
-import 'Keychain.dart';
-import 'digest_email_parser.dart';
-import 'models/Arguments.dart';
-import 'models/Digest.dart';
-
-import './main.dart';
-import 'ui/main_menu.dart';
-import 'ui/settings.dart';
-import 'ui/other_mail.dart';
-import 'ui/mail_widget.dart';
+import 'package:summer2022/main.dart';
+import 'package:summer2022/ui/other_mail.dart';
+import 'package:summer2022/ui/settings.dart';
 
 class Speech {
   String currentPage = "settings";
@@ -33,14 +21,14 @@ class Speech {
   String input = '';
   bool speechEnabled = false;
   bool mute = false;
-  DailyDigestFiles digestFiles = DailyDigestFiles();
-  ReadDigestMail digestMail = ReadDigestMail();  // text to speech
-  ReadMail mail = ReadMail();  // text to speech
   var formatter = DateFormat('yyy-MM-dd');
   dynamic username;
   dynamic password;
   Digest digest = Digest();
+  late List<Digest> emails;
   late MailWidgetState _mailWidgetState;
+  late OtherMailWidgetState _otherMailWidgetState;
+  late MainWidgetState _mainWidgetState;
 
   void setCurrentPage(String page, [Object? obj]) {
     switch (page) {
@@ -50,8 +38,14 @@ class Speech {
         }
         break;
       case 'email':
+        if(obj != null) {
+          _otherMailWidgetState = obj as OtherMailWidgetState;
+        }
         break;
       case 'main':
+        if(obj != null) {
+          _mainWidgetState = obj as MainWidgetState;
+        }
         break;
       case 'settings':
         break;
@@ -103,7 +97,6 @@ class Speech {
   }
 
   DateTime? processDate(String theDate) {
-    // TODO add error handling for an invalid date/date format
     // Expected input example: June 8th 2022
 
     // Validate input
@@ -155,22 +148,7 @@ class Speech {
         mute = false;
         return;
     } 
-    if(s.contains("email date")) {
-      DateTime? dt = processDate(s.split("date ")[1]);
-      if (dt != null) {
-        //TODO
-      } else{
-        tts.speak('The specified date is invalid. Please say the month, day of the month, and then the year.');
-      }
-    } 
-    if(s.contains("digest date")) {
-      DateTime? dt = processDate(s.split("date ")[1]);
-      if (dt != null) {
-        //TODO
-      } else{
-        tts.speak('The specified date is invalid. Please say the month, day of the month, and then the year.');
-      }
-    } 
+
     if (mute == false){
       switch (currentPage) {
         case 'mail':
@@ -213,47 +191,43 @@ class Speech {
             case 'links':
               _mailWidgetState.reader!.readDigestLinks();
               break;
+            case 'help':
+              // TODO
+              break;
             default:
               break;
           }
           break;
         case 'email':
-          switch(s.toLowerCase()) {
+          switch(s) {
             // mail page commands
             case 'next':
-              MailWidgetState().seekForward(MailWidgetState().widget.digest.attachments.length);
+              _otherMailWidgetState.setState(() {
+                _mailWidgetState.seekForward(1);
+              });
               break;
             case 'previous':
-              MailWidgetState().seekBack();
+              _otherMailWidgetState.setState(() {
+                _mailWidgetState.seekBack();
+              });
               break;
             case 'details':
-              digestMail.readDigestInfo();
+              _otherMailWidgetState.reader!.readEmailInfo();
               break;
-            case 'sender name':
-              digestMail.readDigestSenderName();
+            case 'subject':
+              _otherMailWidgetState.reader!.readEmailSubject();
               break;
-            case 'recipient name':
-              digestMail.readDigestRecipientName();
+            case 'text':
+              _otherMailWidgetState.reader!.readEmailText();
               break;
-            case 'sender address':
-              digestMail.readDigestSenderAddress();
+            case 'sender':
+              _otherMailWidgetState.reader!.readEmailSender();
               break;
-            case 'recipient address':
-              digestMail.readDigestRecipientAddress();
-              break;
-            case 'sender validated':
-              digestMail.readDigestSenderAddressValidated();
-              break;
-            case 'recipient validated':
-              digestMail.readDigestRecipientAddressValidated();
-              break;
-            case 'logos':
-              digestMail.readDigestLogos();
-              break;
-            case 'links':
-              digestMail.readDigestLinks();
+            case 'recipients':
+              _otherMailWidgetState.reader!.readEmailRecipients();
               break;
             case 'help':
+              // TODO
               break;
             default:
               break;
@@ -262,7 +236,9 @@ class Speech {
         // Main menu commands
         case 'main':
           switch (s.toLowerCase()) {
-            case "today's mail":
+            case "unread email":
+              List<Digest> digest = await getEmail(true);
+              navKey.currentState!.pushNamed('/other_mail', arguments: EmailWidgetArguments(digest));
               break;
             case 'latest email':
               List<Digest> digest = await getEmail(false);
@@ -274,10 +250,10 @@ class Speech {
                 if(!digest.isNull()) {
                   navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
                 } else {
-                  //TODO tts to tell the user there is no digest available
+                  tts.speak('There are no digests available for today');
                 }
               } catch(e) {
-                //TODO tts to tell the user there was an error
+                tts.speak('An error occurred while fetching your daily digest: $e');
               }
               break;
             case 'settings':
@@ -287,25 +263,67 @@ class Speech {
               navKey.currentState!.pushNamed('/sign_in');
               break;
             case 'switch email':
-              MainWidgetState().setMailType("Email");
-              //navKey.currentState!.pushNamed('/other_mail');
+              _mainWidgetState.setMailType("Email");
               break;
             case 'switch Digest':
-              MainWidgetState().setMailType("Digest");
-              //navKey.currentState!.pushNamed('/digest_mail');
+              _mainWidgetState.setMailType("Digest");
+              break;
+            case 'tutorial off':
+              cfg.updateValue("tutorial", false);
               break;
             case 'help':
+              // TODO
               break;
             default:
+              // User asks for emails from specific date
+              if(s.contains("email date")) {
+                String requestedDate = s.split("date ")[1];
+                DateTime? dt = processDate(requestedDate);
+                if (dt != null) {
+                  try {
+                    emails = await OtherMailParser().createEmailList(false, await Keychain().getUsername(), await Keychain().getPassword(), dt);
+                    if(emails.isNotEmpty) {
+                      navKey.currentState!.pushNamed('/other_mail', arguments: EmailWidgetArguments(emails));
+                    } else {
+                      tts.speak('There are no digest available for $requestedDate');
+                    }
+                  } catch(e) {
+                    tts.speak('An error occurred while fetching your emails: $e');
+                  }
+                } else{
+                  tts.speak('The specified date is invalid. Please say the month, day of the month, and then the year.');
+                }
+              } 
+              // User asks for digest from specific date
+              if(s.contains("digest date")) {
+                String requestedDate = s.split("date ")[1];
+                DateTime? dt = processDate(requestedDate);
+                if (dt != null) {
+                  try {
+                    digest = await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword(), dt);
+                    if(!digest.isNull()) {
+                      navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
+                    } else {
+                      tts.speak('There are no digest available for $requestedDate');
+                    }
+                  } catch(e) {
+                    tts.speak('An error occurred while fetching your daily digest: $e');
+                  }
+                } else{
+                  tts.speak('The specified date is invalid. Please say the month, day of the month, and then the year.');
+                }
+              } 
               break;
           }
           break;
         // settings page commands
         case 'settings':
           switch (s.toLowerCase()) {
+            case 'center on':
             case 'send her on':
               cfg.updateValue("sender", true);
               break;
+            case 'center off':
             case 'sender off':
             case 'send her off':
               cfg.updateValue("sender", false);
@@ -371,6 +389,7 @@ class Speech {
               cfg.updateValue("tutorial", false);
               break;
             case 'help':
+              // TODO
               break;
             default:
               break;
@@ -379,6 +398,7 @@ class Speech {
         case 'signIn':
           switch (s) {
             case 'help':
+              // TODO
               break;
             default: // Invalid command
               break;

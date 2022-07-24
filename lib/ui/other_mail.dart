@@ -1,6 +1,7 @@
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:summer2022/read_info.dart';
 import 'bottom_app_bar.dart';
 import './main_menu.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,6 +21,7 @@ class OtherMailWidget extends StatefulWidget {
 }
 
 class OtherMailWidgetState extends State<OtherMailWidget> {
+  ReadMail? reader;
   late int index;
   FontWeight commonFontWt = FontWeight.w500;
   double commonFontSize = 28;
@@ -27,9 +29,14 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   @override
   void initState() {
     // index must be initialed before build or emails won't iterate
+    if(widget.emails.isNotEmpty) {
+        reader = ReadMail();
+        reader!.setCurrentMail(widget.emails[index].message);
+        readMailPiece();
+    }
     super.initState();
     index = widget.emails.length - 1;
-    stt.setCurrentPage("email");
+    stt.setCurrentPage("email", this);
   }
 
   MimeMessage getCurrentEmailMessage() {
@@ -212,5 +219,16 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
         index--;
       }
     });
+  }
+
+  void readMailPiece() {
+    try{
+      if(reader != null) {
+        reader!.readEmailInfo();
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
   }
 }

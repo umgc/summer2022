@@ -47,7 +47,7 @@ class MainWidgetState extends State<MainWidget> {
   @override
   void initState() {
     super.initState();
-    stt.setCurrentPage("main");
+    stt.setCurrentPage("main", this);
   }
 
   void setMailType(String type) {
