@@ -14,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import './image_processing/usps_address_verification.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+// import './image_processing/imageProcessing.dart';
 
 class DigestEmailParser {
   String _userName = ''; // Add your credentials
@@ -22,8 +23,7 @@ class DigestEmailParser {
   CloudVisionApi vision = CloudVisionApi();
   BarcodeScannerApi? _barcodeScannerApi;
   String filePath = '';
-  String imagePath =
-      '/storage/emulated/0/Android/data/com.example.summer2022/files';
+  String imagePath = '';
 
   Future<Digest> createDigest(String userName, String password,
       [DateTime? targetDate]) async {
@@ -37,7 +37,7 @@ class DigestEmailParser {
         digest.links = _getLinks(digest.message);
       }
       return digest;
-    } catch(e) {
+    } catch (e) {
       rethrow;
     }
   }
@@ -106,10 +106,9 @@ class DigestEmailParser {
                 .length); //remove the found link and continue searching
       }
       return list;
-    } catch(e) {
+    } catch (e) {
       rethrow;
     }
-
   }
 
   String _formatTargetDateForSearch(DateTime date) {
@@ -174,27 +173,45 @@ class DigestEmailParser {
   }
 
   deleteImageFiles() async {
+    Directory? directory;
+
     try {
-      Directory? directory = await getExternalStorageDirectory();
+      if (Platform.isIOS) {
+        directory = await getApplicationDocumentsDirectory();
+      }
+      if (Platform.isAndroid) {
+        directory = await getApplicationDocumentsDirectory();
+
+        // directory = await getExternalStorageDirectory();
+      }
+
       Directory? directory2 = await getTemporaryDirectory();
       var files = directory?.listSync(recursive: false, followLinks: false);
       var files2 = directory2.listSync(recursive: false, followLinks: false);
       for (int x = 0; x < files!.length; x++) {
-        print("Delete in Extern: " + files[x].path);
-        files[x].delete();
+        try {
+          files[x].delete();
+          print("Delete in Extern: " + files[x].path);
+        } catch (e) {
+          print("File" + x.toString() + " does not exist");
+        }
       }
       for (int x = 0; x < files2.length; x++) {
-        print("Delete: " + files2[x].path);
-        files[x].delete();
+        try {
+          files[x].delete();
+          print("Delete: " + files2[x].path);
+        } catch (e) {
+          print("File" + x.toString() + " does not exist");
+        }
       }
-    } catch(e) {
+    } catch (e) {
       rethrow;
     }
   }
 
   void _processImageForLogo(String imagePath) async {
     try {
-      print("Inside processImageForLogo\n");
+      // print("Inside processImageForLogo\n");
       var image = File(imagePath);
       var buffer = image.readAsBytesSync();
       var a = base64.encode(buffer);
@@ -203,31 +220,29 @@ class DigestEmailParser {
       for (var logo in logos) {
         output += logo.toJson().toString() + "\n";
       }
-      print(output);
-      print("Exit ProcessImageForLogo");
-    } catch(e) {
+      // print(output);
+      // print("Exit ProcessImageForLogo");
+    } catch (e) {
       rethrow;
     }
   }
 
   void _processBarcode() async {
-    try{
+    try {
       print("Inside process barcode\n");
       _barcodeScannerApi = BarcodeScannerApi();
-      var fLoc = filePath;
-      print(fLoc);
+      // var fLoc = filePath;
+      // print(fLoc);
       File? img = await _barcodeScannerApi?.getImageFileFromAssets(filePath);
-
       _barcodeScannerApi!.setImageFromFile(img!);
-
       List<CodeObject> codes = await _barcodeScannerApi!.processImage();
       var output = '';
       for (var code in codes) {
         output += code.toJson().toString();
       }
-      print(output);
-      print("Exit ProcessBarcode");
-    } catch(e){
+      // print(output);
+      // print("Exit ProcessBarcode");
+    } catch (e) {
       rethrow;
     }
   }
@@ -237,8 +252,9 @@ class DigestEmailParser {
     try {
       if (Platform.isAndroid) {
         if (await _requestPermission(Permission.storage)) {
-          directory = await getExternalStorageDirectory();
-          imagePath = directory!.path.toString();
+          // directory = await getExternalStorageDirectory();
+          directory = await getApplicationDocumentsDirectory();
+          imagePath = directory.path.toString();
           print(directory.path);
         } else {
           if (await _requestPermission(Permission.photos)) {
@@ -250,6 +266,13 @@ class DigestEmailParser {
           }
         }
       }
+      if (Platform.isIOS) {
+        if (imageBytes != null) {
+          directory = await getApplicationDocumentsDirectory();
+          imagePath = directory.path;
+          print(directory.path);
+        }
+      }
       if (!await directory!.exists()) {
         await directory.create(recursive: true);
       }
@@ -257,17 +280,12 @@ class DigestEmailParser {
         File saveFile = File(directory.path + "/$fileName");
         saveFile.writeAsBytesSync(imageBytes);
 
-        if (Platform.isIOS) {
-          await ImageGallerySaver.saveFile(saveFile.path,
-              isReturnPathOfIOS: true);
-        }
         filePath = saveFile.path;
         print("Directory" + directory.listSync().toString());
         return true;
       }
     } catch (e) {
       print("Something happened in saveImageFile method");
-      rethrow;
     }
     return false;
   }
@@ -284,7 +302,7 @@ class DigestEmailParser {
           return false;
         }
       }
-    } catch(e) {
+    } catch (e) {
       rethrow;
     }
   }
@@ -297,16 +315,16 @@ class DigestEmailParser {
       var imageByte;
       imageByte = image.readAsBytesSync();
 
-    var a = base64.encode(imageByte);
-    print(a);
-    var objMr = await vision.search(a);
-    for (var address in objMr.addresses) {
-      address.validated =
-          await UspsAddressVerification().verifyAddressString(address.address);
-    }
-    _barcodeScannerApi = BarcodeScannerApi();
-    File img = File(filePath);
-    _barcodeScannerApi!.setImageFromFile(img);
+      var a = base64.encode(imageByte);
+      print(a);
+      var objMr = await vision.search(a);
+      for (var address in objMr.addresses) {
+        address.validated = await UspsAddressVerification()
+            .verifyAddressString(address.address);
+      }
+      _barcodeScannerApi = BarcodeScannerApi();
+      File img = File(filePath);
+      _barcodeScannerApi!.setImageFromFile(img);
 
       List<CodeObject> codes = await _barcodeScannerApi!.processImage();
       for (final code in codes) {
@@ -314,7 +332,7 @@ class DigestEmailParser {
       }
       print(objMr.toJson());
       return objMr;
-    } catch(e) {
+    } catch (e) {
       rethrow;
     }
   }

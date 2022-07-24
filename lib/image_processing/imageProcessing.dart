@@ -29,7 +29,9 @@ deleteImageFiles() async {
     directory = await getApplicationDocumentsDirectory();
   }
   if (Platform.isAndroid) {
-    directory = await getExternalStorageDirectory();
+    directory = await getApplicationDocumentsDirectory();
+
+    // directory = await getExternalStorageDirectory();
   }
 
   Directory? directory2 = await getTemporaryDirectory();
@@ -38,7 +40,8 @@ deleteImageFiles() async {
   for (int x = 0; x < files!.length; x++) {
     try {
       files[x].delete();
-      print("Delete in Extern: " + files[x].path);
+      print("Delete files from Externd/applicationDownload Directory: " +
+          files[x].path);
     } catch (e) {
       print("File" + x.toString() + " does not exist");
     }
@@ -46,7 +49,7 @@ deleteImageFiles() async {
   for (int x = 0; x < files2.length; x++) {
     try {
       files[x].delete();
-      print("Delete: " + files2[x].path);
+      print("Delete files from temporary Directory: " + files2[x].path);
     } catch (e) {
       print("File" + x.toString() + " does not exist");
     }
@@ -54,7 +57,7 @@ deleteImageFiles() async {
 }
 
 void processImageForLogo(String imagePath) async {
-  print("Inside processImageForLogo\n");
+  // print("Inside processImageForLogo\n");
   var image = File(imagePath);
   var buffer = image.readAsBytesSync();
   var a = base64.encode(buffer);
@@ -63,12 +66,12 @@ void processImageForLogo(String imagePath) async {
   for (var logo in logos) {
     output += logo.toJson().toString() + "\n";
   }
-  print(output);
-  print("Exit ProcessImageForLogo");
+  // print(output);
+  // print("Exit ProcessImageForLogo");
 }
 
 void processBarcode() async {
-  print("Inside process barcode\n");
+  // print("Inside process barcode\n");
   _barcodeScannerApi = BarcodeScannerApi();
   var fLoc = filePath;
   print(fLoc);
@@ -81,8 +84,8 @@ void processBarcode() async {
   for (var code in codes) {
     output += code.toJson().toString();
   }
-  print(output);
-  print("Exit ProcessBarcode");
+  // print(output);
+  // print("Exit ProcessBarcode");
 }
 
 Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
@@ -90,14 +93,15 @@ Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
   try {
     if (Platform.isAndroid) {
       if (await _requestPermission(Permission.storage)) {
-        directory = await getExternalStorageDirectory();
-        imagePath = directory!.path.toString();
-        print(directory.path);
+        // directory = await getExternalStorageDirectory();
+        directory = await getApplicationDocumentsDirectory();
+        imagePath = directory.path.toString();
+        // print(directory.path);
       } else {
         if (await _requestPermission(Permission.photos)) {
           directory = await getTemporaryDirectory();
           imagePath = directory.path;
-          print(directory.path);
+          // print(directory.path);
         } else {
           return false;
         }
@@ -107,7 +111,7 @@ Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
       if (imageBytes != null) {
         directory = await getApplicationDocumentsDirectory();
         imagePath = directory.path;
-        print(directory.path);
+        // print(directory.path);
       }
     }
     if (!await directory!.exists()) {
@@ -118,7 +122,7 @@ Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
       saveFile.writeAsBytesSync(imageBytes);
 
       filePath = saveFile.path;
-      print("Directory" + directory.listSync().toString());
+      // print("Directory" + directory.listSync().toString());
       return true;
     }
   } catch (e) {
