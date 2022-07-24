@@ -6,8 +6,12 @@ class Digest {
   List<Attachment> attachments = [];
   List<Link> links = [];
 
-  Digest(MimeMessage m) {
-    message = m;
+  Digest([MimeMessage? m]) {
+    if(m != null) {
+      message = m;
+    } else {
+      message = MimeMessage();
+    }
   }
 
   bool isNull(){

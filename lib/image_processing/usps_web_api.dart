@@ -5,8 +5,7 @@ import 'package:http/http.dart' as http;
 //http documentation: https://pub.dev/packages/http
 //usps documentation: https://www.usps.com/business/web-tools-apis/address-information-api.pdf
 
-class UspsWebApi{
-
+class UspsWebApi {
   final String _strUrl = "https://secure.shippingapis.com/";
   final String _strUserID = "974UNIVE7445";
 
@@ -28,7 +27,7 @@ class UspsWebApi{
 
     String strResponse = await _callClient(strUri);
 
-    if(strResponse.contains('<DPVConfirmation>')){
+    if (strResponse.contains('<DPVConfirmation>')) {
       final responseSplit = strResponse.split('<DPVConfirmation>');
       return responseSplit[1].characters.elementAt(0) == 'Y';
     }
@@ -36,27 +35,28 @@ class UspsWebApi{
   }
 
   Future<bool> testConnectionToUspsAPI() async {
-    try{
+    try {
       //Construct test address
-      String strUri = '${getUrl()}ShippingAPITest.dll?API=ZipCodeLookup&XML=<ZipCodeLookupRequest USERID="${getUserID()}"><Address ID="0"><Address1></Address1><Address2>6406 Ivy Lane</Address2><City>Greenbelt</City><State>MD</State></Address></ZipCodeLookupRequest>';
+      String strUri =
+          '${getUrl()}ShippingAPITest.dll?API=ZipCodeLookup&XML=<ZipCodeLookupRequest USERID="${getUserID()}"><Address ID="0"><Address1></Address1><Address2>6406 Ivy Lane</Address2><City>Greenbelt</City><State>MD</State></Address></ZipCodeLookupRequest>';
 
       //regardless of response if its blank then there is no connection
-      if((await _callClient(strUri)).toLowerCase().contains('error')){
+      if ((await _callClient(strUri)).toLowerCase().contains('error')) {
         return false;
       }
       return true;
-    } catch(e) {
+    } catch (e) {
       return false;
     }
   }
 
   Future<String> _callClient(String strUri) async {
-    try{
+    try {
       //create web client
       final client = RetryClient(http.Client());
       //download response string from api
       return await client.read(Uri.parse(strUri));
-    } catch(e){
+    } catch (e) {
       rethrow;
     }
   }

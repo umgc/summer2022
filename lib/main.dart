@@ -6,38 +6,47 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import './Client.dart';
 import './Keychain.dart';
-import './settings.dart';
-import './main_menu.dart';
-import './sign_in.dart';
+import './speech_to_text.dart';
+import './ui/settings.dart';
+import './ui/main_menu.dart';
+import './ui/sign_in.dart';
 
 import 'RouteGenerator.dart';
-import 'bottom_app_bar.dart';
-import 'mail_widget.dart';
-import 'other_mail.dart';
+import './ui/bottom_app_bar.dart';
+import './ui/mail_widget.dart';
+import './ui/other_mail.dart';
 
+final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+final Speech stt = Speech();
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // needed to access Keychain prior to main finishing
+  WidgetsFlutterBinding
+      .ensureInitialized(); // needed to access Keychain prior to main finishing
   GlobalConfiguration cfg = GlobalConfiguration();
   await cfg.loadFromAsset("app_settings");
-  var email_authenticated = false; // default false go to signin page
+  var emailAuthenticated = false; // default false go to signin page
   String? username = await Keychain().getUsername();
   String? password = await Keychain().getPassword();
   if (username != null && password != null) {
-    email_authenticated = (await Client().getImapClient(
+    emailAuthenticated = (await Client().getImapClient(
         username, password)); //Replace with config read for credentials
   }
 
+  stt.speechToText();
+
   runApp(GlobalLoaderOverlay(
       child: MaterialApp(
-          title: "USPS Informed Delivery Visual Assistance App",
-          initialRoute: email_authenticated == true ? "/main" : "/sign_in",
-          onGenerateRoute: RouteGenerator.generateRoute,
-          home: buildScreen(email_authenticated))));
+    title: "USPS Informed Delivery Visual Assistance App",
+    initialRoute: emailAuthenticated == true ? "/main" : "/sign_in",
+    onGenerateRoute: RouteGenerator.generateRoute,
+    home: buildScreen(emailAuthenticated),
+    navigatorKey: navKey,
+  )));
 }
 
-Widget buildScreen(bool email_authenticated) {
+Widget buildScreen(bool emailAuthenticated) {
   return Scaffold(
-    body: email_authenticated == true ? MainWidget() : SignInWidget(),
-    bottomNavigationBar: BottomBar(),
+    body:
+        emailAuthenticated == true ? const MainWidget() : const SignInWidget(),
+    bottomNavigationBar: const BottomBar(),
   );
 }
