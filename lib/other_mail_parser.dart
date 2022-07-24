@@ -43,8 +43,13 @@ class OtherMailParser {
         searchCriteria = 'UNSEEN';
       }
 
-      await client.connectToServer(_imapServerHost, _imapServerPort,
-          isSecure: _isImapServerSecure);
+      var config = await Discover.discover(_userName, isLogEnabled: false);
+      var imapServerConfig = config?.preferredIncomingImapServer;
+      await client.connectToServer(
+          imapServerConfig!.hostname as String, imapServerConfig.port as int,
+          isSecure: imapServerConfig.isSecureSocket);
+      // await client.connectToServer(_imapServerHost, _imapServerPort,
+      // isSecure: _isImapServerSecure);
       await client.login(_userName, _password);
       await client.selectInbox();
 
