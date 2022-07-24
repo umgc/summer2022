@@ -25,12 +25,14 @@ jobs:
         with:
           java-version: 12.x
       - name: Setup Flutter
-        uses: subosito/flutter-action@v1
+        uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
+          channel: 'stable'
+          flutter-version: '3.0.2'
+          architecture: x64
       - name: Install Flutter dependencies
         run: flutter pub get
       - name: Build App Bundle
         run: flutter build appbundle
-      - name: Run Unit Tests
-        run: flutter test
+      # - name: Run Unit Tests
+      #   run: flutter test
