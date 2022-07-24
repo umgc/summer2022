@@ -5,6 +5,7 @@ import './models/MailResponse.dart';
 import './models/Address.dart';
 import './models/Logo.dart';
 import './models/Code.dart';
+import './models/Digest.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 FlutterTts tts = FlutterTts();
@@ -41,6 +42,7 @@ class ReadDigestMail {
   late MailResponse currentMail;
   AddressObject? sender;
   AddressObject? recipient;
+  List<Link> links = <Link>[];
   
   ReadDigestMail() {
     initTTS();
@@ -144,9 +146,9 @@ class ReadDigestMail {
 
   void readDigestLinks() {
     /* Get the links */
-    for (CodeObject code in currentMail.codes) {
-      String text =
-          "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
+    for (Link code in links) {
+//      String text = "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
+      String text = "TThe link is '${code.link}'. Would you like to go to the link?";
       _speak(text);
       // TODO.. needs to listen for response and then display link
     }
