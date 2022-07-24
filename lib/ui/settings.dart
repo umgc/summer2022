@@ -297,24 +297,29 @@ class SettingWidgetState extends State<SettingsWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: const Text("Autoplay"),
-                          ),
-                          ToggleSwitch(
-                            customWidths: const [40.0, 40.0],
-                            cornerRadius: 20.0,
-                            activeBgColors: const [
-                              [Colors.lightGreen],
-                              [Colors.grey]
-                            ],
-                            activeFgColor: Colors.white,
-                            inactiveBgColor: Colors.grey,
-                            inactiveFgColor: Colors.white,
-                            totalSwitches: 2,
-                            labels: const ['|', 'O'],
-                            onToggle: (index) {
-                              print('switched to: $index');
-                            },
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: const Text("Autoplay: "),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.only(right: 50),
+                                  child: Switch(
+                                    value: cfg.getValue("autoplay"),
+                                    activeTrackColor: Colors.lightGreenAccent,
+                                    activeColor: Colors.green,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        cfg.updateValue("autoplay", value);
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           Container(
                             padding: const EdgeInsets.only(right: 10),
