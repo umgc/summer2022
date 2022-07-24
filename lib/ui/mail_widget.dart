@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../main.dart';
@@ -75,6 +76,18 @@ class MailWidgetState extends State<MailWidget> {
     }
     super.initState();
     stt.setCurrentPage("mail", this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => digestAuto(context));
+  }
+
+  digestAuto(context) async {
+    if (GlobalConfiguration().getValue("autoplay")) {
+      while (true) {
+        if (mounted) {
+          await Future.delayed(Duration(seconds: 10));
+          seekForward();
+        }
+      }
+    }
   }
 
   MailResponse getCurrentDigestDetails() {

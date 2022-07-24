@@ -1,5 +1,6 @@
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
 import 'bottom_app_bar.dart';
 import './main_menu.dart';
@@ -30,6 +31,18 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     super.initState();
     index = widget.emails.length - 1;
     stt.setCurrentPage("email");
+    WidgetsBinding.instance.addPostFrameCallback((_) => otherMailAuto(context));
+  }
+
+  otherMailAuto(context) async {
+    if (GlobalConfiguration().getValue("autoplay")) {
+      while (true) {
+        if (mounted) {
+          await Future.delayed(Duration(seconds: 10));
+          seekForward();
+        }
+      }
+    }
   }
 
   MimeMessage getCurrentEmailMessage() {
@@ -169,7 +182,6 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                 FloatingActionButton(
                   backgroundColor: Colors.grey,
                   heroTag: "f1",
-                  key: Key('otherMailBackButton'),
                   onPressed: () {
                     seekBack();
                   },
@@ -182,7 +194,6 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                 FloatingActionButton(
                   backgroundColor: Colors.grey,
                   heroTag: "f2",
-                  key: Key('otherMailForwardButton'),
                   onPressed: () {
                     seekForward();
                   },
@@ -209,10 +220,12 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   }
 
   void seekForward() {
-    setState(() {
-      if (index != 0) {
-        index--;
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (index != 0) {
+          index--;
+        }
+      });
+    }
   }
 }
