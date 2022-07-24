@@ -4,12 +4,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import './models/Logo.dart';
-import 'barcode_scanner.dart';
+import './image_processing/barcode_scanner.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import './/usps_address_verification.dart';
-import 'api.dart';
-import 'models/Code.dart';
+import './image_processing/usps_address_verification.dart';
+import './image_processing/google_cloud_vision_api.dart';
+import './models/Code.dart';
 
 void main() {
   runApp(const MyApp());
@@ -161,7 +161,7 @@ class _BackendPageState extends State<BackendPage> {
         await _barcodeScannerApi!.getImageFileFromAssets('assets/$fileName');
     _barcodeScannerApi!.setImageFromFile(img);
 
-    List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    List codes = await _barcodeScannerApi!.processImage();
     var output = '';
     for (var code in codes) {
       output += code.toJson().toString();
@@ -189,7 +189,7 @@ class _BackendPageState extends State<BackendPage> {
         await _barcodeScannerApi!.getImageFileFromAssets('assets/$fileName');
     _barcodeScannerApi!.setImageFromFile(img);
 
-    List<codeObject> codes = await _barcodeScannerApi!.processImage();
+    List codes = await _barcodeScannerApi!.processImage();
     for (final code in codes) {
       objMr.codes.add(code);
     }

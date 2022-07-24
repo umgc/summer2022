@@ -4,10 +4,10 @@ import 'package:json_annotation/json_annotation.dart';
 part 'Code.g.dart';
 
 @JsonSerializable()
-class codeObject {
+class CodeObject {
   String type;
   String info;
-  codeObject({this.info = '', this.type = ''});
+  CodeObject({this.info = '', this.type = ''});
   String get getType {
     return type;
   }
@@ -27,7 +27,7 @@ class codeObject {
   // static fromJson(Map<String, dynamic> parsedJson) {
   //   return codeObject(type: parsedJson["type"], info: parsedJson["info"]);
   // }
-  factory codeObject.fromJson(Map<String, dynamic> code) =>
+  factory CodeObject.fromJson(Map<String, dynamic> code) =>
       _$codeObjectFromJson(code);
   Map<String, dynamic> toJson() => _$codeObjectToJson(this);
 }

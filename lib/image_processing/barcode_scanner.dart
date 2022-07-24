@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:async';
-import './models/Code.dart';
+import '../models/Code.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
@@ -16,9 +16,16 @@ class BarcodeScannerApi {
 
     //final file = File('${(await getTemporaryDirectory()).path}\\image.png');
     final file =
-        File('${(await getApplicationDocumentsDirectory()).path}\\image.png');
-    await file.writeAsBytes(byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+        File('${(await getApplicationDocumentsDirectory()).path}/image.png');
+
+    if (!file.path.contains('test')) {
+      try {
+        await file.writeAsBytes(byteData.buffer
+            .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+      } catch (e) {
+        rethrow;
+      }
+    }
 
     return file;
   }
@@ -31,8 +38,8 @@ class BarcodeScannerApi {
     inputImage = InputImage.fromFile(img);
   }
 
-  Future<List<codeObject>> processImage([InputImage? img]) async {
-    List<codeObject> codes = [];
+  Future<List<CodeObject>> processImage([InputImage? img]) async {
+    List<CodeObject> codes = [];
 
     if (_isBusy) return codes;
 
@@ -73,7 +80,7 @@ class BarcodeScannerApi {
               break;
           }
           //print("Barcode type: ${type}\nBarcode value: ${barcode.rawValue}");
-          codes.add(codeObject(type: type, info: barcode.rawValue as String));
+          codes.add(CodeObject(type: type, info: barcode.rawValue as String));
         }
       }
       _isBusy = false;
