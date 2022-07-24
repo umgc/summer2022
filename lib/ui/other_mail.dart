@@ -1,5 +1,6 @@
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
 import 'package:summer2022/read_info.dart';
 import 'bottom_app_bar.dart';
@@ -37,6 +38,18 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     super.initState();
     index = widget.emails.length - 1;
     stt.setCurrentPage("email", this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => otherMailAuto(context));
+  }
+
+  otherMailAuto(context) async {
+    if (GlobalConfiguration().getValue("autoplay")) {
+      while (true) {
+        if (mounted) {
+          await Future.delayed(Duration(seconds: 10));
+          seekForward();
+        }
+      }
+    }
   }
 
   MimeMessage getCurrentEmailMessage() {
@@ -214,11 +227,13 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   }
 
   void seekForward() {
-    setState(() {
-      if (index != 0) {
-        index--;
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (index != 0) {
+          index--;
+        }
+      });
+    }
   }
 
   void readMailPiece() {
