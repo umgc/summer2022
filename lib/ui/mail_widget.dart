@@ -47,15 +47,15 @@ class MailWidgetState extends State<MailWidget> {
   double commonButtonHeight = 60;
   double commonCornerRadius = 8;
 
-  ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow)
-  {
+  ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow) {
     return ElevatedButton.styleFrom(
-      textStyle: TextStyle(fontWeight: FontWeight.w700,fontSize: commonFontSize),
+      textStyle:
+          TextStyle(fontWeight: FontWeight.w700, fontSize: commonFontSize),
       primary: primary,
       shadowColor: shadow,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(commonCornerRadius))),
-      side: BorderSide( width: commonBorderWidth, color: Colors.black ),
+      side: BorderSide(width: commonBorderWidth, color: Colors.black),
     );
   }
 
@@ -66,14 +66,15 @@ class MailWidgetState extends State<MailWidget> {
 
   @override
   initState() {
-      if(widget.digest.attachments.isNotEmpty) {
-        reader = ReadDigestMail();
-        reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
-        buildLinks();
-        readMailPiece();
-      }
-      super.initState();
-      stt.setCurrentPage("mail", this);
+    if (widget.digest.attachments.isNotEmpty) {
+      reader = ReadDigestMail();
+      reader!.setCurrentMail(
+          widget.digest.attachments[attachmentIndex].detailedInformation);
+      buildLinks();
+      readMailPiece();
+    }
+    super.initState();
+    stt.setCurrentPage("mail", this);
   }
 
   MailResponse getCurrentDigestDetails() {
@@ -137,28 +138,38 @@ class MailWidgetState extends State<MailWidget> {
                 ),
               ],
             ),
-            Padding( // MODE Dialog Box
-              padding: EdgeInsets.only(top:0, left: 30, right: 30),
-              child: Row( // LATEST and UNREAD Buttons
+            Padding(
+              // MODE Dialog Box
+              padding: EdgeInsets.only(top: 0, left: 30, right: 30),
+              child: Row(
+                  // LATEST and UNREAD Buttons
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SizedBox(height: commonButtonHeight, // LATEST Button
+                    SizedBox(
+                      height: commonButtonHeight, // LATEST Button
                       child: OutlinedButton(
-                        onPressed: () { showLinkDialog(); },
-                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
+                        onPressed: () {
+                          showLinkDialog();
+                        },
+                        style: commonButtonStyleElevated(
+                            Colors.white, Colors.grey),
                         child: const Text("Links",
                             style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                    SizedBox(height: commonButtonHeight, // UNREAD Button
+                    SizedBox(
+                      height: commonButtonHeight, // UNREAD Button
                       child: OutlinedButton(
-                        onPressed: () { readMailPiece(); },
-                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
-                        child: const Text("All Details", style: TextStyle(color: Colors.black)),
+                        onPressed: () {
+                          readMailPiece();
+                        },
+                        style: commonButtonStyleElevated(
+                            Colors.white, Colors.grey),
+                        child: const Text("All Details",
+                            style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                  ]
-              ),
+                  ]),
             ),
             Container(
               padding: const EdgeInsets.only(bottom: 60),
@@ -169,17 +180,22 @@ class MailWidgetState extends State<MailWidget> {
                       backgroundColor: Colors.grey,
                       heroTag: "f1",
                       onPressed: () {
-                        setState(() { seekBack(); });
+                        setState(() {
+                          seekBack();
+                        });
                       },
                       child: Icon(Icons.skip_previous),
                     ),
                     Text(widget.digest.attachments.isNotEmpty
-                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
+                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}"
+                        : "0/0"),
                     FloatingActionButton(
                       backgroundColor: Colors.grey,
                       heroTag: "f2",
                       onPressed: () {
-                        setState(() { seekForward(); });
+                        setState(() {
+                          seekForward();
+                        });
                       },
                       child: Icon(Icons.skip_next),
                     ),
@@ -194,7 +210,10 @@ class MailWidgetState extends State<MailWidget> {
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
-      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      print(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson());
+      reader!.setCurrentMail(
+          widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
       readMailPiece();
     }
@@ -203,7 +222,10 @@ class MailWidgetState extends State<MailWidget> {
   void seekForward() {
     if (attachmentIndex < widget.digest.attachments.length - 1) {
       attachmentIndex = attachmentIndex + 1;
-      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      print(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson());
+      reader!.setCurrentMail(
+          widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
       readMailPiece();
     }
@@ -229,9 +251,8 @@ class MailWidgetState extends State<MailWidget> {
                             ? links[index].link
                             : links[index].info
                         : ""),
-                    onPressed: () => openLink(links.isNotEmpty
-                        ? links[index].link
-                        : ""),
+                    onPressed: () =>
+                        openLink(links.isNotEmpty ? links[index].link : ""),
                   ),
                 );
               },
@@ -256,8 +277,9 @@ class MailWidgetState extends State<MailWidget> {
     widget.digest.links.forEach((link) {
       newLinks.add(link);
     });
-    if(widget.digest.attachments.isNotEmpty) {
-      widget.digest.attachments[attachmentIndex].detailedInformation.codes.forEach((code) {
+    if (widget.digest.attachments.isNotEmpty) {
+      widget.digest.attachments[attachmentIndex].detailedInformation.codes
+          .forEach((code) {
         Link newLink = Link();
         newLink.info = "";
         newLink.link = code.info;
@@ -269,14 +291,12 @@ class MailWidgetState extends State<MailWidget> {
   }
 
   void readMailPiece() {
-    try{
-      if(reader != null) {
+    try {
+      if (reader != null) {
         reader!.readDigestInfo();
       }
     } catch (e) {
       print(e.toString());
     }
-
   }
-
 }
