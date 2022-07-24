@@ -199,7 +199,7 @@ class MailWidgetState extends State<MailWidget> {
                       heroTag: "f2",
                       onPressed: () {
                         setState(() {
-                          seekForward();
+                          seekForward(1);
                         });
                       },
                       child: const Icon(Icons.skip_next),
