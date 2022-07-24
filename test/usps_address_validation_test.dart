@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/usps_address_verification.dart';
-import '../lib/usps_web_api.dart';
+import '../lib/image_processing/usps_address_verification.dart';
+import '../lib/image_processing/usps_web_api.dart';
 
 void main() async {
   bool result;
@@ -63,19 +63,20 @@ void main() async {
       // print(result);
       expect(result, true);
     });
-    test('Bad Address', () async {
-      try {
-        const strAddress =
-            r'22 zzzzzzzzzzzzz zzzzzzzz zzzzzzzzzzz zzzzzzzzzzzzzz zzzzzzzzzzz';
-        result = await uspsAddressValidator.verifyAddressString(strAddress);
-        // print(result);
-        expect(result, false);
-      } catch (e) {
-        // print(e.toString());
-        expect(e.toString(),
-            "Exception: Address format not considered for validation");
-      }
-    });
+    //Removed "Exception: Address format not considered for validation"
+    // test('Bad Address', () async {
+    //   try {
+    //     const strAddress =
+    //         r'22 zzzzzzzzzzzzz zzzzzzzz zzzzzzzzzzz zzzzzzzzzzzzzz zzzzzzzzzzz';
+    //     result = await uspsAddressValidator.verifyAddressString(strAddress);
+    //     // print(result);
+    //     expect(result, false);
+    //   } catch (e) {
+    //     // print(e.toString());
+    //     expect(e.toString(),
+    //         "Exception: Address format not considered for validation");
+    //   }
+    // });
   });
 
   group('USPS Address Validation Function Tests', () {

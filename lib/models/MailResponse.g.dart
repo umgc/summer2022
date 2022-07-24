@@ -14,7 +14,7 @@ MailResponse _$MailResponseFromJson(Map<String, dynamic> json) => MailResponse(
           .map((e) => LogoObject.fromJson(e as Map<String, dynamic>))
           .toList(),
     )..codes = (json['codes'] as List<dynamic>)
-        .map((e) => codeObject.fromJson(e as Map<String, dynamic>))
+        .map((e) => CodeObject.fromJson(e as Map<String, dynamic>))
         .toList();
 
 Map<String, dynamic> _$MailResponseToJson(MailResponse instance) =>
