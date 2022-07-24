@@ -30,14 +30,14 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   @override
   void initState() {
     // index must be initialed before build or emails won't iterate
+    super.initState();
+    index = widget.emails.length - 1;
+    stt.setCurrentPage("email", this);
     if(widget.emails.isNotEmpty) {
         reader = ReadMail();
         reader!.setCurrentMail(widget.emails[index].message);
         readMailPiece();
     }
-    super.initState();
-    index = widget.emails.length - 1;
-    stt.setCurrentPage("email", this);
     WidgetsBinding.instance.addPostFrameCallback((_) => otherMailAuto(context));
   }
 
