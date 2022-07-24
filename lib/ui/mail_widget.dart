@@ -225,6 +225,8 @@ class MailWidgetState extends State<MailWidget> {
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
+      print(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson());
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
@@ -235,6 +237,8 @@ class MailWidgetState extends State<MailWidget> {
   void seekForward() {
     if (attachmentIndex < widget.digest.attachments.length - 1) {
       attachmentIndex = attachmentIndex + 1;
+      print(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson());
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
