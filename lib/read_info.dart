@@ -243,10 +243,13 @@ class ReadMail {
         recipients.add(recipient.mailboxName);
       }
     }
-    recipients[-1] = "and ${recipients[-1]}";
+    if (recipients.length > 1) { // Fix for grammar
+      recipients[recipients.length-1] = "and ${recipients[recipients.length-1]}";
+    }
     recipients.join(', ');
-    String text = "The email recipients are $recipients";
     if (recipients.isNotEmpty) {
+      String? recipientsString = recipients[0];
+      String text = "The email recipients are $recipientsString";
       _speak(text);
     } else {
       _speak("There are no email recipients.");
