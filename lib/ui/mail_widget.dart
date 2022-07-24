@@ -1,8 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter_svg/flutter_svg.dart';
@@ -84,7 +80,7 @@ class MailWidgetState extends State<MailWidget> {
       while (true) {
         if (mounted) {
           await Future.delayed(Duration(seconds: 10));
-          seekForward();
+          seekForward(1);
         }
       }
     }
@@ -105,10 +101,10 @@ class MailWidgetState extends State<MailWidget> {
     // Figma Flutter Generator MailWidget - FRAME
 
     return Scaffold(
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: const BottomBar(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Digest"),
+        title: const Text("Digest"),
         backgroundColor: Colors.grey,
       ),
       body: SafeArea(
@@ -128,14 +124,23 @@ class MailWidgetState extends State<MailWidget> {
                       ),
                     ),
                   ),
-                  Icon(
-                    Icons.arrow_back,
-                    size: 50,
-                    color: Color.fromARGB(0, 255, 255, 1),
+                const Icon(
+                  Icons.arrow_back,
+                  size: 30,
+                ),
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    style: TextStyle(fontSize: 20),
+                    "USPS Informed Delivery Daily Digest",
                   ),
-                ],
+                ),
               ),
-            ),
+              const Icon(
+                Icons.arrow_back,
+                size: 50,
+                color: Color.fromARGB(0, 255, 255, 1),
+              ),
             Row(
               children: [
                 Expanded(
@@ -198,7 +203,7 @@ class MailWidgetState extends State<MailWidget> {
                           seekBack();
                         });
                       },
-                      child: Icon(Icons.skip_previous),
+                      child: const Icon(Icons.skip_previous),
                     ),
                     Text(widget.digest.attachments.isNotEmpty
                         ? "${attachmentIndex + 1}/${widget.digest.attachments.length}"
@@ -209,17 +214,17 @@ class MailWidgetState extends State<MailWidget> {
                       key: Key('mailForwardButton'),
                       onPressed: () {
                         setState(() {
-                          seekForward();
+                          seekForward(1);
                         });
                       },
-                      child: Icon(Icons.skip_next),
+                      child: const Icon(Icons.skip_next),
                     ),
                   ]),
             )
           ],
         ),
       ),
-    );
+    ])));
   }
 
   void seekBack() {
@@ -234,7 +239,7 @@ class MailWidgetState extends State<MailWidget> {
     }
   }
 
-  void seekForward() {
+  void seekForward(int length) {
     if (attachmentIndex < widget.digest.attachments.length - 1) {
       attachmentIndex = attachmentIndex + 1;
       print(widget.digest.attachments[attachmentIndex].detailedInformation

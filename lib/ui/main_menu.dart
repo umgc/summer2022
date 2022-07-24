@@ -36,7 +36,6 @@ class MainWidgetState extends State<MainWidget> {
   String mailType = "Email";
   File? _image;
   Uint8List? _imageBytes;
-  String? _imageName;
   final picker = ImagePicker();
   FontWeight commonFontWt = FontWeight.w700;
   double commonFontSize = 32;
@@ -48,9 +47,13 @@ class MainWidgetState extends State<MainWidget> {
   @override
   void initState() {
     super.initState();
-    stt.setCurrentPage("main");
+    stt.setCurrentPage("main", this);
   }
 
+  void setMailType(String type) {
+    mailType = type;
+  }
+    
   ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow) {
     return ElevatedButton.styleFrom(
       textStyle:
@@ -139,7 +142,7 @@ class MainWidgetState extends State<MainWidget> {
       ),
     );
     return Scaffold(
-        bottomNavigationBar: BottomBar(),
+        bottomNavigationBar: const BottomBar(),
         appBar: AppBar(
           centerTitle: true,
           title: Text(
@@ -155,7 +158,7 @@ class MainWidgetState extends State<MainWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
               Padding(
-                padding: EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 10),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -163,11 +166,11 @@ class MainWidgetState extends State<MainWidget> {
                         height: commonButtonHeight,
                         child: OutlinedButton.icon(
                           onPressed: () => selectDate(context),
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.calendar_month_outlined,
                             size: 35,
                           ),
-                          label: Text("$formattedSelectedDate"),
+                          label: Text(formattedSelectedDate),
                           style:
                               commonButtonStyleText(Colors.black, Colors.grey),
                         ),
@@ -185,11 +188,11 @@ class MainWidgetState extends State<MainWidget> {
                             onPressed: () {
                               Navigator.pushNamed(context, '/settings');
                             },
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.settings,
                               size: 50,
                             ),
-                            label: Text(""),
+                            label: const Text(""),
                             style: commonButtonStyleText(
                                 Colors.black, Colors.blue),
                           ),
@@ -199,7 +202,7 @@ class MainWidgetState extends State<MainWidget> {
               ),
               Padding(
                 // MODE Dialog Box
-                padding: EdgeInsets.only(top: 0, left: 65, right: 65),
+                padding: const EdgeInsets.only(top: 0, left: 65, right: 65),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -219,7 +222,7 @@ class MainWidgetState extends State<MainWidget> {
                                     commonCornerRadius), //border raiuds of dropdown button
                               ),
                               child: Padding(
-                                padding: EdgeInsets.only(left: 30),
+                                padding: const EdgeInsets.only(left: 30),
                                 child: DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                         value: mailType,
@@ -251,7 +254,7 @@ class MainWidgetState extends State<MainWidget> {
               ),
               Padding(
                 // MODE Dialog Box
-                padding: EdgeInsets.only(top: 0, left: 30, right: 30),
+                padding: const EdgeInsets.only(top: 0, left: 30, right: 30),
                 child: Row(
                     // LATEST and UNREAD Buttons
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -287,7 +290,7 @@ class MainWidgetState extends State<MainWidget> {
                         return;
                       }
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.camera_alt_outlined,
                       size: 40,
                     ),
@@ -298,7 +301,7 @@ class MainWidgetState extends State<MainWidget> {
               ),
               Padding(
                 // MODE Dialog Box
-                padding: EdgeInsets.only(top: 0, bottom: 20),
+                padding: const EdgeInsets.only(top: 0, bottom: 20),
                 child: SizedBox(
                   height: commonButtonHeight,
                   child: OutlinedButton(
@@ -372,16 +375,16 @@ class MainWidgetState extends State<MainWidget> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Center(
+          title: const Center(
             child: Text("No Digest Available"),
           ),
-          content: Container(
+          content: SizedBox(
             height: 100.0, // Change as per your requirement
             width: 100.0, // Change as per your requirement
             child: Center(
               child: Text(
                 "There is no Digest available for the selected date: ${selectedDate.month}/${selectedDate.day}/${selectedDate.year}",
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
           ),
@@ -395,16 +398,16 @@ class MainWidgetState extends State<MainWidget> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Center(
+          title: const Center(
             child: Text("No Emails Available"),
           ),
-          content: Container(
+          content: SizedBox(
             height: 100.0, // Change as per your requirement
             width: 100.0, // Change as per your requirement
             child: Center(
               child: Text(
                 "There are no emails available for the selected date: ${selectedDate.month}/${selectedDate.day}/${selectedDate.year}",
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
           ),
