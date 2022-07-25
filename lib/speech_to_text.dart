@@ -227,9 +227,6 @@ class Speech {
             case 'logos':
               _mailWidgetState.reader!.readDigestLogos();
               break;
-            case 'links':
-              _mailWidgetState.reader!.readDigestLinks();
-              break;
             case 'help':
               tutorial.getDigestHelp();
               break;
@@ -237,6 +234,62 @@ class Speech {
               navKey.currentState!.pushNamed('/main');
               break;
             default:
+              if (s.contains("hyperlink")) {
+                if (s == 'hyperlinks') {
+                  _mailWidgetState.reader!.readDigestLinks();
+                } else {
+                  try {
+                    var position = s.split(" ")[0];
+                    if (position == 'first' || position == '1st') {
+                      try {
+                        _mailWidgetState
+                            .openLink(_mailWidgetState.links[0].link);
+                      } catch (e) {
+                        tts.speak(
+                            'There is not a valid hyperlink in that position');
+                      }
+                    }
+                    if (position == 'second' || position == '2nd') {
+                      try {
+                        _mailWidgetState
+                            .openLink(_mailWidgetState.links[1].link);
+                      } catch (e) {
+                        tts.speak(
+                            'There is not a valid hyperlink in that position');
+                      }
+                    }
+                    if (position == 'third' || position == '3rd') {
+                      try {
+                        _mailWidgetState
+                            .openLink(_mailWidgetState.links[2].link);
+                      } catch (e) {
+                        tts.speak(
+                            'There is not a valid hyperlink in that position');
+                      }
+                    }
+                    if (position == 'fourth' || position == '4th') {
+                      try {
+                        _mailWidgetState
+                            .openLink(_mailWidgetState.links[3].link);
+                      } catch (e) {
+                        tts.speak(
+                            'There is not a valid hyperlink in that position');
+                      }
+                    }
+                    if (position == 'fifth' || position == '5th') {
+                      try {
+                        _mailWidgetState
+                            .openLink(_mailWidgetState.links[4].link);
+                      } catch (e) {
+                        tts.speak(
+                            'There is not a valid hyperlink in that position');
+                      }
+                    }
+                  } catch (e) {
+                    break;
+                  }
+                }
+              }
               break;
           }
           break;
