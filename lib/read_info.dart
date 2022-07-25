@@ -1,11 +1,10 @@
 import 'package:enough_mail/pop.dart';
 import 'dart:io';
 import 'package:global_configuration/global_configuration.dart';
-import './models/MailResponse.dart';
-import './models/Address.dart';
-import './models/Logo.dart';
-import './models/Code.dart';
-import './models/Digest.dart';
+import 'package:summer2022/models/MailResponse.dart';
+import 'package:summer2022/models/Address.dart';
+import 'package:summer2022/models/Logo.dart';
+import 'package:summer2022/models/Digest.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 FlutterTts tts = FlutterTts();
@@ -14,10 +13,6 @@ Future<void> _speak(String text) async {
   if (text.isNotEmpty) {
     await tts.awaitSpeakCompletion(true);
     await tts.speak(text);
-    if(Platform.isAndroid) {
-      //currently this feature is only supported by android
-      await tts.awaitSpeakCompletion(true);
-    }
   }
 }
 
@@ -30,7 +25,7 @@ void initTTS() async {
     await tts.setQueueMode(1);
   }
   await tts.setLanguage("en-US");
-  await tts.setSpeechRate(1.0);
+  await tts.setSpeechRate(.4);
   await tts.setVolume(1.0);
   await tts.setPitch(1.0);
 }
@@ -260,28 +255,177 @@ class ReadMail {
 }
 
 class CommandTutorial {
+  bool ranTutorial = false;
+
   CommandTutorial() {
     initTTS();
   }
-  
-  String skipTutorial = "To skip the voice command tutorial this time, say skip.";
-  String stopTutorial = "To turn off the voice command tutorial so it does not play at startup, say off.";
-  String stop = "To stop the current audio content, say stop.";
-  String back = "To go back to the previous page, say back.";
-  String next = "To go to the next item when reading mail or email, say next.";
-  String previous = "To go to the previous item when reading mail or email, say previous.";
-  String settings = "To change the default application settings, say settings.";
-  String mailDate = "To get mail for a specific date, say mail followed by the date.";
-  String emailDate = "To get emails for a specific date, say email followed by the date.";
-  String mailLatest = "To get the latest mail, say mail latest.";
-  String emailLatest = "To get the latest email, say email latest.";
-  String unreadMail = "To get mail you have no listened to yet, say mail unread.";
-  String unreadEmail = "To get emails you have no listened to yet, say email unread.";
-  String help = "To hear this voice command anytime, say help.";
 
-  void runTutorial() {
-    String tutorial = '''$skipTutorial $stopTutorial $stop $back $next $previous $settings
-                         $mailDate $emailDate $mailLatest $emailLatest $unreadMail $unreadEmail $help''';
-    tts.speak(tutorial);
+  String tutorial =
+    '''
+    Welcome to the USPS Visual Assistance App.
+    To skip the voice command tutorial this time, say skip.
+    To turn off the voice command tutorial so it does not play at startup, say off.
+    Currently you are on the main page. You can navigate to the Digest page, Email page, and settings through a series of commands.
+    ''';
+
+  String main =
+    '''
+    To sign out of your account, say sign out.
+    To navigate to the settings page, say settings.
+    ''';
+
+  String digest =
+    '''
+    To navigate to the digest page, there are two voice command options.
+    Option 1 is to get the latest digest, by saying latest digest.
+    Option 2 is to get a digest for a specific date, by saying digest date followed by the date.
+    ''';
+
+  String email =
+    '''
+    To navigate to the email page, there are three voice command options.
+    Option 1 is to get emails for a specific date, by saying email date followed by the date.
+    Option 2 is to get the latest email, by saying latest email.
+    Option 3 is to get emails you have not listened to yet, by saying unread email.
+    ''';
+
+  String digestAndEmail =
+    '''
+    When requesting digests or emails for a specific date, the date formatting is month, day, year.
+    An example is June 10th 2022.
+    When listening to digests or emails, say next to go to the next item.
+    When listening to digests or emails, say previous to go to the previous item.
+    While on the digest or email page, to get all of the details for the current email or digest, say details.
+    On the digest page, you can ask for the specific details: sender name, recipient name, sender address, recipient address, sender validated, recipient validated, logos, and links.
+    On the email page, you can ask for the specific email details: subject, text, sender, and recipients.
+    On the digest and recipients pages, say help to receive more details on these options.
+    ''';
+
+  String general = 
+    '''
+    At any time, to stop the current audio, say stop.
+    To turn the speakers off, say speakers off.
+    To turn the speakers on, say speakers on.
+    To mute the microphone, say mute.
+    To unmute the microphone, say unmute.
+    To go back to the previous page, say back.
+    To get the list of commands for the page that you are currently on, say help.
+    ''';
+
+  void runTutorial() async {
+    if (!ranTutorial) {
+      String readTutorial = '$tutorial $main $digest $email $digestAndEmail $general';
+      await _speak(readTutorial);
+      await _stop();
+      ranTutorial = true;
+    }
   }
+
+  String mainHelp =
+    '''
+    To sign out of your account, say sign out.
+    To navigate to the settings page, say settings.
+    To navigate to the digest page, there are two voice command options.
+    Option 1 is to get the latest mail, by saying latest digest.
+    Option 2 is to get a digest for a specific date, by saying digest date followed by the date.
+    To navigate to the email page, there are three voice command options.
+    Option 1 is to get emails for a specific date, by saying email date followed by the date.
+    Option 2 is to get the latest email, by saying latest email.
+    Option 3 is to get emails you have no listened to yet, by saying unread email.
+    To stop any current audio, say stop.
+    To turn the speakers off, say speakers off.
+    To turn the speakers on, say speakers on.
+    To mute the microphone, say mute.
+    To unmute the microphone, say unmute.
+    To hear these commands again, say help.
+    ''';
+
+  String emailHelp =
+    '''
+    To go to the next email, say next.
+    To go to the previous email, say previous.
+    To get the details for the current email, say details.
+    To get the current email subject, say subject.
+    To get the current email text, say text.
+    To get the current email sender, say sender.
+    To get the current email recipients, say recipients.
+    To go back to the main page, say back.
+    To stop any current audio, say stop.
+    To turn the speakers off, say speakers off.
+    To turn the speakers on, say speakers on.
+    To mute the microphone, say mute.
+    To unmute the microphone, say unmute.
+    To hear these commands again, say help.
+    ''';
+
+  String digestHelp =
+    '''
+    To go to the next digest, say next.
+    To go to the previous digest, say previous.
+    To get the details for the current digest, say details.
+    To get sender's name for the current digest, say sender name.
+    To get recipients's name for the current digest, say recipient name.
+    To get sender's address for the current digest, say sender address.
+    To get recipient's address for the current digest, say recipient address.
+    To get if the sender's address for the current digest was validated, say sender validated.
+    To get if the recipient's address for the current digest was validated, say recipient validated.
+    To get the logos for the current digest, say logos.
+    To get the links for the current digest, say links.
+    To go back to the main page, say back.
+    To stop any current audio, say stop.
+    To turn the speakers off, say speakers off.
+    To turn the speakers on, say speakers on.
+    To mute the microphone, say mute.
+    To unmute the microphone, say unmute.
+    To hear these commands again, say help.
+    ''';
+
+  String settingsHelp =
+    '''
+    The following commands allow you to customize the details that you are told by default for digests and emails.
+    To turn on the sender default, say sender on.
+    To turn off the sender default, say sender off.
+    To turn on the recipient default, say recipient on.
+    To turn off the recipient default, say recipient off.
+    To turn on the logos default, say logos on.
+    To turn off the logos default, say logos off.
+    To turn on the hyperlinks default, say hyperlinks on.
+    To turn off the hyperlinks default, say hyperlinks off.
+    To turn on the address default, say address on.
+    To turn off the address default, say address off.
+    To turn on the email subject default, say email subject on.
+    To turn off the email subject default, say email subject off.
+    To turn on the email text default, say email text on.
+    To turn off the email text default, say email text off.
+    To turn on the email sender address default, say email sender address on.
+    To turn off the email sender address default, say email sender address off.
+    To turn on the email recipients default, say email recipients on.
+    To turn off the email recipients default, say email recipients off.
+    To turn on autoplay so that the digests and emails are automatically played through, say autoplay on.
+    To turn off autoplay so that you have to say next to navigate through the digests and emails, say autoplay off.
+    To go back to the main page, say back.
+    To stop any current audio, say stop.
+    To turn the speakers off, say speakers off.
+    To turn the speakers on, say speakers on.
+    To mute the microphone, say mute.
+    To unmute the microphone, say unmute.
+    To hear these commands again, say help.
+    ''';
+
+    void getMainHelp() {
+      _speak(mainHelp);
+    }
+
+    void getEmailHelp() {
+      _speak(emailHelp);
+    }
+
+    void getDigestHelp() {
+      _speak(digestHelp);
+    }
+
+    void getSettingsHelp() {
+      _speak(settingsHelp);
+    }
 }

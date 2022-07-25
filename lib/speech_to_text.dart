@@ -25,6 +25,7 @@ class Speech {
   dynamic username;
   dynamic password;
   Digest digest = Digest();
+  CommandTutorial tutorial = CommandTutorial();
   late List<Digest> emails;
   late MailWidgetState _mailWidgetState;
   late OtherMailWidgetState _otherMailWidgetState;
@@ -192,7 +193,7 @@ class Speech {
               _mailWidgetState.reader!.readDigestLinks();
               break;
             case 'help':
-              // TODO
+              tutorial.getDigestHelp();
               break;
             default:
               break;
@@ -227,7 +228,7 @@ class Speech {
               _otherMailWidgetState.reader!.readEmailRecipients();
               break;
             case 'help':
-              // TODO
+              tutorial.getEmailHelp();
               break;
             default:
               break;
@@ -272,7 +273,7 @@ class Speech {
               cfg.updateValue("tutorial", false);
               break;
             case 'help':
-              // TODO
+              tutorial.getMainHelp();
               break;
             default:
               // User asks for emails from specific date
@@ -320,6 +321,7 @@ class Speech {
         case 'settings':
           switch (s.toLowerCase()) {
             case 'center on':
+            case 'sender on':
             case 'send her on':
               cfg.updateValue("sender", true);
               break;
@@ -389,18 +391,9 @@ class Speech {
               cfg.updateValue("tutorial", false);
               break;
             case 'help':
-              // TODO
+              tutorial.getSettingsHelp();
               break;
             default:
-              break;
-          }
-          break;
-        case 'signIn':
-          switch (s) {
-            case 'help':
-              // TODO
-              break;
-            default: // Invalid command
               break;
           }
           break;
