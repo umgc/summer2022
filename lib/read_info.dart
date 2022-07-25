@@ -30,7 +30,7 @@ void initTTS() async {
     await tts.setQueueMode(1);
   }
   await tts.setLanguage("en-US");
-  await tts.setSpeechRate(1.0);
+  await tts.setSpeechRate(0.4);
   await tts.setVolume(1.0);
   await tts.setPitch(1.0);
 }
@@ -47,6 +47,11 @@ class ReadDigestMail {
   ReadDigestMail() {
     initTTS();
   }
+
+  void stop() {
+    _stop();
+  }
+
 
   void setCurrentMail(MailResponse mail) {
     currentMail = mail;
@@ -148,7 +153,7 @@ class ReadDigestMail {
     /* Get the links */
     for (Link code in links) {
 //      String text = "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
-      String text = "TThe link is '${code.link}'. Would you like to go to the link?";
+      String text = "The link is '${code.info != "" ? code.info : code.link}'. Would you like to go to the link?";
       _speak(text);
       // TODO.. needs to listen for response and then display link
     }

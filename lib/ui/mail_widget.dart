@@ -43,6 +43,7 @@ class MailWidgetState extends State<MailWidget> {
   double commonBorderWidth = 2;
   double commonButtonHeight = 60;
   double commonCornerRadius = 8;
+  bool isDisposed = false;
 
   ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow) {
     return ElevatedButton.styleFrom(
@@ -58,6 +59,7 @@ class MailWidgetState extends State<MailWidget> {
 
   @override
   void dispose() {
+    isDisposed = true;
     super.dispose();
   }
 
@@ -78,10 +80,12 @@ class MailWidgetState extends State<MailWidget> {
 
   digestAuto(context) async {
     if (GlobalConfiguration().getValue("autoplay")) {
-      while (true) {
+      while (attachmentIndex < widget.digest.attachments.length && !isDisposed) {
         if (mounted) {
           await Future.delayed(Duration(seconds: 10));
-          seekForward(1);
+          this.setState(() {
+            seekForward();
+          });
         }
       }
     }
