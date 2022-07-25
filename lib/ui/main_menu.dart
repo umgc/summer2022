@@ -1,26 +1,23 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:io';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
-import '../image_processing/imageProcessing.dart';
+import 'package:summer2022/image_processing/imageProcessing.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:summer2022/digest_email_parser.dart';
 import 'package:summer2022/other_mail_parser.dart';
-import 'package:summer2022/image_processing/usps_address_verification.dart';
-import '../Client.dart';
-import '../Keychain.dart';
-import 'package:toggle_switch/toggle_switch.dart';
-import '../backend_testing.dart';
-import '../image_processing/google_cloud_vision_api.dart';
-import '../main.dart';
-import '../models/Arguments.dart';
-import '../models/EmailArguments.dart';
-import '../models/Digest.dart';
-import '../models/MailResponse.dart';
-import './bottom_app_bar.dart';
+import 'package:summer2022/read_info.dart';
+import 'package:summer2022/Keychain.dart';
+import 'package:summer2022/image_processing/google_cloud_vision_api.dart';
+import 'package:summer2022/main.dart';
+import 'package:summer2022/models/Arguments.dart';
+import 'package:summer2022/models/EmailArguments.dart';
+import 'package:summer2022/models/Digest.dart';
+import 'package:summer2022/models/MailResponse.dart';
+import 'package:summer2022/ui/bottom_app_bar.dart';
 
 class MainWidget extends StatefulWidget {
   const MainWidget({Key? key}) : super(key: key);
@@ -43,6 +40,17 @@ class MainWidgetState extends State<MainWidget> {
   double commonButtonHeight = 60;
   double commonCornerRadius = 8;
   bool selectDigest = false;
+  bool ranTutorial = false;
+  CommandTutorial commandTutorial = CommandTutorial();
+
+  MainWidgetState() {
+    if (GlobalConfiguration().getValue("tutorial")) {
+      if (!ranTutorial) {
+        commandTutorial.runTutorial();
+        ranTutorial = true;
+      }
+    }
+  }
 
   @override
   void initState() {
