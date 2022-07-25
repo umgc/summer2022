@@ -30,7 +30,7 @@ void initTTS() async {
     await tts.setQueueMode(1);
   }
   await tts.setLanguage("en-US");
-  await tts.setSpeechRate(1.0);
+  await tts.setSpeechRate(.4);
   await tts.setVolume(1.0);
   await tts.setPitch(1.0);
 }
@@ -46,6 +46,10 @@ class ReadDigestMail {
   
   ReadDigestMail() {
     initTTS();
+  }
+
+  void stop() {
+    _stop();
   }
 
   void setCurrentMail(MailResponse mail) {
@@ -186,57 +190,61 @@ class ReadMail {
     initTTS();
   }
 
+  void stop() {
+    _stop();
+  }
+
   void setCurrentMail(MimeMessage mail) {
     currentMail = mail;
   }
 
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
-  void readEmailInfo() {
+  Future<void> readEmailInfo() async {
     if (GlobalConfiguration().getValue("email_subject") == true) {
-      readEmailSubject();
+      await readEmailSubject();
     }
     if (GlobalConfiguration().getValue("email_text") == true) {
-      readEmailText();
+      await readEmailText();
     }
     if (GlobalConfiguration().getValue("email_sender") == true) {
-      readEmailSender();
+      await readEmailSender();
     }
     if (GlobalConfiguration().getValue("email_recipients") == true) {
-      readEmailRecipients();
+      await readEmailRecipients();
     }
   }
 
-  void readEmailSubject(){
+  Future<void> readEmailSubject() async {
     var subject = currentMail.decodeSubject();
     String text = "The email subject is $subject";
     if (subject != null) {
-      _speak(text);
+      await _speak(text);
     } else {
-      _speak("There is no email subject.");
+      await _speak("There is no email subject.");
     }
   }
 
-  void readEmailText(){
+  Future<void> readEmailText() async {
     var emailText = currentMail.body;
     String text = "The email text is $emailText";
     if (emailText != null) {
-      _speak(text);
+      await _speak(text);
     } else {
-      _speak("There is no email text.");
+      await _speak("There is no email text.");
     }
   }
 
-  void readEmailSender(){
+  Future<void> readEmailSender() async {
     var sender = currentMail.decodeSender();
     String text = "The email sender is $sender";
     if (sender != null) {
-      _speak(text);
+      await _speak(text);
     } else {
-      _speak("There is no email sender.");
+      await _speak("There is no email sender.");
     }
   }
 
-  void readEmailRecipients(){
+  Future<void> readEmailRecipients() async {
     List<String?> recipients = [];
     for (MailAddress recipient in currentMail.recipients) {
       if (recipient.hasPersonalName) {
@@ -252,9 +260,9 @@ class ReadMail {
     if (recipients.isNotEmpty) {
       String? recipientsString = recipients[0];
       String text = "The email recipients are $recipientsString";
-      _speak(text);
+      await _speak(text);
     } else {
-      _speak("There are no email recipients.");
+      await _speak("There are no email recipients.");
     }
   }
 }

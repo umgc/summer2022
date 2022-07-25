@@ -218,11 +218,14 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     );
   }
 
-  void seekBack() {
+  void seekBack() async {
     setState(() {
       if (index != widget.emails.length - 1) {
         index++;
       }
+      reader!.stop();
+      reader!.setCurrentMail(widget.emails[index].message);
+      readMailPiece();
     });
   }
 
@@ -232,14 +235,17 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
         if (index != 0) {
           index--;
         }
+        reader!.stop();
+        reader!.setCurrentMail(widget.emails[index].message);
+        readMailPiece();
       });
     }
   }
 
-  void readMailPiece() {
+  void readMailPiece() async {
     try{
       if(reader != null) {
-        reader!.readEmailInfo();
+        await reader!.readEmailInfo();
       }
     } catch (e) {
       print(e.toString());
