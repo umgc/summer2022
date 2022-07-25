@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:toggle_switch/toggle_switch.dart';
-import 'package:summer2022/speech_to_text.dart';
 import '../main.dart';
-import 'package:global_configuration/global_configuration.dart';
 
 import 'bottom_app_bar.dart';
 
@@ -28,10 +26,10 @@ class SettingWidgetState extends State<SettingsWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: const BottomBar(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Settings"),
+        title: const Text("Settings"),
         backgroundColor: Colors.grey,
       ),
       body: SingleChildScrollView(

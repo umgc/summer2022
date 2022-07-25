@@ -25,6 +25,7 @@ class Speech {
   dynamic username;
   dynamic password;
   Digest digest = Digest();
+  CommandTutorial tutorial = CommandTutorial();
   late List<Digest> emails;
   late MailWidgetState _mailWidgetState;
   late OtherMailWidgetState _otherMailWidgetState;
@@ -33,17 +34,17 @@ class Speech {
   void setCurrentPage(String page, [Object? obj]) {
     switch (page) {
       case 'mail':
-        if(obj != null) {
+        if (obj != null) {
           _mailWidgetState = obj as MailWidgetState;
         }
         break;
       case 'email':
-        if(obj != null) {
+        if (obj != null) {
           _otherMailWidgetState = obj as OtherMailWidgetState;
         }
         break;
       case 'main':
-        if(obj != null) {
+        if (obj != null) {
           _mainWidgetState = obj as MainWidgetState;
         }
         break;
@@ -64,10 +65,13 @@ class Speech {
 
   Future<List<Digest>> getEmail(bool unread) async {
     setAccountInfo();
-    List<Digest> digest = await OtherMailParser().createEmailList(unread, username, password, DateTime.now());
-    if (digest.isEmpty) { // If don't have one for today, try yesterday
-      DateTime date = DateTime.now().subtract(const Duration(days:1));
-      digest = await OtherMailParser().createEmailList(false, username, password, date);
+    List<Digest> digest = await OtherMailParser()
+        .createEmailList(unread, username, password, DateTime.now());
+    if (digest.isEmpty) {
+      // If don't have one for today, try yesterday
+      DateTime date = DateTime.now().subtract(const Duration(days: 1));
+      digest = await OtherMailParser()
+          .createEmailList(false, username, password, date);
     }
     return digest;
   }
@@ -86,7 +90,7 @@ class Speech {
     speechEnabled = await speech.initialize();
     while (true) {
       input = recording();
-      if (input.isNotEmpty){
+      if (input.isNotEmpty) {
         print(input);
         await command(input);
       }
@@ -101,8 +105,18 @@ class Speech {
 
     // Validate input
     List months = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
     ];
     bool foundMonth = false;
     for (String month in months) {
@@ -111,20 +125,45 @@ class Speech {
         break;
       }
     }
-    if (!foundMonth){
+    if (!foundMonth) {
       return null;
     }
 
     var numberSuffixes = {
-      "1st": "1", "2nd": "2", "3rd": "3", "4th": "4", "5th": "5", "6th": "6",
-      "7th": "7", "8th": "8", "9th": "9", "10th": "10", "11th": "11",
-      "12th": "12", "13th": "13", "14th": "14", "15th": "15", "16th": "16",
-      "17th": "17", "18th": "18", "19th": "19", "20th": "20", "21st": "21",
-      "22nd": "22", "23rd": "23", "24th": "24", "25th": "25", "26th": "26",
-      "27th": "27", "28th": "28", "29th": "29", "30th": "30", "31st": "31"
+      "1st": "1",
+      "2nd": "2",
+      "3rd": "3",
+      "4th": "4",
+      "5th": "5",
+      "6th": "6",
+      "7th": "7",
+      "8th": "8",
+      "9th": "9",
+      "10th": "10",
+      "11th": "11",
+      "12th": "12",
+      "13th": "13",
+      "14th": "14",
+      "15th": "15",
+      "16th": "16",
+      "17th": "17",
+      "18th": "18",
+      "19th": "19",
+      "20th": "20",
+      "21st": "21",
+      "22nd": "22",
+      "23rd": "23",
+      "24th": "24",
+      "25th": "25",
+      "26th": "26",
+      "27th": "27",
+      "28th": "28",
+      "29th": "29",
+      "30th": "30",
+      "31st": "31"
     };
     for (var key in numberSuffixes.keys) {
-      if(theDate.contains(key)) {
+      if (theDate.contains(key)) {
         String? val = numberSuffixes[key];
         if (val != null) {
           theDate.replaceFirst(key, val);
@@ -145,14 +184,14 @@ class Speech {
   command(String s) async {
     //General commands
     if (s == 'unmute') {
-        mute = false;
-        return;
-    } 
+      mute = false;
+      return;
+    }
 
-    if (mute == false){
+    if (mute == false) {
       switch (currentPage) {
         case 'mail':
-          switch(s.toLowerCase()) {
+          switch (s.toLowerCase()) {
             // mail page commands
             case 'next':
               _mailWidgetState.setState(() {
@@ -188,18 +227,74 @@ class Speech {
             case 'logos':
               _mailWidgetState.reader!.readDigestLogos();
               break;
-            case 'links':
-              _mailWidgetState.reader!.readDigestLinks();
-              break;
             case 'help':
-              // TODO
+              tutorial.getDigestHelp();
+              break;
+            case 'back':
+              navKey.currentState!.pushNamed('/main');
               break;
             default:
+              if (s.contains("hyperlink")) {
+                if (s == 'hyperlinks') {
+                  _mailWidgetState.reader!.readDigestLinks();
+                } else {
+                  try {
+                    var position = s.split(" ")[0];
+                    if (position == 'first' || position == '1st') {
+                      try {
+                        _mailWidgetState
+                            .openLink(_mailWidgetState.links[0].link);
+                      } catch (e) {
+                        tts.speak(
+                            'There is not a valid hyperlink in that position');
+                      }
+                    }
+                    if (position == 'second' || position == '2nd') {
+                      try {
+                        _mailWidgetState
+                            .openLink(_mailWidgetState.links[1].link);
+                      } catch (e) {
+                        tts.speak(
+                            'There is not a valid hyperlink in that position');
+                      }
+                    }
+                    if (position == 'third' || position == '3rd') {
+                      try {
+                        _mailWidgetState
+                            .openLink(_mailWidgetState.links[2].link);
+                      } catch (e) {
+                        tts.speak(
+                            'There is not a valid hyperlink in that position');
+                      }
+                    }
+                    if (position == 'fourth' || position == '4th') {
+                      try {
+                        _mailWidgetState
+                            .openLink(_mailWidgetState.links[3].link);
+                      } catch (e) {
+                        tts.speak(
+                            'There is not a valid hyperlink in that position');
+                      }
+                    }
+                    if (position == 'fifth' || position == '5th') {
+                      try {
+                        _mailWidgetState
+                            .openLink(_mailWidgetState.links[4].link);
+                      } catch (e) {
+                        tts.speak(
+                            'There is not a valid hyperlink in that position');
+                      }
+                    }
+                  } catch (e) {
+                    break;
+                  }
+                }
+              }
               break;
           }
           break;
         case 'email':
-          switch(s) {
+          switch (s) {
             // mail page commands
             case 'next':
               _otherMailWidgetState.setState(() {
@@ -227,7 +322,10 @@ class Speech {
               _otherMailWidgetState.reader!.readEmailRecipients();
               break;
             case 'help':
-              // TODO
+              tutorial.getEmailHelp();
+              break;
+            case 'back':
+              navKey.currentState!.pushNamed('/main');
               break;
             default:
               break;
@@ -238,22 +336,28 @@ class Speech {
           switch (s.toLowerCase()) {
             case "unread email":
               List<Digest> digest = await getEmail(true);
-              navKey.currentState!.pushNamed('/other_mail', arguments: EmailWidgetArguments(digest));
+              navKey.currentState!.pushNamed('/other_mail',
+                  arguments: EmailWidgetArguments(digest));
               break;
             case 'latest email':
               List<Digest> digest = await getEmail(false);
-              navKey.currentState!.pushNamed('/other_mail', arguments: EmailWidgetArguments(digest));
+              navKey.currentState!.pushNamed('/other_mail',
+                  arguments: EmailWidgetArguments(digest));
               break;
             case 'latest digest':
               try {
-                digest = await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword());
-                if(!digest.isNull()) {
-                  navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
+                digest = await DigestEmailParser().createDigest(
+                    await Keychain().getUsername(),
+                    await Keychain().getPassword());
+                if (!digest.isNull()) {
+                  navKey.currentState!.pushNamed('/digest_mail',
+                      arguments: MailWidgetArguments(digest));
                 } else {
                   tts.speak('There are no digests available for today');
                 }
-              } catch(e) {
-                tts.speak('An error occurred while fetching your daily digest: $e');
+              } catch (e) {
+                tts.speak(
+                    'An error occurred while fetching your daily digest: $e');
               }
               break;
             case 'settings':
@@ -272,47 +376,62 @@ class Speech {
               cfg.updateValue("tutorial", false);
               break;
             case 'help':
-              // TODO
+              tutorial.getMainHelp();
               break;
             default:
               // User asks for emails from specific date
-              if(s.contains("email date")) {
+              if (s.contains("email date")) {
                 String requestedDate = s.split("date ")[1];
                 DateTime? dt = processDate(requestedDate);
                 if (dt != null) {
                   try {
-                    emails = await OtherMailParser().createEmailList(false, await Keychain().getUsername(), await Keychain().getPassword(), dt);
-                    if(emails.isNotEmpty) {
-                      navKey.currentState!.pushNamed('/other_mail', arguments: EmailWidgetArguments(emails));
+                    emails = await OtherMailParser().createEmailList(
+                        false,
+                        await Keychain().getUsername(),
+                        await Keychain().getPassword(),
+                        dt);
+                    if (emails.isNotEmpty) {
+                      navKey.currentState!.pushNamed('/other_mail',
+                          arguments: EmailWidgetArguments(emails));
                     } else {
-                      tts.speak('There are no digest available for $requestedDate');
+                      tts.speak(
+                          'There are no digest available for $requestedDate');
                     }
-                  } catch(e) {
-                    tts.speak('An error occurred while fetching your emails: $e');
+                  } catch (e) {
+                    tts.speak(
+                        'An error occurred while fetching your emails: $e');
                   }
-                } else{
-                  tts.speak('The specified date is invalid. Please say the month, day of the month, and then the year.');
+                } else {
+                  tts.speak(
+                      'The specified date is invalid. Please say the month, day of the month, and then the year.');
                 }
-              } 
+              }
               // User asks for digest from specific date
-              if(s.contains("digest date")) {
+              if (s.contains("digest date")) {
                 String requestedDate = s.split("date ")[1];
                 DateTime? dt = processDate(requestedDate);
                 if (dt != null) {
                   try {
-                    digest = await DigestEmailParser().createDigest(await Keychain().getUsername(), await Keychain().getPassword(), dt);
-                    if(!digest.isNull()) {
-                      navKey.currentState!.pushNamed('/digest_mail', arguments: MailWidgetArguments(digest));
+                    digest = await DigestEmailParser().createDigest(
+                        await Keychain().getUsername(),
+                        await Keychain().getPassword(),
+                        dt);
+                    if (!digest.isNull()) {
+                      navKey.currentState!.pushNamed('/digest_mail',
+                          arguments: MailWidgetArguments(digest));
                     } else {
-                      tts.speak('There are no digest available for $requestedDate');
+                      tts.speak(
+                          'There are no digest available for $requestedDate');
                     }
-                  } catch(e) {
-                    tts.speak('An error occurred while fetching your daily digest: $e');
+                  } catch (e) {
+                    tts.speak(
+                        'An error occurred while fetching your daily digest: $e');
                   }
-                } else{
-                  tts.speak('The specified date is invalid. Please say the month, day of the month, and then the year.');
+                } else {
+                  tts.speak(
+                      'The specified date is invalid. Please say the month, day of the month, and then the year.');
                 }
-              } 
+              }
               break;
           }
           break;
@@ -320,6 +439,7 @@ class Speech {
         case 'settings':
           switch (s.toLowerCase()) {
             case 'center on':
+            case 'sender on':
             case 'send her on':
               cfg.updateValue("sender", true);
               break;
@@ -389,18 +509,12 @@ class Speech {
               cfg.updateValue("tutorial", false);
               break;
             case 'help':
-              // TODO
+              tutorial.getSettingsHelp();
+              break;
+            case 'back':
+              navKey.currentState!.pushNamed('/main');
               break;
             default:
-              break;
-          }
-          break;
-        case 'signIn':
-          switch (s) {
-            case 'help':
-              // TODO
-              break;
-            default: // Invalid command
               break;
           }
           break;
@@ -410,7 +524,7 @@ class Speech {
         case 'mute':
           mute = true;
           break;
-        case 'stop' :
+        case 'stop':
           tts.stop();
           break;
         case 'speakers off':
@@ -418,9 +532,6 @@ class Speech {
           break;
         case 'speakers on':
           tts.setVolume(1);
-          break;
-        case 'back':
-          navKey.currentState!.pop();
           break;
         default: // Invalid command
           break;
