@@ -1,15 +1,17 @@
+import 'package:enough_mail/pop.dart';
 import 'dart:io';
 import 'package:global_configuration/global_configuration.dart';
 import './models/MailResponse.dart';
 import './models/Address.dart';
 import './models/Logo.dart';
 import './models/Code.dart';
+import './models/Digest.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 FlutterTts tts = FlutterTts();
 
 Future<void> _speak(String text) async {
-  if (text != null && text.isNotEmpty) {
+  if (text.isNotEmpty) {
     await tts.awaitSpeakCompletion(true);
     await tts.speak(text);
     if(Platform.isAndroid) {
@@ -40,6 +42,7 @@ class ReadDigestMail {
   late MailResponse currentMail;
   AddressObject? sender;
   AddressObject? recipient;
+  List<Link> links = <Link>[];
   
   ReadDigestMail() {
     initTTS();
@@ -143,9 +146,9 @@ class ReadDigestMail {
 
   void readDigestLinks() {
     /* Get the links */
-    for (CodeObject code in currentMail.codes) {
-      String text =
-          "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
+    for (Link code in links) {
+//      String text = "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
+      String text = "TThe link is '${code.link}'. Would you like to go to the link?";
       _speak(text);
       // TODO.. needs to listen for response and then display link
     }
@@ -177,16 +180,14 @@ class ReadDigestMail {
  * The ReadMail class's purpose is to read the details of an email that is not a Daily Digest 
  */
 class ReadMail {
-  // TODO placeholder until we actually parse email
-  var emailDetails = {
-    'email_subject': 'Checking in',
-    'email_text': 'Hi, how are you?',
-    'email_sender': 'myfriend@yahoo.com',
-    'email_recipients': 'someemail@gmail.com'
-  };
+  late MimeMessage currentMail;
 
   ReadMail() {
     initTTS();
+  }
+
+  void setCurrentMail(MimeMessage mail) {
+    currentMail = mail;
   }
 
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
@@ -205,8 +206,8 @@ class ReadMail {
     }
   }
 
-  void readEmailSubject() {
-    var subject = emailDetails["email_subject"];
+  void readEmailSubject(){
+    var subject = currentMail.decodeSubject();
     String text = "The email subject is $subject";
     if (subject != null) {
       _speak(text);
@@ -215,8 +216,8 @@ class ReadMail {
     }
   }
 
-  void readEmailText() {
-    var emailText = emailDetails["email_text"];
+  void readEmailText(){
+    var emailText = currentMail.body;
     String text = "The email text is $emailText";
     if (emailText != null) {
       _speak(text);
@@ -225,8 +226,8 @@ class ReadMail {
     }
   }
 
-  void readEmailSender() {
-    var sender = emailDetails["email_sender"];
+  void readEmailSender(){
+    var sender = currentMail.decodeSender();
     String text = "The email sender is $sender";
     if (sender != null) {
       _speak(text);
@@ -235,10 +236,22 @@ class ReadMail {
     }
   }
 
-  void readEmailRecipients() {
-    var recipients = emailDetails["email_recipients"];
-    String text = "The email recipients are $recipients";
-    if (recipients != null) {
+  void readEmailRecipients(){
+    List<String?> recipients = [];
+    for (MailAddress recipient in currentMail.recipients) {
+      if (recipient.hasPersonalName) {
+        recipients.add(recipient.personalName);
+      } else {
+        recipients.add(recipient.mailboxName);
+      }
+    }
+    if (recipients.length > 1) { // Fix for grammar
+      recipients[recipients.length-1] = "and ${recipients[recipients.length-1]}";
+    }
+    recipients.join(', ');
+    if (recipients.isNotEmpty) {
+      String? recipientsString = recipients[0];
+      String text = "The email recipients are $recipientsString";
       _speak(text);
     } else {
       _speak("There are no email recipients.");

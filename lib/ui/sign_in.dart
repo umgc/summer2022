@@ -5,6 +5,7 @@ import '../Keychain.dart';
 import '../Client.dart';
 import '../main.dart';
 import './bottom_app_bar.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class SignInWidget extends StatefulWidget {
   const SignInWidget({Key? key}) : super(key: key);
@@ -28,6 +29,29 @@ class SignInWidgetState extends State<SignInWidget> {
     email_controller.dispose();
     password_controller.dispose();
     super.dispose();
+  }
+
+  void showLoginErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center(
+            child: Text("Login Error"),
+          ),
+          content: Container(
+            height: 50.0, // Change as per your requirement
+            width: 75.0, // Change as per your requirement
+            child: Center(
+              child: Text(
+                "Login credentials failed.",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -118,8 +142,8 @@ class SignInWidgetState extends State<SignInWidget> {
                                     Keychain().addCredentials(email, password);
                                     Navigator.pushNamed(context, '/main');
                                   } else {
-                                    //TODO:send back error message
-
+                                    showLoginErrorDialog();
+                                    context.loaderOverlay.hide();
                                   }
                                 },
                                 child: const Text(

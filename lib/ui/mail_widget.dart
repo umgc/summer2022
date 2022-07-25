@@ -1,12 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import '../main.dart';
@@ -47,15 +44,15 @@ class MailWidgetState extends State<MailWidget> {
   double commonButtonHeight = 60;
   double commonCornerRadius = 8;
 
-  ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow)
-  {
+  ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow) {
     return ElevatedButton.styleFrom(
-      textStyle: TextStyle(fontWeight: FontWeight.w700,fontSize: commonFontSize),
+      textStyle:
+          TextStyle(fontWeight: FontWeight.w700, fontSize: commonFontSize),
       primary: primary,
       shadowColor: shadow,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(commonCornerRadius))),
-      side: BorderSide( width: commonBorderWidth, color: Colors.black ),
+      side: BorderSide(width: commonBorderWidth, color: Colors.black),
     );
   }
 
@@ -66,14 +63,28 @@ class MailWidgetState extends State<MailWidget> {
 
   @override
   initState() {
-      if(widget.digest.attachments.isNotEmpty) {
-        reader = ReadDigestMail();
-        reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
-        buildLinks();
-        readMailPiece();
+    super.initState();
+    if (widget.digest.attachments.isNotEmpty) {
+      reader = ReadDigestMail();
+      reader!.setCurrentMail(
+          widget.digest.attachments[attachmentIndex].detailedInformation);
+      buildLinks();
+      readMailPiece();
+    }
+
+    stt.setCurrentPage("mail", this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => digestAuto(context));
+  }
+
+  digestAuto(context) async {
+    if (GlobalConfiguration().getValue("autoplay")) {
+      while (true) {
+        if (mounted) {
+          await Future.delayed(Duration(seconds: 10));
+          seekForward(1);
+        }
       }
-      super.initState();
-      stt.setCurrentPage("mail", this);
+    }
   }
 
   MailResponse getCurrentDigestDetails() {
@@ -127,12 +138,12 @@ class MailWidgetState extends State<MailWidget> {
                 Expanded(
                   child: Center(
                       child: Container(
-                          //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
+                        //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
                           child: widget.digest.attachments.isNotEmpty
                               ? Image.memory(base64Decode(widget
-                                  .digest
-                                  .attachments[attachmentIndex]
-                                  .attachmentNoFormatting))
+                              .digest
+                              .attachments[attachmentIndex]
+                              .attachmentNoFormatting))
                               : Image.asset('assets/NoAttachments.png'))),
                 ),
               ],
@@ -194,16 +205,22 @@ class MailWidgetState extends State<MailWidget> {
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
-      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      print(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson());
+      reader!.setCurrentMail(
+          widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
       readMailPiece();
     }
   }
 
-  void seekForward() {
-    if (attachmentIndex < widget.digest.attachments.length - 1) {
+  void seekForward([int length = 0]) {
+    if (attachmentIndex < (length != 0 ? length : widget.digest.attachments.length - 1)) {
       attachmentIndex = attachmentIndex + 1;
-      reader!.setCurrentMail(widget.digest.attachments[attachmentIndex].detailedInformation);
+      print(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson());
+      reader!.setCurrentMail(
+          widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
       readMailPiece();
     }
@@ -229,9 +246,8 @@ class MailWidgetState extends State<MailWidget> {
                             ? links[index].link
                             : links[index].info
                         : ""),
-                    onPressed: () => openLink(links.isNotEmpty
-                        ? links[index].link
-                        : ""),
+                    onPressed: () =>
+                        openLink(links.isNotEmpty ? links[index].link : ""),
                   ),
                 );
               },
@@ -256,27 +272,26 @@ class MailWidgetState extends State<MailWidget> {
     widget.digest.links.forEach((link) {
       newLinks.add(link);
     });
-    if(widget.digest.attachments.isNotEmpty) {
-      widget.digest.attachments[attachmentIndex].detailedInformation.codes.forEach((code) {
+    if (widget.digest.attachments.isNotEmpty) {
+      widget.digest.attachments[attachmentIndex].detailedInformation.codes
+          .forEach((code) {
         Link newLink = Link();
         newLink.info = "";
         newLink.link = code.info;
         newLinks.add(newLink);
       });
     }
-
     links = newLinks;
+    reader!.links = links;
   }
 
   void readMailPiece() {
-    try{
-      if(reader != null) {
+    try {
+      if (reader != null) {
         reader!.readDigestInfo();
       }
     } catch (e) {
       print(e.toString());
     }
-
   }
-
 }
