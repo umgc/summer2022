@@ -38,7 +38,7 @@ class MainWidgetState extends State<MainWidget> {
   Uint8List? _imageBytes;
   final picker = ImagePicker();
   FontWeight commonFontWt = FontWeight.w700;
-  double commonFontSize = 32;
+  double commonFontSize = 30;
   double commonBorderWidth = 2;
   double commonButtonHeight = 60;
   double commonCornerRadius = 8;
@@ -157,104 +157,102 @@ class MainWidgetState extends State<MainWidget> {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        height: commonButtonHeight,
-                        child: OutlinedButton.icon(
-                          onPressed: () => selectDate(context),
-                          icon: const Icon(
-                            Icons.calendar_month_outlined,
-                            size: 35,
-                          ),
-                          label: Text(formattedSelectedDate),
-                          style:
-                              commonButtonStyleText(Colors.black, Colors.grey),
-                        ),
-                      ),
-                      SizedBox(
-                        height: commonButtonHeight,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: Colors.grey
-                                .shade300, //background color of dropdown button
-                            borderRadius: BorderRadius.circular(
-                                commonCornerRadius), //border raiuds of dropdown button
-                          ),
-                          child: OutlinedButton.icon(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/settings');
-                            },
-                            icon: const Icon(
-                              Icons.settings,
-                              size: 50,
-                            ),
-                            label: const Text(""),
-                            style: commonButtonStyleText(
-                                Colors.black, Colors.blue),
-                          ),
-                        ),
-                      ),
-                    ]),
-              ),
-              Padding(
-                // MODE Dialog Box
-                padding: const EdgeInsets.only(top: 0, left: 65, right: 65),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        child: SizedBox(
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
                             height: commonButtonHeight,
-                            width: 13,
+                            child: OutlinedButton.icon(
+                              onPressed: () => selectDate(context),
+                              icon: const Icon(
+                                Icons.calendar_month_outlined,
+                                size: 35,
+                              ),
+                              label: Text("$formattedSelectedDate", style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: commonFontSize-3,)),
+                              style:
+                              commonButtonStyleText(Colors.black, Colors.grey),
+                            ),
+                          ),
+                          SizedBox(
+                            height: commonButtonHeight,
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 color: Colors.grey
-                                    .shade200, //background color of dropdown button
-                                border: Border.all(
-                                    color: Colors.black,
-                                    width:
-                                        commonBorderWidth), //border of dropdown button
+                                    .shade300, //background color of dropdown button
                                 borderRadius: BorderRadius.circular(
                                     commonCornerRadius), //border raiuds of dropdown button
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 30),
-                                child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                        value: mailType,
-                                        items: [
-                                          DropdownMenuItem<String>(
-                                            value: "Email",
-                                            child: Text("Email Mode",
-                                                style: TextStyle(
-                                                    fontWeight: commonFontWt,
-                                                    fontSize: commonFontSize)),
-                                          ),
-                                          DropdownMenuItem<String>(
-                                            value: "Digest",
-                                            child: Text("Digest Mode",
-                                                style: TextStyle(
-                                                    fontWeight: commonFontWt,
-                                                    fontSize: commonFontSize)),
-                                          ),
-                                        ],
-                                        onChanged: (String? valueSelected) {
-                                          setState(() {
-                                            mailType = valueSelected!;
-                                          });
-                                        })),
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/settings');
+                                },
+                                icon: const Icon(
+                                  Icons.settings,
+                                  size: 45,
+                                ),
+                                label: const Text(""),
+                                style: commonButtonStyleText(
+                                    Colors.black, Colors.grey),
                               ),
-                            )),
-                      ),
-                    ]),
-              ),
-              Padding(
-                // MODE Dialog Box
-                padding: const EdgeInsets.only(top: 0, left: 30, right: 30),
+                            ),
+                          ),
+                        ]),
+                  ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: SizedBox(
+                                height: commonButtonHeight,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey
+                                        .shade200, //background color of dropdown button
+                                    border: Border.all(
+                                        color: Colors.black,
+                                        width:
+                                        commonBorderWidth), //border of dropdown button
+                                    borderRadius: BorderRadius.circular(
+                                        commonCornerRadius), //border raiuds of dropdown button
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 20),
+                                    child: DropdownButtonHideUnderline(
+                                        child: DropdownButton(
+                                            value: mailType,
+                                            items: [
+                                              DropdownMenuItem<String>(
+                                                value: "Email",
+                                                child: Text("Email Mode",
+                                                    style: TextStyle(
+                                                        fontWeight: commonFontWt,
+                                                        fontSize: commonFontSize)),
+                                              ),
+                                              DropdownMenuItem<String>(
+                                                value: "Digest",
+                                                child: Text("Digest Mode",
+                                                    style: TextStyle(
+                                                        fontWeight: commonFontWt,
+                                                        fontSize: commonFontSize)),
+                                              ),
+                                            ],
+                                            onChanged: (String? valueSelected) {
+                                              setState(() {
+                                                mailType = valueSelected!;
+                                              });
+                                            })),
+                                  ),
+                                )),
+                          ),
+                        ),
+                      ]
+                  ),
+              Center(
                 child: Row(
                     // LATEST and UNREAD Buttons
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
