@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -34,21 +36,9 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     index = widget.emails.length - 1;
     stt.setCurrentPage("email", this);
     if(widget.emails.isNotEmpty) {
-        reader = ReadMail();
-        reader!.setCurrentMail(widget.emails[index].message);
-        readMailPiece();
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) => otherMailAuto(context));
-  }
-
-  otherMailAuto(context) async {
-    if (GlobalConfiguration().getValue("autoplay")) {
-      while (true) {
-        if (mounted) {
-          await Future.delayed(Duration(seconds: 10));
-          seekForward();
-        }
-      }
+      reader = ReadMail();
+      reader!.setCurrentMail(widget.emails[index].message);
+      readMailPiece();
     }
   }
 
@@ -229,9 +219,9 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     });
   }
 
-  void seekForward() {
+  void seekForward() async {
     if (mounted) {
-      setState(() {
+      setState(() async {
         if (index != 0) {
           index--;
         }
@@ -245,11 +235,15 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   void readMailPiece() async {
     try{
       if(reader != null) {
-        await reader!.readEmailInfo();
+        var read = await reader!.readEmailInfo();
       }
     } catch (e) {
       print(e.toString());
     }
 
+    if (GlobalConfiguration().getValue("autoplay")) {
+      sleep(const Duration(seconds:10));
+      seekForward();
+    }
   }
 }
