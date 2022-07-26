@@ -242,7 +242,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     }
 
     if (GlobalConfiguration().getValue("autoplay")) {
-      sleep(const Duration(seconds:10));
+      sleep(const Duration(seconds:4));
       seekForward();
     }
   }
