@@ -79,63 +79,64 @@ class ReadDigestMail {
   }
 
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
-  void readDigestInfo() {
+  Future<bool> readDigestInfo() async {
     if (GlobalConfiguration().getValue("sender") == true && sender != null) {
-      readDigestSenderName();
+      await readDigestSenderName();
     }
     if (GlobalConfiguration().getValue("recipient") == true && recipient != null) {
-      readDigestRecipientName();
+      await readDigestRecipientName();
     }
     if (GlobalConfiguration().getValue("validated") == true) {
       if(sender != null) {
-        readDigestSenderAddressValidated();
+        await readDigestSenderAddressValidated();
       }
       if(recipient != null) {
-        readDigestRecipientAddressValidated();
+        await readDigestRecipientAddressValidated();
       }
     }
     if (GlobalConfiguration().getValue("address") == true) {
       if(sender != null) {
-        readDigestSenderAddress();
+        await readDigestSenderAddress();
       }
       if(recipient != null) {
-        readDigestRecipientAddress();
+        await readDigestRecipientAddress();
       }
     }
     if (GlobalConfiguration().getValue("logos") == true) {
-      readDigestLogos();
+      await readDigestLogos();
     }
     if (GlobalConfiguration().getValue("links") == true) {
-      readDigestLinks();
+      await readDigestLinks();
     }
+    return true;
   }
 
-  void readDigestSenderName() {
+  Future<void> readDigestSenderName() async {
     /* Get the name of the sender */
     String text = "The sender is '${sender!.name}'";
     _speak(text);
 
   }
 
-  void readDigestRecipientName() {
+  Future<void> readDigestRecipientName() async {
     /* Get the name of the recipient */
     String text = "The recipient is '${recipient!.name}'";
     _speak(text);
   }
 
-  void readDigestSenderAddress() {
+  Future<void> readDigestSenderAddress() async {
     /* Get the sender's address */
     String text = "The sender's address is '${sender!.address}'";
     _speak(text);
   }
 
-  void readDigestRecipientAddress() {
+  Future<void> readDigestRecipientAddress() async {
     /* Get the recipient's address */
     String text = "The recipient's address is '${recipient!.address}'";
     _speak(text);
   }
 
-  void readDigestLogos() {
+  Future<void> readDigestLogos() async {
     /* Get the logos */
     for (LogoObject logo in currentMail.logos) {
       String text = "The logo says '${logo.name}'";
@@ -143,7 +144,7 @@ class ReadDigestMail {
     }
   }
 
-  void readDigestLinks() {
+  Future<void> readDigestLinks() async {
     /* Get the links */
     for (Link code in links) {
 //      String text = "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
@@ -153,7 +154,7 @@ class ReadDigestMail {
     }
   }
 
-  void readDigestSenderAddressValidated() {
+  Future<void> readDigestSenderAddressValidated() async {
     /* Get if the sender's address was validated */
     String validated = "was not";
 
@@ -164,7 +165,7 @@ class ReadDigestMail {
     _speak(text);
   }
 
-  void readDigestRecipientAddressValidated() {
+  Future<void> readDigestRecipientAddressValidated() async {
     /* Get if the recipient's address was validated */
     String validated = "was not";
     if (recipient!.validated) {
@@ -194,7 +195,7 @@ class ReadMail {
   }
 
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
-  Future<void> readEmailInfo() async {
+  Future<bool> readEmailInfo() async {
     if (GlobalConfiguration().getValue("email_subject") == true) {
       await readEmailSubject();
     }
@@ -207,6 +208,7 @@ class ReadMail {
     if (GlobalConfiguration().getValue("email_recipients") == true) {
       await readEmailRecipients();
     }
+    return true;
   }
 
   Future<void> readEmailSubject() async {

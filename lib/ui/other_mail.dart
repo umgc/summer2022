@@ -219,9 +219,9 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     });
   }
 
-  void seekForward() async {
+  void seekForward() {
     if (mounted) {
-      setState(() async {
+      setState(() {
         if (index != 0) {
           index--;
         }

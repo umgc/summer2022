@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:flutter_svg/flutter_svg.dart';
@@ -73,18 +74,6 @@ class MailWidgetState extends State<MailWidget> {
     }
 
     stt.setCurrentPage("mail", this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => digestAuto(context));
-  }
-
-  digestAuto(context) async {
-    if (GlobalConfiguration().getValue("autoplay")) {
-      while (true) {
-        if (mounted) {
-          await Future.delayed(Duration(seconds: 10));
-          seekForward(1);
-        }
-      }
-    }
   }
 
   MailResponse getCurrentDigestDetails() {
@@ -287,13 +276,18 @@ class MailWidgetState extends State<MailWidget> {
     reader!.links = links;
   }
 
-  void readMailPiece() {
+  void readMailPiece() async {
     try {
       if (reader != null) {
-        reader!.readDigestInfo();
+        var read = await reader!.readDigestInfo();
       }
     } catch (e) {
       print(e.toString());
+    }
+
+    if (GlobalConfiguration().getValue("autoplay")) {
+      sleep(const Duration(seconds:10));
+      seekForward();
     }
   }
 }
