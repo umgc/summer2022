@@ -207,6 +207,7 @@ class MailWidgetState extends State<MailWidget> {
       attachmentIndex = attachmentIndex - 1;
       print(widget.digest.attachments[attachmentIndex].detailedInformation
           .toJson());
+      reader!.stop();
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
@@ -219,6 +220,7 @@ class MailWidgetState extends State<MailWidget> {
       attachmentIndex = attachmentIndex + 1;
       print(widget.digest.attachments[attachmentIndex].detailedInformation
           .toJson());
+      reader!.stop();
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
