@@ -204,31 +204,31 @@ class Speech {
               });
               break;
             case 'details':
-              _mailWidgetState.readMailPiece();
+              var result = await _mailWidgetState.readMailPiece();
               break;
             case 'sender name':
-              _mailWidgetState.reader!.readDigestSenderName();
+              var result = await _mailWidgetState.reader!.readDigestSenderName();
               break;
             case 'recipient name':
-              _mailWidgetState.reader!.readDigestRecipientName();
+              var result = await _mailWidgetState.reader!.readDigestRecipientName();
               break;
             case 'sender address':
-              _mailWidgetState.reader!.readDigestSenderAddress();
+              var result = await _mailWidgetState.reader!.readDigestSenderAddress();
               break;
             case 'recipient address':
-              _mailWidgetState.reader!.readDigestRecipientAddress();
+              var result = await _mailWidgetState.reader!.readDigestRecipientAddress();
               break;
             case 'sender validated':
-              _mailWidgetState.reader!.readDigestSenderAddressValidated();
+              var result = await _mailWidgetState.reader!.readDigestSenderAddressValidated();
               break;
             case 'recipient validated':
-              _mailWidgetState.reader!.readDigestRecipientAddressValidated();
+              var result = await _mailWidgetState.reader!.readDigestRecipientAddressValidated();
               break;
             case 'logos':
-              _mailWidgetState.reader!.readDigestLogos();
+              var result = await _mailWidgetState.reader!.readDigestLogos();
               break;
             case 'help':
-              tutorial.getDigestHelp();
+              var result = await tutorial.getDigestHelp();
               break;
             case 'back':
               navKey.currentState!.pushNamed('/main');
@@ -236,7 +236,7 @@ class Speech {
             default:
               if (s.contains("hyperlink")) {
                 if (s == 'hyperlinks') {
-                  _mailWidgetState.reader!.readDigestLinks();
+                  var result = await _mailWidgetState.reader!.readDigestLinks();
                 } else {
                   try {
                     var position = s.split(" ")[0];
@@ -245,7 +245,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[0].link);
                       } catch (e) {
-                        tts.speak(
+                        var result = await tts.speak(
                             'There is not a valid hyperlink in that position');
                       }
                     }
@@ -254,7 +254,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[1].link);
                       } catch (e) {
-                        tts.speak(
+                        var result = await tts.speak(
                             'There is not a valid hyperlink in that position');
                       }
                     }
@@ -263,7 +263,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[2].link);
                       } catch (e) {
-                        tts.speak(
+                        var result = await tts.speak(
                             'There is not a valid hyperlink in that position');
                       }
                     }
@@ -272,7 +272,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[3].link);
                       } catch (e) {
-                        tts.speak(
+                        var result = await tts.speak(
                             'There is not a valid hyperlink in that position');
                       }
                     }
@@ -281,7 +281,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[4].link);
                       } catch (e) {
-                        tts.speak(
+                        var result = await tts.speak(
                             'There is not a valid hyperlink in that position');
                       }
                     }
@@ -307,22 +307,22 @@ class Speech {
               });
               break;
             case 'details':
-              _otherMailWidgetState.reader!.readEmailInfo();
+              var result = await _otherMailWidgetState.reader!.readEmailInfo();
               break;
             case 'subject':
-              _otherMailWidgetState.reader!.readEmailSubject();
+              var result = await _otherMailWidgetState.reader!.readEmailSubject();
               break;
             case 'text':
-              _otherMailWidgetState.reader!.readEmailText();
+              var result = await _otherMailWidgetState.reader!.readEmailText();
               break;
             case 'sender':
-              _otherMailWidgetState.reader!.readEmailSender();
+              var result = await _otherMailWidgetState.reader!.readEmailSender();
               break;
             case 'recipients':
-              _otherMailWidgetState.reader!.readEmailRecipients();
+              var result = await _otherMailWidgetState.reader!.readEmailRecipients();
               break;
             case 'help':
-              tutorial.getEmailHelp();
+              var result = await tutorial.getEmailHelp();
               break;
             case 'back':
               navKey.currentState!.pushNamed('/main');
@@ -353,10 +353,10 @@ class Speech {
                   navKey.currentState!.pushNamed('/digest_mail',
                       arguments: MailWidgetArguments(digest));
                 } else {
-                  tts.speak('There are no digests available for today');
+                  var result = await tts.speak('There are no digests available for today');
                 }
               } catch (e) {
-                tts.speak(
+                var result = await tts.speak(
                     'An error occurred while fetching your daily digest: $e');
               }
               break;
@@ -376,7 +376,7 @@ class Speech {
               cfg.updateValue("tutorial", false);
               break;
             case 'help':
-              tutorial.getMainHelp();
+              var result = await tutorial.getMainHelp();
               break;
             default:
               // User asks for emails from specific date
@@ -394,15 +394,15 @@ class Speech {
                       navKey.currentState!.pushNamed('/other_mail',
                           arguments: EmailWidgetArguments(emails));
                     } else {
-                      tts.speak(
+                      var result = await tts.speak(
                           'There are no digest available for $requestedDate');
                     }
                   } catch (e) {
-                    tts.speak(
+                    var result = await tts.speak(
                         'An error occurred while fetching your emails: $e');
                   }
                 } else {
-                  tts.speak(
+                  var result = await tts.speak(
                       'The specified date is invalid. Please say the month, day of the month, and then the year.');
                 }
               }
@@ -420,15 +420,15 @@ class Speech {
                       navKey.currentState!.pushNamed('/digest_mail',
                           arguments: MailWidgetArguments(digest));
                     } else {
-                      tts.speak(
+                      var result = await tts.speak(
                           'There are no digest available for $requestedDate');
                     }
                   } catch (e) {
-                    tts.speak(
+                    var result = await tts.speak(
                         'An error occurred while fetching your daily digest: $e');
                   }
                 } else {
-                  tts.speak(
+                  var result = await tts.speak(
                       'The specified date is invalid. Please say the month, day of the month, and then the year.');
                 }
               }
@@ -509,7 +509,7 @@ class Speech {
               cfg.updateValue("tutorial", false);
               break;
             case 'help':
-              tutorial.getSettingsHelp();
+              var result = await tutorial.getSettingsHelp();
               break;
             case 'back':
               navKey.currentState!.pushNamed('/main');
@@ -525,13 +525,13 @@ class Speech {
           mute = true;
           break;
         case 'stop':
-          tts.stop();
+          var result = tts.stop();
           break;
         case 'speakers off':
-          tts.setVolume(0);
+          var result = await tts.setVolume(0);
           break;
         case 'speakers on':
-          tts.setVolume(1);
+          var result = await tts.setVolume(1);
           break;
         default: // Invalid command
           break;

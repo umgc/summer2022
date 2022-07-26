@@ -292,7 +292,7 @@ class MainWidgetState extends State<MainWidget> {
                         await deleteImageFiles();
                         await saveImageFile(_imageBytes!, "mailpiece.jpg");
                         MailResponse s =
-                            await processImage("${imagePath}/mailpiece.jpg");
+                            await processImage("$imagePath/mailpiece.jpg");
                         print(s.toJson());
                       } else {
                         return;
@@ -428,14 +428,14 @@ class MainWidgetState extends State<MainWidget> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
+        return const AlertDialog(
           title: Center(
             child: Text("Error Dialog"),
           ),
-          content: Container(
+          content: SizedBox(
             height: 100.0,
             width: 100.0,
-            child: const Center(
+            child: Center(
               child: Text(
                 "An Unexpected Error has occurred, please try again later.",
                 style: TextStyle(color: Colors.black),

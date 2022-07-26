@@ -1,20 +1,16 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import './Client.dart';
-import './Keychain.dart';
-import './speech_to_text.dart';
-import './ui/settings.dart';
-import './ui/main_menu.dart';
-import './ui/sign_in.dart';
+import 'package:summer2022/Client.dart';
+import 'package:summer2022/Keychain.dart';
+import 'package:summer2022/speech_to_text.dart';
+import 'package:summer2022/ui/main_menu.dart';
+import 'package:summer2022/ui/sign_in.dart';
 
 import 'RouteGenerator.dart';
-import './ui/bottom_app_bar.dart';
-import './ui/mail_widget.dart';
-import './ui/other_mail.dart';
+import 'package:summer2022/ui/bottom_app_bar.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 final Speech stt = Speech();

@@ -9,11 +9,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 
 FlutterTts tts = FlutterTts();
 
-Future<void> _speak(String text) async {
+Future<bool> _speak(String text) async {
   if (text.isNotEmpty) {
-    await tts.awaitSpeakCompletion(true);
-    await tts.speak(text);
+    var result = await tts.awaitSpeakCompletion(true);
+    var read = await tts.speak(text);
   }
+  return true;
 }
 
 Future _stop() async {
@@ -81,80 +82,83 @@ class ReadDigestMail {
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
   Future<bool> readDigestInfo() async {
     if (GlobalConfiguration().getValue("sender") == true && sender != null) {
-      await readDigestSenderName();
+      var read = await readDigestSenderName();
     }
     if (GlobalConfiguration().getValue("recipient") == true && recipient != null) {
-      await readDigestRecipientName();
+      var read = await readDigestRecipientName();
     }
     if (GlobalConfiguration().getValue("validated") == true) {
       if(sender != null) {
-        await readDigestSenderAddressValidated();
+        var read = await readDigestSenderAddressValidated();
       }
       if(recipient != null) {
-        await readDigestRecipientAddressValidated();
+        var read = await readDigestRecipientAddressValidated();
       }
     }
     if (GlobalConfiguration().getValue("address") == true) {
       if(sender != null) {
-        await readDigestSenderAddress();
+        var read = await readDigestSenderAddress();
       }
       if(recipient != null) {
-        await readDigestRecipientAddress();
+        var read = await readDigestRecipientAddress();
       }
     }
     if (GlobalConfiguration().getValue("logos") == true) {
-      await readDigestLogos();
+      var read = await readDigestLogos();
     }
     if (GlobalConfiguration().getValue("links") == true) {
-      await readDigestLinks();
+      var read = await readDigestLinks();
     }
     return true;
   }
 
-  Future<void> readDigestSenderName() async {
+  Future<bool> readDigestSenderName() async {
     /* Get the name of the sender */
     String text = "The sender is '${sender!.name}'";
-    _speak(text);
-
+    var read = await _speak(text);
+    return true;
   }
 
-  Future<void> readDigestRecipientName() async {
+  Future<bool> readDigestRecipientName() async {
     /* Get the name of the recipient */
     String text = "The recipient is '${recipient!.name}'";
-    _speak(text);
+    var read = await _speak(text);
+    return true;
   }
 
-  Future<void> readDigestSenderAddress() async {
+  Future<bool> readDigestSenderAddress() async {
     /* Get the sender's address */
     String text = "The sender's address is '${sender!.address}'";
-    _speak(text);
+    var read = await _speak(text);
+    return true;
   }
 
-  Future<void> readDigestRecipientAddress() async {
+  Future<bool> readDigestRecipientAddress() async {
     /* Get the recipient's address */
     String text = "The recipient's address is '${recipient!.address}'";
-    _speak(text);
+    var read = await _speak(text);
+    return true;
   }
 
-  Future<void> readDigestLogos() async {
+  Future<bool> readDigestLogos() async {
     /* Get the logos */
     for (LogoObject logo in currentMail.logos) {
       String text = "The logo says '${logo.name}'";
-      _speak(text);
+      var read = await _speak(text);
     }
+    return true;
   }
 
-  Future<void> readDigestLinks() async {
+  Future<bool> readDigestLinks() async {
     /* Get the links */
     for (Link code in links) {
-//      String text = "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
-      String text = "TThe link is '${code.link}'. Would you like to go to the link?";
-      _speak(text);
-      // TODO.. needs to listen for response and then display link
+      String text = "The link is '${code.link}'. Would you like to go to the link?";
+      var read = await _speak(text);
     }
+    return true;
   }
 
-  Future<void> readDigestSenderAddressValidated() async {
+  Future<bool> readDigestSenderAddressValidated() async {
     /* Get if the sender's address was validated */
     String validated = "was not";
 
@@ -162,17 +166,19 @@ class ReadDigestMail {
       validated = "was";
     }
     String text = "The sender's address $validated validated";
-    _speak(text);
+    var read = await _speak(text);
+    return true;
   }
 
-  Future<void> readDigestRecipientAddressValidated() async {
+  Future<bool> readDigestRecipientAddressValidated() async {
     /* Get if the recipient's address was validated */
     String validated = "was not";
     if (recipient!.validated) {
       validated = "was";
     }
     String text = "The recipient's address $validated validated";
-    _speak(text);
+    var read = await _speak(text);
+    return true;
   }
 }
 
@@ -197,51 +203,54 @@ class ReadMail {
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
   Future<bool> readEmailInfo() async {
     if (GlobalConfiguration().getValue("email_subject") == true) {
-      await readEmailSubject();
+      var read = await readEmailSubject();
     }
     if (GlobalConfiguration().getValue("email_text") == true) {
-      await readEmailText();
+      var read = await readEmailText();
     }
     if (GlobalConfiguration().getValue("email_sender") == true) {
-      await readEmailSender();
+      var read = await readEmailSender();
     }
     if (GlobalConfiguration().getValue("email_recipients") == true) {
-      await readEmailRecipients();
+      var read = await readEmailRecipients();
     }
     return true;
   }
 
-  Future<void> readEmailSubject() async {
+  Future<bool> readEmailSubject() async {
     var subject = currentMail.decodeSubject();
     String text = "The email subject is $subject";
     if (subject != null) {
-      await _speak(text);
+      var read = await _speak(text);
     } else {
-      await _speak("There is no email subject.");
+      var read = await _speak("There is no email subject.");
     }
+    return true;
   }
 
-  Future<void> readEmailText() async {
+  Future<bool> readEmailText() async {
     var emailText = currentMail.body;
     String text = "The email text is $emailText";
     if (emailText != null) {
-      await _speak(text);
+      var read = await _speak(text);
     } else {
-      await _speak("There is no email text.");
+      var read = await _speak("There is no email text.");
     }
+    return true;
   }
 
-  Future<void> readEmailSender() async {
+  Future<bool> readEmailSender() async {
     var sender = currentMail.decodeSender();
     String text = "The email sender is $sender";
     if (sender != null) {
-      await _speak(text);
+      var read = await _speak(text);
     } else {
-      await _speak("There is no email sender.");
+      var read = await _speak("There is no email sender.");
     }
+    return true;
   }
 
-  Future<void> readEmailRecipients() async {
+  Future<bool> readEmailRecipients() async {
     List<String?> recipients = [];
     for (MailAddress recipient in currentMail.recipients) {
       if (recipient.hasPersonalName) {
@@ -257,10 +266,11 @@ class ReadMail {
     if (recipients.isNotEmpty) {
       String? recipientsString = recipients[0];
       String text = "The email recipients are $recipientsString";
-      await _speak(text);
+      var read = await _speak(text);
     } else {
-      await _speak("There are no email recipients.");
+      var read = await _speak("There are no email recipients.");
     }
+    return true;
   }
 }
 
@@ -323,13 +333,14 @@ class CommandTutorial {
     To get the list of commands for the page that you are currently on, say help.
     ''';
 
-  void runTutorial() async {
+  Future<bool> runTutorial() async {
     if (!ranTutorial) {
       String readTutorial = '$tutorial $main $digest $email $digestAndEmail $general';
-      await _speak(readTutorial);
+      var read = await _speak(readTutorial);
       await _stop();
       ranTutorial = true;
     }
+    return true;
   }
 
   String mainHelp =
@@ -423,19 +434,23 @@ class CommandTutorial {
     To hear these commands again, say help.
     ''';
 
-    void getMainHelp() {
-      _speak(mainHelp);
+    Future<bool> getMainHelp() async {
+      var read = await _speak(mainHelp);
+      return true;
     }
 
-    void getEmailHelp() {
-      _speak(emailHelp);
+    Future<bool> getEmailHelp() async {
+      var read = await _speak(emailHelp);
+      return true;
     }
 
-    void getDigestHelp() {
-      _speak(digestHelp);
+    Future<bool> getDigestHelp() async {
+      var read = await _speak(digestHelp);
+      return true;
     }
 
-    void getSettingsHelp() {
-      _speak(settingsHelp);
+    Future<bool> getSettingsHelp() async {
+      var read = await _speak(settingsHelp);
+      return true;
     }
 }

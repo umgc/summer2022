@@ -6,11 +6,8 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
 import 'package:summer2022/read_info.dart';
 import 'bottom_app_bar.dart';
-import './main_menu.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../models/Arguments.dart';
-import '../models/Digest.dart';
-import '../main.dart';
+import 'package:summer2022/models/Digest.dart';
+import 'package:summer2022/main.dart';
 
 class OtherMailWidget extends StatefulWidget {
   final List<Digest> emails;
@@ -47,7 +44,6 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   }
 
   String removeLinks(Digest d) {
-    String bodyText = '';
     RegExp linkExp = RegExp(
         r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
     RegExp carotsExpn = RegExp(r"\<https.+?\>");
@@ -94,7 +90,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     final String formatted = formatter.format(parsedDate);
     String timeAgo = convertToAgo(parsedDate);
     return Scaffold(
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: const BottomBar(),
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -185,8 +181,8 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                   child: const Icon(Icons.skip_previous),
                 ),
                 Text(
-                  (emailsLen - (index)).toString() + '/' + emailsLen.toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  '${emailsLen - (index)}/$emailsLen',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 FloatingActionButton(
                   backgroundColor: Colors.grey,
@@ -232,7 +228,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     }
   }
 
-  void readMailPiece() async {
+  Future<void> readMailPiece() async {
     try{
       if(reader != null) {
         var read = await reader!.readEmailInfo();
