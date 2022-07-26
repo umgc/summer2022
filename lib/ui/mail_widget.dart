@@ -97,106 +97,131 @@ class MailWidgetState extends State<MailWidget> {
     );
   }
 
+  Future<bool> returnBackToMain() async {
+    reader!.stop();
+    stt.setCurrentPage("main", this);
+    Navigator.pop(context, '/menu');
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Figma Flutter Generator MailWidget - FRAME
 
-    return Scaffold(
-      bottomNavigationBar: BottomBar(),
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Digest"),
-        backgroundColor: Colors.grey,
-      ),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Container(
-                        child: Text(
-                          style: TextStyle(fontSize: 20),
-                          "",
+    return WillPopScope(
+      onWillPop: returnBackToMain,
+      child: Scaffold(
+        bottomNavigationBar: BottomBar(),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("Digest"),
+          backgroundColor: Colors.grey,
+        ),
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Container(
+                          child: Text(
+                            style: TextStyle(fontSize: 20),
+                            "",
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Icon(
-                    Icons.arrow_back,
-                    size: 50,
-                    color: Color.fromARGB(0, 255, 255, 1),
+                    Icon(
+                      Icons.arrow_back,
+                      size: 50,
+                      color: Color.fromARGB(0, 255, 255, 1),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Center(
+                        child: Container(
+                            //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
+                            child: widget.digest.attachments.isNotEmpty
+                                ? Image.memory(base64Decode(widget
+                                    .digest
+                                    .attachments[attachmentIndex]
+                                    .attachmentNoFormatting))
+                                : Image.asset('assets/NoAttachments.png'))),
                   ),
                 ],
               ),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Center(
-                      child: Container(
-                        //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
-                          child: widget.digest.attachments.isNotEmpty
-                              ? Image.memory(base64Decode(widget
-                              .digest
-                              .attachments[attachmentIndex]
-                              .attachmentNoFormatting))
-                              : Image.asset('assets/NoAttachments.png'))),
-                ),
-              ],
-            ),
-            Padding( // MODE Dialog Box
-              padding: EdgeInsets.only(top:0, left: 30, right: 30),
-              child: Row( // LATEST and UNREAD Buttons
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(height: commonButtonHeight, // LATEST Button
-                      child: OutlinedButton(
-                        onPressed: () { showLinkDialog(); },
-                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
-                        child: const Text("Links",
-                            style: TextStyle(color: Colors.black)),
+              Padding(
+                // MODE Dialog Box
+                padding: EdgeInsets.only(top: 0, left: 30, right: 30),
+                child: Row(
+                    // LATEST and UNREAD Buttons
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        height: commonButtonHeight, // LATEST Button
+                        child: OutlinedButton(
+                          onPressed: () {
+                            showLinkDialog();
+                          },
+                          style: commonButtonStyleElevated(
+                              Colors.white, Colors.grey),
+                          child: const Text("Links",
+                              style: TextStyle(color: Colors.black)),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: commonButtonHeight, // UNREAD Button
-                      child: OutlinedButton(
-                        onPressed: () { readMailPiece(); },
-                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
-                        child: const Text("All Details", style: TextStyle(color: Colors.black)),
+                      SizedBox(
+                        height: commonButtonHeight, // UNREAD Button
+                        child: OutlinedButton(
+                          onPressed: () {
+                            readMailPiece();
+                          },
+                          style: commonButtonStyleElevated(
+                              Colors.white, Colors.grey),
+                          child: const Text("All Details",
+                              style: TextStyle(color: Colors.black)),
+                        ),
                       ),
-                    ),
-                  ]
+                    ]),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(bottom: 60),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    FloatingActionButton(
-                      backgroundColor: Colors.grey,
-                      heroTag: "f1",
-                      onPressed: () {
-                        setState(() { seekBack(); });
-                      },
-                      child: Icon(Icons.skip_previous),
-                    ),
-                    Text(widget.digest.attachments.isNotEmpty
-                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
-                    FloatingActionButton(
-                      backgroundColor: Colors.grey,
-                      heroTag: "f2",
-                      onPressed: () {
-                        setState(() { seekForward(); });
-                      },
-                      child: Icon(Icons.skip_next),
-                    ),
-                  ]),
-            )
-          ],
+              Container(
+                padding: const EdgeInsets.only(bottom: 60),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FloatingActionButton(
+                        backgroundColor: Colors.grey,
+                        heroTag: "f1",
+                        onPressed: () {
+                          setState(() {
+                            seekBack();
+                          });
+                        },
+                        child: Icon(Icons.skip_previous),
+                      ),
+                      Text(widget.digest.attachments.isNotEmpty
+                          ? "${attachmentIndex + 1}/${widget.digest.attachments.length}"
+                          : "0/0"),
+                      FloatingActionButton(
+                        backgroundColor: Colors.grey,
+                        heroTag: "f2",
+                        onPressed: () {
+                          setState(() {
+                            seekForward();
+                          });
+                        },
+                        child: Icon(Icons.skip_next),
+                      ),
+                    ]),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -216,7 +241,8 @@ class MailWidgetState extends State<MailWidget> {
   }
 
   void seekForward([int length = 0]) {
-    if (attachmentIndex < (length != 0 ? length : widget.digest.attachments.length - 1)) {
+    if (attachmentIndex <
+        (length != 0 ? length : widget.digest.attachments.length - 1)) {
       attachmentIndex = attachmentIndex + 1;
       print(widget.digest.attachments[attachmentIndex].detailedInformation
           .toJson());

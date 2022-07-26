@@ -33,10 +33,10 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     super.initState();
     index = widget.emails.length - 1;
     stt.setCurrentPage("email", this);
-    if(widget.emails.isNotEmpty) {
-        reader = ReadMail();
-        reader!.setCurrentMail(widget.emails[index].message);
-        readMailPiece();
+    if (widget.emails.isNotEmpty) {
+      reader = ReadMail();
+      reader!.setCurrentMail(widget.emails[index].message);
+      readMailPiece();
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => otherMailAuto(context));
   }
@@ -95,6 +95,13 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     }
   }
 
+  Future<bool> returnBackToMain() async {
+    reader!.stop();
+    stt.setCurrentPage("main", this);
+    Navigator.pop(context, '/menu');
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     int emailsLen = widget.emails.length;
@@ -103,116 +110,122 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     final DateFormat formatter = DateFormat('yyyy-MM-dd h:mm:ss');
     final String formatted = formatter.format(parsedDate);
     String timeAgo = convertToAgo(parsedDate);
-    return Scaffold(
-      bottomNavigationBar: BottomBar(),
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          formatted,
-          style: TextStyle(fontWeight: commonFontWt, fontSize: commonFontSize),
+    return WillPopScope(
+      onWillPop: returnBackToMain,
+      child: Scaffold(
+        bottomNavigationBar: BottomBar(),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            formatted,
+            style:
+                TextStyle(fontWeight: commonFontWt, fontSize: commonFontSize),
+          ),
+          backgroundColor: Colors.grey,
         ),
-        backgroundColor: Colors.grey,
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 10,
-              width: double.infinity,
-            ),
-            Expanded(
-              flex: 1,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical, //.horizontal
-                child: RichText(
-                  text: TextSpan(children: <TextSpan>[
-                    const TextSpan(
-                        text: 'SUBJECT: ',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            height: 2)),
-                    TextSpan(
-                        text: widget.emails[index].message
-                            .decodeSubject()
-                            .toString(),
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16)),
-                    const TextSpan(
-                        text: '\nSENDER: ',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            height: 2)),
-                    TextSpan(
-                        text: widget.emails[index].message
-                            .decodeSender()
-                            .toString(),
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16)),
-                    const TextSpan(
-                        text: '\nSENT: ',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            height: 2)),
-                    TextSpan(
-                        text: '$timeAgo\n\n',
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16)),
-                    TextSpan(
-                        text: removeLinks(widget.emails[index]),
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16)),
-                  ]),
+        body: SafeArea(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 10,
+                width: double.infinity,
+              ),
+              Expanded(
+                flex: 1,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical, //.horizontal
+                  child: RichText(
+                    text: TextSpan(children: <TextSpan>[
+                      const TextSpan(
+                          text: 'SUBJECT: ',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              height: 2)),
+                      TextSpan(
+                          text: widget.emails[index].message
+                              .decodeSubject()
+                              .toString(),
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16)),
+                      const TextSpan(
+                          text: '\nSENDER: ',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              height: 2)),
+                      TextSpan(
+                          text: widget.emails[index].message
+                              .decodeSender()
+                              .toString(),
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16)),
+                      const TextSpan(
+                          text: '\nSENT: ',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              height: 2)),
+                      TextSpan(
+                          text: '$timeAgo\n\n',
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16)),
+                      TextSpan(
+                          text: removeLinks(widget.emails[index]),
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16)),
+                    ]),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 15,
-              width: double.infinity,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                FloatingActionButton(
-                  backgroundColor: Colors.grey,
-                  heroTag: "f1",
-                  onPressed: () {
-                    seekBack();
-                  },
-                  child: const Icon(Icons.skip_previous),
-                ),
-                Text(
-                  (emailsLen - (index)).toString() + '/' + emailsLen.toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                FloatingActionButton(
-                  backgroundColor: Colors.grey,
-                  heroTag: "f2",
-                  onPressed: () {
-                    seekForward();
-                  },
-                  child: const Icon(Icons.skip_next),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 15,
-              width: double.infinity,
-            ),
-          ],
+              const SizedBox(
+                height: 15,
+                width: double.infinity,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  FloatingActionButton(
+                    backgroundColor: Colors.grey,
+                    heroTag: "f1",
+                    onPressed: () {
+                      seekBack();
+                    },
+                    child: const Icon(Icons.skip_previous),
+                  ),
+                  Text(
+                    (emailsLen - (index)).toString() +
+                        '/' +
+                        emailsLen.toString(),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  FloatingActionButton(
+                    backgroundColor: Colors.grey,
+                    heroTag: "f2",
+                    onPressed: () {
+                      seekForward();
+                    },
+                    child: const Icon(Icons.skip_next),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 15,
+                width: double.infinity,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -243,13 +256,12 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   }
 
   void readMailPiece() async {
-    try{
-      if(reader != null) {
+    try {
+      if (reader != null) {
         await reader!.readEmailInfo();
       }
     } catch (e) {
       print(e.toString());
     }
-
   }
 }
