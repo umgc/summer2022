@@ -35,7 +35,9 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     if(widget.emails.isNotEmpty) {
       reader = ReadMail();
       reader!.setCurrentMail(widget.emails[index].message);
-      readMailPiece();
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        readMailPiece();
+      });
     }
   }
 

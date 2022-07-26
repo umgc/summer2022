@@ -56,7 +56,9 @@ class MailWidgetState extends State<MailWidget> {
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
-      readMailPiece();
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        readMailPiece();
+      });
     }
 
     stt.setCurrentPage("mail", this);
