@@ -1,4 +1,4 @@
-git_url("https://github.com/umgc/certificates")
+git_url("https://github.com/umgc/summer2022.git")
 
 storage_mode("git")
 
