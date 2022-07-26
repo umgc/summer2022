@@ -142,6 +142,7 @@ class MainWidgetState extends State<MainWidget> {
       ),
     );
     return Scaffold(
+
         bottomNavigationBar: const BottomBar(),
         appBar: AppBar(
           centerTitle: true,
@@ -153,8 +154,13 @@ class MainWidgetState extends State<MainWidget> {
           automaticallyImplyLeading: false,
           backgroundColor: Colors.grey,
         ),
+
         body: SafeArea(
-            child: Column(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: SizedBox(
+              height: 630,
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Padding(
@@ -330,7 +336,7 @@ class MainWidgetState extends State<MainWidget> {
                           style: TextStyle(color: Colors.black)),
                     ),
                   ),*/
-            ])));
+            ])))));
   }
 
   Future<void> selectDate(BuildContext context) async {
