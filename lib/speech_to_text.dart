@@ -29,7 +29,6 @@ class Speech {
   late List<Digest> emails;
   late MailWidgetState _mailWidgetState;
   late OtherMailWidgetState _otherMailWidgetState;
-  late MainWidgetState _mainWidgetState;
   bool links = false;
 
   void setCurrentPage(String page, [Object? obj]) {
@@ -42,11 +41,6 @@ class Speech {
       case 'email':
         if (obj != null) {
           _otherMailWidgetState = obj as OtherMailWidgetState;
-        }
-        break;
-      case 'main':
-        if (obj != null) {
-          _mainWidgetState = obj as MainWidgetState;
         }
         break;
       case 'settings':

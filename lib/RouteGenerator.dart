@@ -29,10 +29,10 @@ class RouteGenerator {
                 emails: (settings.arguments as EmailWidgetArguments).emails));
       case '/backend_testing':
         return MaterialPageRoute(
-            builder: (_) => BackendPage(title: "Backend Testing"));
+            builder: (_) => const BackendPage(title: "Backend Testing"));
       case '/enough_mail_sample':
         return MaterialPageRoute(
-            builder: (_) => EnoughMailPage(title: "Enough Mail Sample"));
+            builder: (_) => const EnoughMailPage(title: "Enough Mail Sample"));
       default:
         return MaterialPageRoute(builder: (_) {
           return Scaffold(

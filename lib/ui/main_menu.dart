@@ -46,7 +46,7 @@ class MainWidgetState extends State<MainWidget> {
   MainWidgetState() {
     if (GlobalConfiguration().getValue("tutorial")) {
       if (!ranTutorial) {
-        commandTutorial.runTutorial();
+        //commandTutorial.runTutorial();
         ranTutorial = true;
       }
     }

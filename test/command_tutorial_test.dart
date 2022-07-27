@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:summer2022/read_info.dart';
+import 'package:summer2022/main.dart';
 
 
 class FakeFlutterTts extends Fake implements FlutterTts {

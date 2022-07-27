@@ -6,29 +6,8 @@ import 'package:summer2022/models/Address.dart';
 import 'package:summer2022/models/Logo.dart';
 import 'package:summer2022/models/Digest.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:summer2022/main.dart';
 
-FlutterTts tts = FlutterTts();
-
-Future<void> _speak(String text) async {
-  if (text.isNotEmpty) {
-    await tts.awaitSpeakCompletion(true);
-    await tts.speak(text);
-  }
-}
-
-Future _stop() async {
-  var result = await tts.stop();
-}
-
-void initTTS() async {
-  if(Platform.isAndroid) {
-    await tts.setQueueMode(1);
-  }
-  await tts.setLanguage("en-US");
-  await tts.setSpeechRate(.4);
-  await tts.setVolume(1.0);
-  await tts.setPitch(1.0);
-}
 
 /*
  * The ReadDigestMail class's purpose is to read the details of a Daily Digest mail 
@@ -38,19 +17,10 @@ class ReadDigestMail {
   AddressObject? sender;
   AddressObject? recipient;
   List<Link> links = <Link>[];
-  
-  ReadDigestMail() {
-    initTTS();
-  }
-
-  void stop() {
-    _stop();
-  }
 
   void setCurrentMail(MailResponse mail) {
     currentMail = mail;
     setSenderAndRecipient(currentMail.addresses);
-    initTTS();
   }
 
   void setSenderAndRecipient(List<AddressObject> addresses) {
@@ -66,20 +36,11 @@ class ReadDigestMail {
   }
 
   List<AddressObject> getSenderAndRecipient() {
-    /* This code is assuming that there is one address object for the sender
-       and one for the recipient. Figure out which one is which. */
-    //if (addresses[0].type == "sender") {
-    //  sender = addresses[0];
-    //  recipient = addresses[1];
-    //} else {
-    //  sender = addresses[0];
-    //  recipient = addresses[1];
-    //}
     return [sender!, recipient!];
   }
 
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
-  void readDigestInfo() {
+  Future<void> readDigestInfo() async {
     if (GlobalConfiguration().getValue("sender") == true && sender != null) {
       readDigestSenderName();
     }
@@ -110,50 +71,49 @@ class ReadDigestMail {
     }
   }
 
-  void readDigestSenderName() {
+  void readDigestSenderName() async {
     /* Get the name of the sender */
     String text = "The sender is '${sender!.name}'";
-    _speak(text);
+    Future.wait([speak(text)]);
 
   }
 
-  void readDigestRecipientName() {
+  void readDigestRecipientName() async {
     /* Get the name of the recipient */
     String text = "The recipient is '${recipient!.name}'";
-    _speak(text);
+    Future.wait([speak(text)]);
   }
 
-  void readDigestSenderAddress() {
+  void readDigestSenderAddress() async {
     /* Get the sender's address */
     String text = "The sender's address is '${sender!.address}'";
-    _speak(text);
+    Future.wait([speak(text)]);
   }
 
-  void readDigestRecipientAddress() {
+  void readDigestRecipientAddress() async {
     /* Get the recipient's address */
     String text = "The recipient's address is '${recipient!.address}'";
-    _speak(text);
+    Future.wait([speak(text)]);
   }
 
-  void readDigestLogos() {
+  void readDigestLogos() async {
     /* Get the logos */
     for (LogoObject logo in currentMail.logos) {
       String text = "The logo says '${logo.name}'";
-      _speak(text);
+      Future.wait([speak(text)]);
     }
   }
 
-  void readDigestLinks() {
+  void readDigestLinks() async {
     /* Get the links */
     for (Link code in links) {
-//      String text = "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
       String text = "The link is '${code.info != "" ? code.info : code.link}'. Would you like to go to the link?";
-      _speak(text);
-      // TODO.. needs to listen for response and then display link
+      Future.wait([speak(text)]);
+      sleep(const Duration(seconds:3));
     }
   }
 
-  void readDigestSenderAddressValidated() {
+  void readDigestSenderAddressValidated() async {
     /* Get if the sender's address was validated */
     String validated = "was not";
 
@@ -161,17 +121,17 @@ class ReadDigestMail {
       validated = "was";
     }
     String text = "The sender's address $validated validated";
-    _speak(text);
+    Future.wait([speak(text)]);
   }
 
-  void readDigestRecipientAddressValidated() {
+  void readDigestRecipientAddressValidated() async {
     /* Get if the recipient's address was validated */
     String validated = "was not";
     if (recipient!.validated) {
       validated = "was";
     }
     String text = "The recipient's address $validated validated";
-    _speak(text);
+    Future.wait([speak(text)]);
   }
 }
 
@@ -181,14 +141,6 @@ class ReadDigestMail {
 class ReadMail {
   late MimeMessage currentMail;
 
-  ReadMail() {
-    initTTS();
-  }
-
-  void stop() {
-    _stop();
-  }
-
   void setCurrentMail(MimeMessage mail) {
     currentMail = mail;
   }
@@ -196,46 +148,46 @@ class ReadMail {
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
   Future<void> readEmailInfo() async {
     if (GlobalConfiguration().getValue("email_subject") == true) {
-      await readEmailSubject();
+      readEmailSubject();
     }
     if (GlobalConfiguration().getValue("email_text") == true) {
-      await readEmailText();
+      readEmailText();
     }
     if (GlobalConfiguration().getValue("email_sender") == true) {
-      await readEmailSender();
+      readEmailSender();
     }
     if (GlobalConfiguration().getValue("email_recipients") == true) {
-      await readEmailRecipients();
+      readEmailRecipients();
     }
   }
 
-  Future<void> readEmailSubject() async {
+  void readEmailSubject() async {
     var subject = currentMail.decodeSubject();
     String text = "The email subject is $subject";
     if (subject != null) {
-      await _speak(text);
+      Future.wait([speak(text)]);
     } else {
-      await _speak("There is no email subject.");
+      Future.wait([speak("There is no email subject.")]);
     }
   }
 
-  Future<void> readEmailText() async {
+  void readEmailText() async {
     var emailText = currentMail.body;
     String text = "The email text is $emailText";
     if (emailText != null) {
-      await _speak(text);
+      Future.wait([speak(text)]);
     } else {
-      await _speak("There is no email text.");
+      Future.wait([speak("There is no email text.")]);
     }
   }
 
-  Future<void> readEmailSender() async {
+  void readEmailSender() async {
     var sender = currentMail.decodeSender();
     String text = "The email sender is $sender";
-    if (sender != null) {
-      await _speak(text);
+    if (sender.isNotEmpty) {
+      Future.wait([speak(text)]);
     } else {
-      await _speak("There is no email sender.");
+      Future.wait([speak("There is no email sender.")]);
     }
   }
 
@@ -255,19 +207,15 @@ class ReadMail {
     if (recipients.isNotEmpty) {
       String? recipientsString = recipients[0];
       String text = "The email recipients are $recipientsString";
-      await _speak(text);
+      Future.wait([speak(text)]);
     } else {
-      await _speak("There are no email recipients.");
+      Future.wait([speak("There are no email recipients.")]);
     }
   }
 }
 
 class CommandTutorial {
   bool ranTutorial = false;
-
-  CommandTutorial() {
-    initTTS();
-  }
 
   String tutorial =
     '''
@@ -321,11 +269,11 @@ class CommandTutorial {
     To get the list of commands for the page that you are currently on, say help.
     ''';
 
-  void runTutorial() async {
+  void runTutorial() {
     if (!ranTutorial) {
       String readTutorial = '$tutorial $main $digest $email $digestAndEmail $general';
-      await _speak(readTutorial);
-      await _stop();
+      Future.wait([speak(readTutorial)]);
+      stop();
       ranTutorial = true;
     }
   }
@@ -422,18 +370,18 @@ class CommandTutorial {
     ''';
 
     void getMainHelp() {
-      _speak(mainHelp);
+      Future.wait([speak(mainHelp)]);
     }
 
     void getEmailHelp() {
-      _speak(emailHelp);
+      Future.wait([speak(emailHelp)]);
     }
 
     void getDigestHelp() {
-      _speak(digestHelp);
+      Future.wait([speak(digestHelp)]);
     }
 
     void getSettingsHelp() {
-      _speak(settingsHelp);
+      Future.wait([speak(settingsHelp)]);
     }
 }

@@ -188,17 +188,17 @@ class DigestEmailParser {
       for (int x = 0; x < files!.length; x++) {
         try {
           files[x].delete();
-          print("Delete in Extern: " + files[x].path);
+          print("Delete in Extern: ${files[x].path}");
         } catch (e) {
-          print("File" + x.toString() + " does not exist");
+          print("File$x does not exist");
         }
       }
       for (int x = 0; x < files2.length; x++) {
         try {
           files[x].delete();
-          print("Delete: " + files2[x].path);
+          print("Delete: ${files2[x].path}");
         } catch (e) {
-          print("File" + x.toString() + " does not exist");
+          print("File$x does not exist");
         }
       }
     } catch (e) {
@@ -278,7 +278,7 @@ class DigestEmailParser {
         saveFile.writeAsBytesSync(imageBytes);
 
         filePath = saveFile.path;
-        print("Directory" + directory.listSync().toString());
+        print("Directory${directory.listSync()}");
         return true;
       }
     } catch (e) {
@@ -307,9 +307,9 @@ class DigestEmailParser {
   Future<MailResponse> processImage(String imagePath) async {
     try {
       CloudVisionApi vision = CloudVisionApi();
-      print("processImage: " + imagePath);
+      print("processImage: $imagePath");
       var image = File(imagePath);
-      var imageByte;
+      Uint8List imageByte;
       imageByte = image.readAsBytesSync();
 
       var a = base64.encode(imageByte);

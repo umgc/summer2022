@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:summer2022/main.dart';
@@ -64,10 +65,13 @@ class MailWidgetState extends State<MailWidget> {
 
   digestAuto(context) async {
     if (GlobalConfiguration().getValue("autoplay")) {
-      while (true) {
+      while (attachmentIndex < widget.digest.attachments.length - 1) {
         if (mounted) {
-          await Future.delayed(Duration(seconds: 10));
-          seekForward(1);
+          await readMailPiece();
+          while (ttsState == TtsState.playing) {
+            sleep(const Duration(seconds:1));
+          }
+          await seekForward();
         }
       }
     }
@@ -88,36 +92,32 @@ class MailWidgetState extends State<MailWidget> {
     // Figma Flutter Generator MailWidget - FRAME
 
     return Scaffold(
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: const BottomBar(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Digest"),
+        title: const Text("Digest"),
         backgroundColor: Colors.grey,
       ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Container(
-                        child: Text(
-                          style: TextStyle(fontSize: 20),
-                          "",
-                        ),
-                      ),
+            Row(
+              children: const [
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      style: TextStyle(fontSize: 20),
+                      "",
                     ),
                   ),
-                  Icon(
-                    Icons.arrow_back,
-                    size: 50,
-                    color: Color.fromARGB(0, 255, 255, 1),
-                  ),
-                ],
-              ),
+                ),
+                Icon(
+                  Icons.arrow_back,
+                  size: 50,
+                  color: Color.fromARGB(0, 255, 255, 1),
+                ),
+              ],
             ),
             Row(
               children: [
@@ -135,7 +135,7 @@ class MailWidgetState extends State<MailWidget> {
               ],
             ),
             Padding( // MODE Dialog Box
-              padding: EdgeInsets.only(top:0, left: 30, right: 30),
+              padding: const EdgeInsets.only(top:0, left: 30, right: 30),
               child: Row( // LATEST and UNREAD Buttons
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -168,7 +168,7 @@ class MailWidgetState extends State<MailWidget> {
                       onPressed: () {
                         setState(() { seekBack(); });
                       },
-                      child: Icon(Icons.skip_previous),
+                      child: const Icon(Icons.skip_previous),
                     ),
                     Text(widget.digest.attachments.isNotEmpty
                         ? "${attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
@@ -178,7 +178,7 @@ class MailWidgetState extends State<MailWidget> {
                       onPressed: () {
                         setState(() { seekForward(); });
                       },
-                      child: Icon(Icons.skip_next),
+                      child: const Icon(Icons.skip_next),
                     ),
                   ]),
             )
@@ -193,7 +193,7 @@ class MailWidgetState extends State<MailWidget> {
       attachmentIndex = attachmentIndex - 1;
       print(widget.digest.attachments[attachmentIndex].detailedInformation
           .toJson());
-      reader!.stop();
+      stop();
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
@@ -201,16 +201,15 @@ class MailWidgetState extends State<MailWidget> {
     }
   }
 
-  void seekForward([int length = 0]) {
+  Future<void> seekForward([int length = 0]) async{
     if (attachmentIndex < (length != 0 ? length : widget.digest.attachments.length - 1)) {
       attachmentIndex = attachmentIndex + 1;
       print(widget.digest.attachments[attachmentIndex].detailedInformation
           .toJson());
-      reader!.stop();
+      stop();
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
-      readMailPiece();
     }
   }
 
@@ -257,26 +256,25 @@ class MailWidgetState extends State<MailWidget> {
 
   void buildLinks() {
     List<Link> newLinks = <Link>[];
-    widget.digest.links.forEach((link) {
+    for (var link in widget.digest.links) {
       newLinks.add(link);
-    });
+    }
     if (widget.digest.attachments.isNotEmpty) {
-      widget.digest.attachments[attachmentIndex].detailedInformation.codes
-          .forEach((code) {
+      for (var code in widget.digest.attachments[attachmentIndex].detailedInformation.codes) {
         Link newLink = Link();
         newLink.info = "";
         newLink.link = code.info;
         newLinks.add(newLink);
-      });
+      }
     }
     links = newLinks;
     reader!.links = links;
   }
 
-  void readMailPiece() {
+  Future<void> readMailPiece() async {
     try {
       if (reader != null) {
-        reader!.readDigestInfo();
+        Future.wait([reader!.readDigestInfo()]);
       }
     } catch (e) {
       print(e.toString());

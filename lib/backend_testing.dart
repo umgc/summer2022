@@ -3,13 +3,12 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import './models/Logo.dart';
-import './image_processing/barcode_scanner.dart';
+import 'package:summer2022/models/Logo.dart';
+import 'package:summer2022/image_processing/barcode_scanner.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import './image_processing/usps_address_verification.dart';
-import './image_processing/google_cloud_vision_api.dart';
-import './models/Code.dart';
+import 'package:summer2022/image_processing/usps_address_verification.dart';
+import 'package:summer2022/image_processing/google_cloud_vision_api.dart';
 
 void main() {
   runApp(const MyApp());
@@ -62,10 +61,9 @@ class BackendPage extends StatefulWidget {
 class _BackendPageState extends State<BackendPage> {
   File? _image;
   Uint8List? _imageBytes;
-  String? _imageName;
   CloudVisionApi? vision;
   BarcodeScannerApi? _barcodeScannerApi;
-  TextEditingController _textController = new TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   Image? displayImage;
   var mailAssetsFiles = [
     'mail.test.02.png',
@@ -88,10 +86,10 @@ class _BackendPageState extends State<BackendPage> {
   }
 
   void _getImage() async {
-    final PickedFile = await picker.getImage(source: ImageSource.camera);
-    print(PickedFile!.path);
-    if (PickedFile != null) {
-      _image = File(PickedFile.path);
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    print(pickedFile!.path);
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
 
       _imageBytes = _image!.readAsBytesSync();
       String a = base64.encode(_imageBytes!);
@@ -101,10 +99,9 @@ class _BackendPageState extends State<BackendPage> {
             .verifyAddressString(address.address);
       }
       setState(() {
-        if (PickedFile != null) {
-          _image = File(PickedFile.path);
+        if (pickedFile != null) {
+          _image = File(pickedFile.path);
           _imageBytes = _image!.readAsBytesSync();
-          _imageName = _image!.path.split('/').last;
         } else {
           print('No image selected.');
         }

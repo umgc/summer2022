@@ -1,23 +1,38 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import './Client.dart';
-import './Keychain.dart';
-import './speech_to_text.dart';
-import './ui/settings.dart';
-import './ui/main_menu.dart';
-import './ui/sign_in.dart';
-
+import 'package:summer2022/Client.dart';
+import 'package:summer2022/Keychain.dart';
+import 'package:summer2022/speech_to_text.dart';
+import 'package:summer2022/ui/main_menu.dart';
+import 'package:summer2022/ui/sign_in.dart';
 import 'RouteGenerator.dart';
-import './ui/bottom_app_bar.dart';
-import './ui/mail_widget.dart';
-import './ui/other_mail.dart';
+import 'package:summer2022/ui/bottom_app_bar.dart';
+import 'dart:io' show Platform, sleep;
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 final Speech stt = Speech();
+FlutterTts tts = FlutterTts();
+enum TtsState { playing, stopped, paused, continued }
+TtsState ttsState = TtsState.stopped;
+
+Future speak(String text) async {
+  try {
+  await tts.awaitSpeakCompletion(true);
+  bool result = await tts.speak(text);
+  print("result $result");
+  } catch(e) {
+    print(e.toString());
+  }
+}
+
+Future stop() async {
+  await tts.stop();
+}
+
 void main() async {
   WidgetsFlutterBinding
       .ensureInitialized(); // needed to access Keychain prior to main finishing
@@ -30,6 +45,31 @@ void main() async {
     emailAuthenticated = (await Client().getImapClient(
         username, password)); //Replace with config read for credentials
   }
+
+  void initTTS() async {
+    if(Platform.isAndroid) {
+      await tts.setQueueMode(1);
+    }
+    await tts.setLanguage("en-US");
+    await tts.setSpeechRate(.4);
+    await tts.setVolume(1.0);
+    await tts.setPitch(1.0);
+  }
+
+  initTTS();
+
+  setTtsState(TtsState state) {
+    print("set tts state $state");
+    ttsState = state;
+  }
+
+  tts.setStartHandler(() {
+    setTtsState(TtsState.playing);
+  });
+
+  tts.setCompletionHandler(() {
+    setTtsState(TtsState.stopped);
+  });
 
   stt.speechToText();
 

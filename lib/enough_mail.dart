@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:enough_mail/enough_mail.dart';
-import 'discover.dart';
 
 // Add your credentials
 String userName = ''; // Add your credentials

@@ -53,7 +53,7 @@ class Keychain {
         aOptions: _getAndroidOptions());
   }
 
-  IOSOptions _getIOSOptions() => IOSOptions(
+  IOSOptions _getIOSOptions() => const IOSOptions(
       // accountName: _getAccountName(),
       );
 
