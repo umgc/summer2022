@@ -108,77 +108,52 @@ class Speech {
     // Expected input example: June 8th 2022
 
     // Validate input
-    List months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
-    ];
+    var months = {
+      "January": "1", "February": "2", "March": "3", "April": "4",
+      "May": "5", "June": "6", "July": "7", "August": "8",
+      "September": "9", "October": "10", "November": "11", "December": "12"
+    };
     bool foundMonth = false;
-    for (String month in months) {
-      if (theDate.contains(month)) {
+    for (var key in months.keys) {
+      if (theDate.contains(key)) {
         foundMonth = true;
+        String? val = months[key];
+        if (val != null) {
+          theDate = theDate.replaceFirst(key, val);
+        }
         break;
       }
     }
+
     if (!foundMonth) {
       return null;
     }
 
     var numberSuffixes = {
-      "1st": "1",
-      "2nd": "2",
-      "3rd": "3",
-      "4th": "4",
-      "5th": "5",
-      "6th": "6",
-      "7th": "7",
-      "8th": "8",
-      "9th": "9",
-      "10th": "10",
-      "11th": "11",
-      "12th": "12",
-      "13th": "13",
-      "14th": "14",
-      "15th": "15",
-      "16th": "16",
-      "17th": "17",
-      "18th": "18",
-      "19th": "19",
-      "20th": "20",
-      "21st": "21",
-      "22nd": "22",
-      "23rd": "23",
-      "24th": "24",
-      "25th": "25",
-      "26th": "26",
-      "27th": "27",
-      "28th": "28",
-      "29th": "29",
-      "30th": "30",
-      "31st": "31"
+      "1st": "1", "2nd": "2", "3rd": "3", "4th": "4", "5th": "5", "6th": "6", 
+      "7th": "7", "8th": "8", "9th": "9", "10th": "10", "11th": "11",
+      "12th": "12","13th": "13","14th": "14", "15th": "15", "16th": "16",
+      "17th": "17", "18th": "18", "19th": "19", "20th": "20", "21st": "21",
+      "22nd": "22", "23rd": "23", "24th": "24", "25th": "25", "26th": "26",
+      "27th": "27", "28th": "28", "29th": "29", "30th": "30", "31st": "31"
     };
     for (var key in numberSuffixes.keys) {
       if (theDate.contains(key)) {
         String? val = numberSuffixes[key];
         if (val != null) {
-          theDate.replaceFirst(key, val);
+          theDate = theDate.replaceFirst(key, val);
         }
       }
     }
 
     DateTime? dt;
     try {
-      dt = DateFormat('yyyy/MM/dd').parse(theDate);
-    } on FormatException {
+      // Current format "6 8 2022"
+      var splitDate = theDate.split(" ");
+      // DateTime expects year, month, day
+      dt = DateTime(int.parse(splitDate[2]), int.parse(splitDate[0]), int.parse(splitDate[1]));
+    } catch(e) {
+      print(e.toString());
       return null;
     }
     return dt;
