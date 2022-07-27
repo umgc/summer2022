@@ -40,24 +40,17 @@ jobs:
         run: flutter build ios --release --no-codesign
       #- name: Run Unit Tests
       #  run: flutter test
-      - name: Deploy iOS Beta to TestFlight via Fastlane
-        uses: maierj/fastlane-action@v1.4.0
-        with:
-          lane: closed_beta
-          subdirectory: ios
+      - name: Deploy to TestFlight
+        run: |
+          cd ./ios && bundle exec fastlane beta
         env:
-          APP_STORE_CONNECT_TEAM_ID: '${{ secrets.APP_STORE_CONNECT_TEAM_ID }}'
-          DEVELOPER_APP_ID: '${{ secrets.DEVELOPER_APP_ID }}'
-          DEVELOPER_APP_IDENTIFIER: '${{ secrets.DEVELOPER_APP_IDENTIFIER }}'
-          DEVELOPER_PORTAL_TEAM_ID: '${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'
-          FASTLANE_APPLE_ID: '${{ secrets.FASTLANE_APPLE_ID }}'
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: '${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}'
-          MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
-          GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
-          PROVISIONING_PROFILE_SPECIFIER: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}'
-          TEMP_KEYCHAIN_PASSWORD: '${{ secrets.TEMP_KEYCHAIN_PASSWORD }}'
-          TEMP_KEYCHAIN_USER: '${{ secrets.TEMP_KEYCHAIN_USER }}'
-          BUILD_NUMBER: '${{ github.run_number }}'
-          APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'
-          APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
-          APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'
+          TEAM_ID: ${{ secrets.TEAM_ID }}
+          ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_KEYCHAIN_NAME: ${{ secrets.MATCH_KEYCHAIN_NAME }}
+          MATCH_KEYCHAIN_PASSWORD: ${{ secrets.MATCH_KEYCHAIN_PASSWORD }}
+          DELIVER_ITMSTRANSPORTER_ADDITIONAL_UPLOAD_PARAMETERS: ${{ secrets.DELIVER_ITMSTRANSPORTER_ADDITIONAL_UPLOAD_PARAMETERS }}
