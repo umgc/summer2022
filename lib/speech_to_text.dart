@@ -30,6 +30,7 @@ class Speech {
   late MailWidgetState _mailWidgetState;
   late OtherMailWidgetState _otherMailWidgetState;
   late MainWidgetState _mainWidgetState;
+  bool links = false;
 
   void setCurrentPage(String page, [Object? obj]) {
     switch (page) {
@@ -209,26 +210,65 @@ class Speech {
             case 'details':
               _mailWidgetState.readMailPiece();
               break;
+            case 'center name':
             case 'sender name':
-              _mailWidgetState.reader!.readDigestSenderName();
+            case 'send her name':
+            case 'sonder name':
+              try {
+                _mailWidgetState.reader!.readDigestSenderName();
+              } catch (e) {
+                tts.speak('There is no sender name');
+              }
               break;
             case 'recipient name':
-              _mailWidgetState.reader!.readDigestRecipientName();
+              try {
+                _mailWidgetState.reader!.readDigestRecipientName();
+              } catch (e) {
+                tts.speak('There is no recipient name');
+              }
               break;
+            case 'center address':
             case 'sender address':
-              _mailWidgetState.reader!.readDigestSenderAddress();
+            case 'send her address':
+            case 'sonder address':
+              try {
+                _mailWidgetState.reader!.readDigestSenderAddress();
+              } catch (e) {
+                tts.speak('There is no sender address');
+              }
+
               break;
             case 'recipient address':
-              _mailWidgetState.reader!.readDigestRecipientAddress();
+              try {
+                _mailWidgetState.reader!.readDigestRecipientAddress();
+              } catch (e) {
+                tts.speak('There is no recipient address');
+              }
+
               break;
+            case 'center validated':
             case 'sender validated':
-              _mailWidgetState.reader!.readDigestSenderAddressValidated();
+            case 'send her validated':
+            case 'sonder validated':
+              try {
+                _mailWidgetState.reader!.readDigestSenderAddressValidated();
+              } catch (e) {
+                tts.speak('There is no sender validation');
+              }
               break;
             case 'recipient validated':
-              _mailWidgetState.reader!.readDigestRecipientAddressValidated();
+              try {
+                _mailWidgetState.reader!.readDigestRecipientAddressValidated();
+              } catch (e) {
+                tts.speak('There is no recipient validation');
+              }
               break;
             case 'logos':
-              _mailWidgetState.reader!.readDigestLogos();
+              try {
+                _mailWidgetState.reader!.readDigestLogos();
+              } catch (e) {
+                tts.speak('There are no logos');
+              }
               break;
             case 'help':
               tutorial.getDigestHelp();
@@ -238,8 +278,14 @@ class Speech {
               break;
             default:
               if (s.contains("hyperlink")) {
-                if (s == 'hyperlinks') {
+                if (s == 'hyperlinks' && links == false) {
                   _mailWidgetState.reader!.readDigestLinks();
+                  _mailWidgetState.showLinkDialog();
+                  links = true;
+                }
+                if (s == 'close hyperlinks' && links == true) {
+                  navKey.currentState!.pop();
+                  links = false;
                 } else {
                   try {
                     var position = s.split(" ")[0];
@@ -249,7 +295,7 @@ class Speech {
                             .openLink(_mailWidgetState.links[0].link);
                       } catch (e) {
                         tts.speak(
-                            'There is not a valid hyperlink in that position');
+                            'There is not a valid hyperlink in the first position');
                       }
                     }
                     if (position == 'second' || position == '2nd') {
@@ -258,7 +304,7 @@ class Speech {
                             .openLink(_mailWidgetState.links[1].link);
                       } catch (e) {
                         tts.speak(
-                            'There is not a valid hyperlink in that position');
+                            'There is not a valid hyperlink in the second position');
                       }
                     }
                     if (position == 'third' || position == '3rd') {
@@ -267,7 +313,7 @@ class Speech {
                             .openLink(_mailWidgetState.links[2].link);
                       } catch (e) {
                         tts.speak(
-                            'There is not a valid hyperlink in that position');
+                            'There is not a valid hyperlink in the third position');
                       }
                     }
                     if (position == 'fourth' || position == '4th') {
@@ -276,7 +322,7 @@ class Speech {
                             .openLink(_mailWidgetState.links[3].link);
                       } catch (e) {
                         tts.speak(
-                            'There is not a valid hyperlink in that position');
+                            'There is not a valid hyperlink in the fourth position');
                       }
                     }
                     if (position == 'fifth' || position == '5th') {
@@ -285,7 +331,7 @@ class Speech {
                             .openLink(_mailWidgetState.links[4].link);
                       } catch (e) {
                         tts.speak(
-                            'There is not a valid hyperlink in that position');
+                            'There is not a valid hyperlink in the fifth position');
                       }
                     }
                   } catch (e) {
@@ -318,7 +364,9 @@ class Speech {
             case 'text':
               _otherMailWidgetState.reader!.readEmailText();
               break;
+            case 'center':
             case 'sender':
+            case 'send her':
             case 'sonder':
               _otherMailWidgetState.reader!.readEmailSender();
               break;
@@ -369,12 +417,6 @@ class Speech {
               break;
             case 'sign out':
               navKey.currentState!.pushNamed('/sign_in');
-              break;
-            case 'switch email':
-              _mainWidgetState.setMailType("Email");
-              break;
-            case 'switch Digest':
-              _mainWidgetState.setMailType("Digest");
               break;
             case 'tutorial off':
               cfg.updateValue("tutorial", false);
@@ -534,9 +576,11 @@ class Speech {
           tts.stop();
           break;
         case 'speakers off':
+          tts.stop();
           tts.setVolume(0);
           break;
         case 'speakers on':
+          tts.stop();
           tts.setVolume(1);
           break;
         default: // Invalid command
