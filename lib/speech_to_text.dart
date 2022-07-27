@@ -65,8 +65,11 @@ class Speech {
 
   Future<List<Digest>> getEmail(bool unread) async {
     setAccountInfo();
-    List<Digest> digest = await OtherMailParser()
-        .createEmailList(unread, username, password, DateTime.now());
+    List<Digest> digest = await OtherMailParser().createEmailList(
+        unread,
+        await Keychain().getUsername(),
+        await Keychain().getPassword(),
+        DateTime.now());
     if (digest.isEmpty) {
       // If don't have one for today, try yesterday
       DateTime date = DateTime.now().subtract(const Duration(days: 1));
@@ -298,12 +301,12 @@ class Speech {
             // mail page commands
             case 'next':
               _otherMailWidgetState.setState(() {
-                _mailWidgetState.seekForward(1);
+                _otherMailWidgetState.seekForward();
               });
               break;
             case 'previous':
               _otherMailWidgetState.setState(() {
-                _mailWidgetState.seekBack();
+                _otherMailWidgetState.seekBack();
               });
               break;
             case 'details':
@@ -316,6 +319,7 @@ class Speech {
               _otherMailWidgetState.reader!.readEmailText();
               break;
             case 'sender':
+            case 'sonder':
               _otherMailWidgetState.reader!.readEmailSender();
               break;
             case 'recipients':
@@ -441,11 +445,13 @@ class Speech {
             case 'center on':
             case 'sender on':
             case 'send her on':
+            case 'sonder on':
               cfg.updateValue("sender", true);
               break;
             case 'center off':
             case 'sender off':
             case 'send her off':
+            case 'sonder off':
               cfg.updateValue("sender", false);
               break;
             case 'recipient on':
