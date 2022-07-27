@@ -1,32 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-// ignore: unused_import
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:intl/intl.dart';
-import 'package:loader_overlay/loader_overlay.dart';
-import '../main.dart';
-import '../read_info.dart';
-import '../ui/main_menu.dart';
-import '../image_processing/usps_address_verification.dart';
+import 'package:summer2022/main.dart';
+import 'package:summer2022/read_info.dart';
+import 'package:summer2022/ui/main_menu.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import '../image_processing/google_cloud_vision_api.dart';
-import '../speech_to_text.dart';
-import '../models/MailResponse.dart';
-import '../image_processing/barcode_scanner.dart';
-import '../models/Arguments.dart';
-import '../models/Code.dart';
-import '../models/Digest.dart';
-import '../models/Logo.dart';
-import './bottom_app_bar.dart';
+import 'package:summer2022/models/MailResponse.dart';
+import 'package:summer2022/models/Digest.dart';
+import 'package:summer2022/ui/bottom_app_bar.dart';
 
 class MailWidget extends StatefulWidget {
   final Digest digest;
 
-  MailWidget({required this.digest});
+  const MailWidget({Key? key, required this.digest}) : super(key: key);
 
   @override
   State<MailWidget> createState() {

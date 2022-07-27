@@ -2,19 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
-import 'package:googleapis/cloudsearch/v1.dart';
 import 'package:intl/intl.dart';
 import 'package:summer2022/models/MailResponse.dart';
-import './image_processing/google_cloud_vision_api.dart';
-import './models/Digest.dart';
-import './models/Code.dart';
-import './models/Logo.dart';
+import 'package:summer2022/image_processing/google_cloud_vision_api.dart';
+import 'package:summer2022/models/Digest.dart';
+import 'package:summer2022/models/Code.dart';
+import 'package:summer2022/models/Logo.dart';
 import 'image_processing/barcode_scanner.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import './image_processing/usps_address_verification.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-// import './image_processing/imageProcessing.dart';
+import 'package:summer2022/image_processing/usps_address_verification.dart';
 
 class DigestEmailParser {
   String _userName = ''; // Add your credentials
@@ -28,9 +25,9 @@ class DigestEmailParser {
   Future<Digest> createDigest(String userName, String password,
       [DateTime? targetDate]) async {
     try {
-      this._userName = userName;
-      this._password = password;
-      this._targetDate = targetDate;
+      _userName = userName;
+      _password = password;
+      _targetDate = targetDate;
       Digest digest = Digest(await _getDigestEmail());
       if (!digest.isNull()) {
         digest.attachments = await _getAttachments(digest.message);
@@ -64,7 +61,7 @@ class DigestEmailParser {
               .replaceAll(
                   "\r\n", ""); //These are base64 encoded images with formatting
           await saveImageFile(base64Decode(attachment.attachmentNoFormatting),
-              "mailpiece" + x.toString() + ".jpg");
+              "mailpiece$x.jpg");
           attachment.detailedInformation = await processImage(filePath);
           list.add(attachment);
         }
@@ -218,7 +215,7 @@ class DigestEmailParser {
       List<LogoObject> logos = await vision.searchImageForLogo(a);
       var output = '';
       for (var logo in logos) {
-        output += logo.toJson().toString() + "\n";
+        output += "${logo.toJson()}\n";
       }
       // print(output);
       // print("Exit ProcessImageForLogo");
@@ -277,7 +274,7 @@ class DigestEmailParser {
         await directory.create(recursive: true);
       }
       if (await directory.exists()) {
-        File saveFile = File(directory.path + "/$fileName");
+        File saveFile = File("${directory.path}/$fileName");
         saveFile.writeAsBytesSync(imageBytes);
 
         filePath = saveFile.path;

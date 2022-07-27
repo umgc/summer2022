@@ -4,16 +4,13 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
 import 'package:summer2022/read_info.dart';
 import 'bottom_app_bar.dart';
-import './main_menu.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../models/Arguments.dart';
-import '../models/Digest.dart';
-import '../main.dart';
+import 'package:summer2022/models/Digest.dart';
+import 'package:summer2022/main.dart';
 
 class OtherMailWidget extends StatefulWidget {
   final List<Digest> emails;
 
-  const OtherMailWidget({required this.emails});
+  const OtherMailWidget({Key? key, required this.emails}) : super(key: key);
 
   @override
   State<OtherMailWidget> createState() {
@@ -45,7 +42,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     if (GlobalConfiguration().getValue("autoplay")) {
       while (true) {
         if (mounted) {
-          await Future.delayed(Duration(seconds: 10));
+          await Future.delayed(const Duration(seconds: 10));
           seekForward();
         }
       }
@@ -104,7 +101,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     final String formatted = formatter.format(parsedDate);
     String timeAgo = convertToAgo(parsedDate);
     return Scaffold(
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: const BottomBar(),
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -195,8 +192,8 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                   child: const Icon(Icons.skip_previous),
                 ),
                 Text(
-                  (emailsLen - (index)).toString() + '/' + emailsLen.toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  '${emailsLen - (index)}/$emailsLen',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 FloatingActionButton(
                   backgroundColor: Colors.grey,
