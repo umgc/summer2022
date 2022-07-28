@@ -43,28 +43,21 @@ class MainWidgetState extends State<MainWidget> {
   bool ranTutorial = false;
   CommandTutorial commandTutorial = CommandTutorial();
 
-  /*MainWidgetState() {
-    if (GlobalConfiguration().getValue("tutorial")) {
-      if (!ranTutorial) {
-        print("running tutorial");
-        var result = commandTutorial.runTutorial();
-        print("done tutorial");
-        ranTutorial = true;
-      }
-    }
-  }*/
-
   @override
   void initState() {
-    super.initState();
     stt.setCurrentPage("main", this);
-
-    if (GlobalConfiguration().getValue("tutorial")) {
-      if (!ranTutorial) {
-        commandTutorial.runTutorial();
-        ranTutorial = true;
+    print("main menu init state");
+    /*if (mounted) {
+      if (GlobalConfiguration().getValue("tutorial")) {
+        if (!ranTutorial) {
+          print("running tutorial");
+          //commandTutorial.runTutorial();
+          print("done tutorial");
+          ranTutorial = true;
+        }
       }
-    }
+    }*/
+    super.initState();
   }
 
   void setMailType(String type) {
@@ -105,7 +98,7 @@ class MainWidgetState extends State<MainWidget> {
           if (mailType == "Email") {
             context.loaderOverlay.show();
             await getEmails(false, DateTime.now());
-            if ((emails.isNotEmpty)) {
+            if (emails.isNotEmpty) {
               Navigator.pushNamed(context, '/other_mail',
                   arguments: EmailWidgetArguments(emails));
             } else {
@@ -469,7 +462,7 @@ class MainWidgetState extends State<MainWidget> {
     if ((picked != null) && (picked != selectedDate)) {
       context.loaderOverlay.show();
       await getEmails(false, picked);
-      if ((emails.isNotEmpty)) {
+      if (emails.isNotEmpty) {
         Navigator.pushNamed(context, '/other_mail',
             arguments: EmailWidgetArguments(emails));
       } else {

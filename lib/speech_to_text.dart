@@ -186,14 +186,14 @@ class Speech {
               try {
                 _mailWidgetState.reader!.readDigestSenderName();
               } catch (e) {
-                tts.speak('There is no sender name');
+                speak('There is no sender name');
               }
               break;
             case 'recipient name':
               try {
                 _mailWidgetState.reader!.readDigestRecipientName();
               } catch (e) {
-                tts.speak('There is no recipient name');
+                speak('There is no recipient name');
               }
               break;
             case 'center address':
@@ -203,7 +203,7 @@ class Speech {
               try {
                 _mailWidgetState.reader!.readDigestSenderAddress();
               } catch (e) {
-                tts.speak('There is no sender address');
+                speak('There is no sender address');
               }
 
               break;
@@ -211,7 +211,7 @@ class Speech {
               try {
                 _mailWidgetState.reader!.readDigestRecipientAddress();
               } catch (e) {
-                tts.speak('There is no recipient address');
+                speak('There is no recipient address');
               }
 
               break;
@@ -222,21 +222,21 @@ class Speech {
               try {
                 _mailWidgetState.reader!.readDigestSenderAddressValidated();
               } catch (e) {
-                tts.speak('There is no sender validation');
+                speak('There is no sender validation');
               }
               break;
             case 'recipient validated':
               try {
                 _mailWidgetState.reader!.readDigestRecipientAddressValidated();
               } catch (e) {
-                tts.speak('There is no recipient validation');
+                speak('There is no recipient validation');
               }
               break;
             case 'logos':
               try {
                 _mailWidgetState.reader!.readDigestLogos();
               } catch (e) {
-                tts.speak('There are no logos');
+                speak('There are no logos');
               }
               break;
             case 'help':
@@ -263,8 +263,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[0].link);
                       } catch (e) {
-                        tts.speak(
-                            'There is not a valid hyperlink in the first position');
+                        speak('There is not a valid hyperlink in the first position');
                       }
                     }
                     if (position == 'second' || position == '2nd') {
@@ -272,8 +271,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[1].link);
                       } catch (e) {
-                        tts.speak(
-                            'There is not a valid hyperlink in the second position');
+                        speak('There is not a valid hyperlink in the second position');
                       }
                     }
                     if (position == 'third' || position == '3rd') {
@@ -281,8 +279,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[2].link);
                       } catch (e) {
-                        tts.speak(
-                            'There is not a valid hyperlink in the third position');
+                        speak('There is not a valid hyperlink in the third position');
                       }
                     }
                     if (position == 'fourth' || position == '4th') {
@@ -290,8 +287,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[3].link);
                       } catch (e) {
-                        tts.speak(
-                            'There is not a valid hyperlink in the fourth position');
+                        speak('There is not a valid hyperlink in the fourth position');
                       }
                     }
                     if (position == 'fifth' || position == '5th') {
@@ -299,8 +295,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[4].link);
                       } catch (e) {
-                        tts.speak(
-                            'There is not a valid hyperlink in the fifth position');
+                        speak('There is not a valid hyperlink in the fifth position');
                       }
                     }
                   } catch (e) {
@@ -374,11 +369,10 @@ class Speech {
                   navKey.currentState!.pushNamed('/digest_mail',
                       arguments: MailWidgetArguments(digest));
                 } else {
-                  tts.speak('There are no digests available for today');
+                  speak('There are no digests available for today');
                 }
               } catch (e) {
-                tts.speak(
-                    'An error occurred while fetching your daily digest: $e');
+                speak('An error occurred while fetching your daily digest: $e');
               }
               break;
             case 'settings':
@@ -409,15 +403,13 @@ class Speech {
                       navKey.currentState!.pushNamed('/other_mail',
                           arguments: EmailWidgetArguments(emails));
                     } else {
-                      tts.speak(
-                          'There are no digest available for $requestedDate');
+                      speak('There are no digest available for $requestedDate');
                     }
                   } catch (e) {
-                    tts.speak(
-                        'An error occurred while fetching your emails: $e');
+                    speak('An error occurred while fetching your emails: $e');
                   }
                 } else {
-                  tts.speak(
+                  speak(
                       'The specified date is invalid. Please say the month, day of the month, and then the year.');
                 }
               }
@@ -435,15 +427,13 @@ class Speech {
                       navKey.currentState!.pushNamed('/digest_mail',
                           arguments: MailWidgetArguments(digest));
                     } else {
-                      tts.speak(
-                          'There are no digest available for $requestedDate');
+                      speak('There are no digest available for $requestedDate');
                     }
                   } catch (e) {
-                    tts.speak(
-                        'An error occurred while fetching your daily digest: $e');
+                    speak('An error occurred while fetching your daily digest: $e');
                   }
                 } else {
-                  tts.speak(
+                  speak(
                       'The specified date is invalid. Please say the month, day of the month, and then the year.');
                 }
               }

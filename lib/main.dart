@@ -27,10 +27,10 @@ Future speak(String text) async {
     int result = await tts.speak(text);
     print("result $result");
     setTtsState(TtsState.stopped);
-    while (ttsState == TtsState.playing){
-      print("playing");
-      sleep(const Duration(seconds: 1));
-    }
+    //while (ttsState == TtsState.playing){
+    //  print("playing");
+    //  sleep(const Duration(seconds: 1));
+    //}
   } catch(e) {
     print("TTS ERROR: ${e.toString()}");
   }
@@ -71,13 +71,6 @@ void main() async {
     await tts.setSpeechRate(.4);
     await tts.setVolume(1.0);
     await tts.setPitch(1.0);
-    tts.setStartHandler(() {
-      setTtsState(TtsState.playing);
-    });
-
-    tts.setCompletionHandler(() {
-      setTtsState(TtsState.stopped);
-    });
   }
 
   initTTS();

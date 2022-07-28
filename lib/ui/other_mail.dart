@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -35,29 +33,35 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     if(widget.emails.isNotEmpty) {
         reader = ReadMail();
         reader!.setCurrentMail(widget.emails[index].message);
-        
+           
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => otherMailAuto(context));
   }
 
   otherMailAuto(context) async {
     try {
-      await readMailPiece();
+        setTtsState(TtsState.playing);
+        readMailPiece();
+        //await Future.delayed(const Duration(seconds: 5));
     } catch(e) {
-      print("ERROR: Read mail piece in init: ${e.toString()}");
+        print("ERROR: Read mail piece in init: ${e.toString()}");
     }
+    autoplay();
+  }
+
+  Future<void> autoplay() async {
+    // Wait a few seconds before starting to check if speaking is done
+    await Future.delayed(const Duration(seconds: 3));
+    setTtsState(TtsState.playing);
     if (GlobalConfiguration().getValue("autoplay")) {
-      while (true) {
-        if (mounted) {
-          //await Future.delayed(Duration(seconds: 10));
-          while (ttsState == TtsState.playing){
-            print("waiting!");
-            sleep(const Duration(seconds: 1));
-          }
-          print("made it out of while loop");
-          await Future.delayed(Duration(seconds: 10));
-          seekForward();
+      if (mounted) {
+        while (ttsState == TtsState.playing){
+          print("waiting");
+          await Future.delayed(const Duration(seconds: 1));
         }
+        print("done waiting");
+        await Future.delayed(const Duration(seconds: 5));
+        seekForward();
       }
     }
   }
@@ -67,7 +71,6 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   }
 
   String removeLinks(Digest d) {
-    String bodyText = '';
     RegExp linkExp = RegExp(
         r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
     RegExp carotsExpn = RegExp(r"\<https.+?\>");
@@ -205,14 +208,15 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
                   child: const Icon(Icons.skip_previous),
                 ),
                 Text(
-                  (emailsLen - (index)).toString() + '/' + emailsLen.toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  '${emailsLen - (index)}/$emailsLen',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 FloatingActionButton(
                   backgroundColor: Colors.grey,
                   heroTag: "f2",
                   onPressed: () {
                     seekForward();
+                    //autoplay();
                   },
                   child: const Icon(Icons.skip_next),
                 ),
@@ -228,7 +232,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     );
   }
 
-  void seekBack() async{
+  void seekBack() {
     setState(() {
       if (index != widget.emails.length - 1) {
         index++;
@@ -238,13 +242,14 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
       
     });
     try {
-      await readMailPiece();
+      setTtsState(TtsState.playing);
+      readMailPiece();
     } catch(e) {
       print("ERROR: Seek back: ${e.toString()}");
     }
   }
 
-  void seekForward() async {
+  void seekForward() {
     if (mounted) {
       setState(() {
         if (index != 0) {
@@ -254,10 +259,12 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
         reader!.setCurrentMail(widget.emails[index].message);
       });
       try {
-        await readMailPiece();
+        setTtsState(TtsState.playing);
+        readMailPiece();
       } catch(e) {
         print("ERROR: Seek forward: ${e.toString()}");
       }
+      autoplay();
     }
   }
 

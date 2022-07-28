@@ -261,8 +261,6 @@ class ReadMail {
 }
 
 class CommandTutorial {
-  bool ranTutorial = false;
-
   String tutorial =
     '''
     Welcome to the USPS Visual Assistance App.
@@ -296,8 +294,7 @@ class CommandTutorial {
     '''
     When requesting digests or emails for a specific date, the date formatting is month, day, year.
     An example is June 10th 2022.
-    When listening to digests or emails, say next to go to the next item.
-    When listening to digests or emails, say previous to go to the previous item.
+    When listening to digests or emails, say next to go to the next item and previous to go to the previous item.
     While on the digest or email page, to get all of the details for the current email or digest, say details.
     On the digest page, you can ask for the specific details: sender name, recipient name, sender address, recipient address, sender validated, recipient validated, logos, and links.
     On the email page, you can ask for the specific email details: subject, text, sender, and recipients.
@@ -315,14 +312,9 @@ class CommandTutorial {
     To get the list of commands for the page that you are currently on, say help.
     ''';
 
-  Future<bool> runTutorial() async {
-    if (!ranTutorial) {
-      String readTutorial = '$tutorial $main $digest $email $digestAndEmail $general';
-      var result = await speak(readTutorial);
-      stop();
-      ranTutorial = true;
-    }
-    return true;
+  void runTutorial() async {
+    String readTutorial = '$tutorial $main $digest $email $digestAndEmail $general';
+    speak(readTutorial);
   }
 
   String mainHelp =
