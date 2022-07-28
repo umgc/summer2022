@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:summer2022/main.dart';
-import 'package:summer2022/read_info.dart';
+import 'package:summer2022/ui/main.dart';
+import 'package:summer2022/speech_commands/read_info.dart';
 import 'package:summer2022/ui/main_menu.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:summer2022/models/MailResponse.dart';

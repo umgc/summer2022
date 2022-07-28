@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:summer2022/Client.dart';
-import 'package:summer2022/Keychain.dart';
-import 'package:summer2022/speech_to_text.dart';
+import 'package:summer2022/utility/Client.dart';
+import 'package:summer2022/utility/Keychain.dart';
+import 'package:summer2022/speech_commands/speech_to_text.dart';
 import 'package:summer2022/ui/main_menu.dart';
 import 'package:summer2022/ui/sign_in.dart';
-import 'RouteGenerator.dart';
+import 'package:summer2022/utility/RouteGenerator.dart';
 import 'package:summer2022/ui/bottom_app_bar.dart';
 import 'dart:io' show Platform;
 

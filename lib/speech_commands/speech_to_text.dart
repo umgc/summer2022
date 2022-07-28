@@ -1,15 +1,15 @@
 import 'package:intl/intl.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:summer2022/Keychain.dart';
-import 'package:summer2022/digest_email_parser.dart';
+import 'package:summer2022/utility/Keychain.dart';
+import 'package:summer2022/email_processing/digest_email_parser.dart';
 import 'package:summer2022/models/Arguments.dart';
 import 'package:summer2022/models/Digest.dart';
 import 'package:summer2022/models/EmailArguments.dart';
-import 'package:summer2022/other_mail_parser.dart';
-import 'package:summer2022/read_info.dart';
+import 'package:summer2022/email_processing/other_mail_parser.dart';
+import 'package:summer2022/speech_commands/read_info.dart';
 import 'package:summer2022/ui/mail_widget.dart';
-import 'package:summer2022/main.dart';
+import 'package:summer2022/ui/main.dart';
 import 'package:summer2022/ui/other_mail.dart';
 import 'package:summer2022/ui/settings.dart';
 
