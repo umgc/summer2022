@@ -43,19 +43,28 @@ class MainWidgetState extends State<MainWidget> {
   bool ranTutorial = false;
   CommandTutorial commandTutorial = CommandTutorial();
 
-  MainWidgetState() {
+  /*MainWidgetState() {
     if (GlobalConfiguration().getValue("tutorial")) {
       if (!ranTutorial) {
-        //commandTutorial.runTutorial();
+        print("running tutorial");
+        var result = commandTutorial.runTutorial();
+        print("done tutorial");
         ranTutorial = true;
       }
     }
-  }
+  }*/
 
   @override
   void initState() {
     super.initState();
     stt.setCurrentPage("main", this);
+
+    if (GlobalConfiguration().getValue("tutorial")) {
+      if (!ranTutorial) {
+        commandTutorial.runTutorial();
+        ranTutorial = true;
+      }
+    }
   }
 
   void setMailType(String type) {

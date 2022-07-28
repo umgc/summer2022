@@ -21,9 +21,15 @@ TtsState ttsState = TtsState.stopped;
 
 Future speak(String text) async {
   try {
-  await tts.awaitSpeakCompletion(true);
-  bool result = await tts.speak(text);
-  print("result $result");
+    //ttsState = TtsState.playing;
+    await tts.awaitSpeakCompletion(true);
+    int result = await tts.speak(text);
+    print("result $result");
+    setTtsState(TtsState.stopped);
+    while (ttsState == TtsState.playing){
+      print("playing");
+      sleep(const Duration(seconds: 1));
+    }
   } catch(e) {
     print(e.toString());
   }
@@ -31,6 +37,11 @@ Future speak(String text) async {
 
 Future stop() async {
   await tts.stop();
+}
+
+setTtsState(TtsState state) {
+  print("set tts state $state");
+  ttsState = state;
 }
 
 void main() async {
@@ -54,22 +65,16 @@ void main() async {
     await tts.setSpeechRate(.4);
     await tts.setVolume(1.0);
     await tts.setPitch(1.0);
+    tts.setStartHandler(() {
+      setTtsState(TtsState.playing);
+    });
+
+    tts.setCompletionHandler(() {
+      setTtsState(TtsState.stopped);
+    });
   }
 
   initTTS();
-
-  setTtsState(TtsState state) {
-    print("set tts state $state");
-    ttsState = state;
-  }
-
-  tts.setStartHandler(() {
-    setTtsState(TtsState.playing);
-  });
-
-  tts.setCompletionHandler(() {
-    setTtsState(TtsState.stopped);
-  });
 
   stt.speechToText();
 

@@ -13,8 +13,8 @@ class SignInWidget extends StatefulWidget {
 }
 
 class SignInWidgetState extends State<SignInWidget> {
-  final email_controller = TextEditingController();
-  final password_controller = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -24,8 +24,8 @@ class SignInWidgetState extends State<SignInWidget> {
 
   @override
   void dispose() {
-    email_controller.dispose();
-    password_controller.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -84,7 +84,7 @@ class SignInWidgetState extends State<SignInWidget> {
                                 border: OutlineInputBorder(),
                                 labelText: 'E-Mail Address',
                               ),
-                              controller: email_controller,
+                              controller: emailController,
                             ),
                           ),
                         ),
@@ -102,7 +102,7 @@ class SignInWidgetState extends State<SignInWidget> {
                               obscureText: true,
                               enableSuggestions: false,
                               autocorrect: false,
-                              controller: password_controller,
+                              controller: passwordController,
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: 'Password',
@@ -124,9 +124,9 @@ class SignInWidgetState extends State<SignInWidget> {
                             child: OutlinedButton(
                               onPressed: () async {
                                 String email =
-                                    email_controller.text.toString();
+                                    emailController.text.toString();
                                 String password =
-                                    password_controller.text.toString();
+                                    passwordController.text.toString();
                                 //If email validated through enough mail then switch to the main screen, if not, add error text to the to show on the screen
                                 var loggedIn = await Client()
                                     .getImapClient(email, password);
