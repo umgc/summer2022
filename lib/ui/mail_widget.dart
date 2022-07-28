@@ -55,23 +55,36 @@ class MailWidgetState extends State<MailWidget> {
       reader = ReadDigestMail();
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
-      buildLinks();
+      buildLinks(); 
     }
-
     stt.setCurrentPage("mail", this);
     WidgetsBinding.instance.addPostFrameCallback((_) => digestAuto(context));
   }
 
   digestAuto(context) async {
+    try {
+        setTtsState(TtsState.playing);
+        readMailPiece();
+        //await Future.delayed(const Duration(seconds: 5));
+    } catch(e) {
+        print("ERROR: Read mail piece in init: ${e.toString()}");
+    }
+    autoplay();
+  }
+
+  Future<void> autoplay() async {
+    // Wait a few seconds before starting to check if speaking is done
+    await Future.delayed(const Duration(seconds: 3));
+    setTtsState(TtsState.playing);
     if (GlobalConfiguration().getValue("autoplay")) {
-      while (attachmentIndex < widget.digest.attachments.length - 1) {
-        if (mounted) {
-          await readMailPiece();
-          while (ttsState == TtsState.playing) {
-            sleep(const Duration(seconds:1));
-          }
-          await seekForward();
+      if (mounted) {
+        while (ttsState == TtsState.playing){
+          print("waiting");
+          await Future.delayed(const Duration(seconds: 1));
         }
+        print("done waiting");
+        await Future.delayed(const Duration(seconds: 5));
+        seekForward();
       }
     }
   }
@@ -200,7 +213,7 @@ class MailWidgetState extends State<MailWidget> {
     }
   }
 
-  Future<void> seekForward([int length = 0]) async{
+  void seekForward([int length = 0]) {
     if (attachmentIndex < (length != 0 ? length : widget.digest.attachments.length - 1)) {
       attachmentIndex = attachmentIndex + 1;
       print(widget.digest.attachments[attachmentIndex].detailedInformation
@@ -210,6 +223,13 @@ class MailWidgetState extends State<MailWidget> {
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
     }
+    try {
+      setTtsState(TtsState.playing);
+      readMailPiece();
+    } catch(e) {
+      print("ERROR: Seek forward: ${e.toString()}");
+    }
+    autoplay();
   }
 
   void showLinkDialog() {

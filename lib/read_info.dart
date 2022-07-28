@@ -39,35 +39,46 @@ class ReadDigestMail {
   }
 
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
-  Future<void> readDigestInfo() async {
+  Future<bool> readDigestInfo() async {
+    String senderString = '';
+    String recipientString = '';
+    String validatedSender = '';
+    String validatedRecipient = '';
+    String senderAddress = '';
+    String recipientAddress = '';
+    String logos = '';
     if (GlobalConfiguration().getValue("sender") && sender != null) {
-      readDigestSenderName();
+      senderString = getDigestSenderName();
     }
     if (GlobalConfiguration().getValue("recipient") && recipient != null) {
-      readDigestRecipientName();
+      recipientString = getDigestRecipientName();
     }
     if (GlobalConfiguration().getValue("validated")) {
       if(sender != null) {
-        readDigestSenderAddressValidated();
+        validatedSender = getDigestSenderAddressValidated();
       }
       if(recipient != null) {
-        readDigestRecipientAddressValidated();
+        validatedRecipient = getDigestRecipientAddressValidated();
       }
     }
     if (GlobalConfiguration().getValue("address")) {
       if(sender != null) {
-        readDigestSenderAddress();
+        senderAddress = getDigestSenderAddress();
       }
       if(recipient != null) {
-        readDigestRecipientAddress();
+        recipientAddress = getDigestRecipientAddress();
       }
     }
     if (GlobalConfiguration().getValue("logos")) {
-      readDigestLogos();
+      logos = getDigestLogos();
     }
+    String read = '$senderString $senderAddress $validatedSender $recipientString $recipientAddress $validatedRecipient $logos';
+    var result = await speak(read);
+    
     if (GlobalConfiguration().getValue("links")) {
       readDigestLinks();
     }
+    return true;  
   }
 
   String getDigestSenderName() {
@@ -136,24 +147,35 @@ class ReadDigestMail {
     }
   }
 
-  void readDigestSenderAddressValidated() async {
-    /* Get if the sender's address was validated */
+  String getDigestSenderAddressValidated() {
     String validated = "was not";
 
     if (sender!.validated) {
       validated = "was";
     }
     String text = "The sender's address $validated validated";
+    return text;
+  }
+  
+  void readDigestSenderAddressValidated() async {
+    /* Get if the sender's address was validated */
+   String text = getDigestSenderAddressValidated();
     var result = await speak(text);
   }
 
-  void readDigestRecipientAddressValidated() async {
-    /* Get if the recipient's address was validated */
+  String getDigestRecipientAddressValidated() {
     String validated = "was not";
+
     if (recipient!.validated) {
       validated = "was";
     }
     String text = "The recipient's address $validated validated";
+    return text;
+  }
+
+  void readDigestRecipientAddressValidated() async {
+    /* Get if the recipient's address was validated */
+    String text = getDigestRecipientAddressValidated();
     var result = await speak(text);
   }
 }

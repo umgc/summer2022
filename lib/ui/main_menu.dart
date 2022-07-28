@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:io';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
 import 'package:summer2022/image_processing/imageProcessing.dart';
 import 'package:flutter/material.dart';
@@ -43,9 +44,13 @@ class MainWidgetState extends State<MainWidget> {
 
   @override
   void initState() {
+    super.initState();
     stt.setCurrentPage("main", this);
-    print("main menu init state");
-    /*if (mounted) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => tutorial(context));
+  }
+
+  tutorial(context) async {
+    if (mounted) {
       if (GlobalConfiguration().getValue("tutorial")) {
         if (!ranTutorial) {
           print("running tutorial");
@@ -54,8 +59,7 @@ class MainWidgetState extends State<MainWidget> {
           ranTutorial = true;
         }
       }
-    }*/
-    super.initState();
+    }
   }
 
   void setMailType(String type) {
