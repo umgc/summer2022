@@ -1,7 +1,5 @@
-default_platform(:ios)
-
 platform :ios do
-  desc "Description of what the lane does"
+  desc "Push a new beta build to TestFlight"
   lane :beta do
     if is_ci
       create_keychain(
@@ -13,7 +11,17 @@ platform :ios do
         lock_when_sleeps: false
       )
     end
+    match(
+      type: "appstore",
+      readonly: is_ci,
+      keychain_name: ENV['MATCH_NAME'],
+      keychain_password: ENV["MATCH_PASSWORD"],
+    )
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "MyApp",
+      export_method: "app-store"
+    )
+    upload_to_testflight
   end
 end
-
-
