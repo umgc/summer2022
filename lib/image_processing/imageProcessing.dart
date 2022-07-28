@@ -13,10 +13,6 @@ import '../models/Logo.dart';
 import '../models/MailResponse.dart';
 import './usps_address_verification.dart';
 
-File? _image;
-Uint8List? _imageBytes;
-String? _imageName;
-DateTime? _targetDate;
 CloudVisionApi vision = CloudVisionApi();
 BarcodeScannerApi? _barcodeScannerApi;
 String filePath = '';
@@ -40,18 +36,17 @@ deleteImageFiles() async {
   for (int x = 0; x < files!.length; x++) {
     try {
       files[x].delete();
-      print("Delete files from Externd/applicationDownload Directory: " +
-          files[x].path);
+      print("Delete files from Externd/applicationDownload Directory: ${files[x].path}");
     } catch (e) {
-      print("File" + x.toString() + " does not exist");
+      print("File$x does not exist");
     }
   }
   for (int x = 0; x < files2.length; x++) {
     try {
       files[x].delete();
-      print("Delete files from temporary Directory: " + files2[x].path);
+      print("Delete files from temporary Directory: ${files2[x].path}");
     } catch (e) {
-      print("File" + x.toString() + " does not exist");
+      print("File$x does not exist");
     }
   }
 }
@@ -64,10 +59,8 @@ void processImageForLogo(String imagePath) async {
   List<LogoObject> logos = await vision.searchImageForLogo(a);
   var output = '';
   for (var logo in logos) {
-    output += logo.toJson().toString() + "\n";
+    output += "${logo.toJson()}\n";
   }
-  // print(output);
-  // print("Exit ProcessImageForLogo");
 }
 
 void processBarcode() async {
@@ -108,7 +101,7 @@ Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
       }
     }
     if (Platform.isIOS) {
-      if (imageBytes != null) {
+      if (imageBytes.isNotEmpty) {
         directory = await getApplicationDocumentsDirectory();
         imagePath = directory.path;
         // print(directory.path);
@@ -118,7 +111,7 @@ Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
       await directory.create(recursive: true);
     }
     if (await directory.exists()) {
-      File saveFile = File(directory.path + "/$fileName");
+      File saveFile = File("${directory.path}/$fileName");
       saveFile.writeAsBytesSync(imageBytes);
 
       filePath = saveFile.path;
@@ -146,10 +139,9 @@ Future<bool> _requestPermission(Permission permission) async {
 
 Future<MailResponse> processImage(String imagePath) async {
   CloudVisionApi vision = CloudVisionApi();
-  print("processImage: " + imagePath);
+  print("processImage: $imagePath");
   var image = File(imagePath);
-  var imageByte;
-  imageByte = image.readAsBytesSync();
+  var imageByte = image.readAsBytesSync();
 
   var a = base64.encode(imageByte);
   print(a);

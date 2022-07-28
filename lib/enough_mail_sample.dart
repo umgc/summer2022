@@ -3,7 +3,6 @@ import './EmailContent.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import './enough_mail.dart';
-import 'package:intl/date_time_patterns.dart';
 
 void main() {
   runApp(const EnoughMail());
@@ -70,40 +69,39 @@ class _EnoughMailPageState extends State<EnoughMailPage> {
   void addEmails(List<ListTile> emails) {}
   void resetEmailWidget() {}
   _test(int index) {
-    print('Test Click: ' + index.toString());
+    print('Test Click: $index');
   }
 
   _selectDate(BuildContext context) async {
     final DateTime? selected = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: currentDate.subtract(Duration(days: 7)),
+      firstDate: currentDate.subtract(const Duration(days: 7)),
       lastDate: currentDate,
     );
-    if (selected != null && selected != selectedDate)
+    if (selected != null && selected != selectedDate) {
       setState(() {
         selectedDate = selected;
       });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var menu = Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _imapTest,
-                  child: Text("Fetch Email using IMAP"),
-                ),
+    var menu = Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _imapTest,
+                child: const Text("Fetch Email using IMAP"),
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
     var emails2 = Expanded(
       child: ListView.builder(
@@ -112,7 +110,7 @@ class _EnoughMailPageState extends State<EnoughMailPage> {
           itemBuilder: (BuildContext context, int index) {
             return Container(
               height: 50,
-              margin: EdgeInsets.all(5),
+              margin: const EdgeInsets.all(5),
 
               // child: Container(
               child: ElevatedButton(
@@ -129,10 +127,10 @@ class _EnoughMailPageState extends State<EnoughMailPage> {
                     );
                   },
                   child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           color: Color.fromARGB(255, 24, 162, 226)),
                       width: double.infinity,
-                      child: Text('${emailsList[index]}'))),
+                      child: Text(emailsList[index]))),
               // ),
             );
           }),
@@ -144,19 +142,17 @@ class _EnoughMailPageState extends State<EnoughMailPage> {
       ),
       body: Column(
         children: [
-          Container(
-            child: Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _selectDate(context);
-                  },
-                  child: Text("Choose Date"),
-                ),
-                Text(
-                    "${selectedDate.month}/${selectedDate.day}/${selectedDate.year}")
-              ],
-            ),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  _selectDate(context);
+                },
+                child: const Text("Choose Date"),
+              ),
+              Text(
+                  "${selectedDate.month}/${selectedDate.day}/${selectedDate.year}")
+            ],
           ),
           menu,
           emails2,

@@ -11,7 +11,7 @@ import 'package:summer2022/ui/main_menu.dart';
 import 'package:summer2022/ui/sign_in.dart';
 import 'RouteGenerator.dart';
 import 'package:summer2022/ui/bottom_app_bar.dart';
-import 'dart:io' show Platform, sleep;
+import 'dart:io' show Platform;
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 final Speech stt = Speech();
@@ -22,7 +22,7 @@ TtsState ttsState = TtsState.stopped;
 Future speak(String text) async {
   print(text);
   try {
-    //ttsState = TtsState.playing;
+    setTtsState(TtsState.playing);
     await tts.awaitSpeakCompletion(true);
     int result = await tts.speak(text);
     print("result $result");

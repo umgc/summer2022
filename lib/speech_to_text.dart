@@ -9,7 +9,6 @@ import 'package:summer2022/models/EmailArguments.dart';
 import 'package:summer2022/other_mail_parser.dart';
 import 'package:summer2022/read_info.dart';
 import 'package:summer2022/ui/mail_widget.dart';
-import 'package:summer2022/ui/main_menu.dart';
 import 'package:summer2022/main.dart';
 import 'package:summer2022/ui/other_mail.dart';
 import 'package:summer2022/ui/settings.dart';

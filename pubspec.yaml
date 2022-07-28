@@ -61,7 +61,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  json_serializable: ^6.2.0
   build_runner: ^2.1.11
 
   # The "flutter_lints" package below contains a set of recommended lints to

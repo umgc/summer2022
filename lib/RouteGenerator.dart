@@ -14,7 +14,7 @@ class RouteGenerator {
     print('setting.name:  ${settings.name}');
     switch (settings.name) {
       case '/main':
-        return MaterialPageRoute(builder: (_) => MainWidget());
+        return MaterialPageRoute(builder: (_) => const MainWidget());
       case '/settings':
         return MaterialPageRoute(builder: (_) => const SettingsWidget());
       case '/digest_mail':

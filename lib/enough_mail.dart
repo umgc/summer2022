@@ -13,14 +13,6 @@ String smtpServerHost = 'smtp.google.com';
 int smtpServerPort = 465;
 bool isSmtpServerSecure = true;
 
-// void main() async {
-//   await discoverExample();
-//   await imapExample();
-//   //await smtpExample();
-//   //await popExample();
-//   exit(0);
-// }
-
 Future<void> discoverExample() async {
   var email = 'razielxp4@yahoo.com';
   var config = await Discover.discover(email, isLogEnabled: false);

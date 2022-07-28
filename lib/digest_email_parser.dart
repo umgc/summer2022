@@ -7,7 +7,6 @@ import 'package:summer2022/models/MailResponse.dart';
 import 'package:summer2022/image_processing/google_cloud_vision_api.dart';
 import 'package:summer2022/models/Digest.dart';
 import 'package:summer2022/models/Code.dart';
-import 'package:summer2022/models/Logo.dart';
 import 'image_processing/barcode_scanner.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -161,14 +160,6 @@ class DigestEmailParser {
     }
   }
 
-  String _formatDateTime(DateTime? date) {
-    if (date != null) {
-      return "${date.year}-${date.month}-${date.day}";
-    } else {
-      return "";
-    }
-  }
-
   deleteImageFiles() async {
     Directory? directory;
 
@@ -206,44 +197,6 @@ class DigestEmailParser {
     }
   }
 
-  void _processImageForLogo(String imagePath) async {
-    try {
-      // print("Inside processImageForLogo\n");
-      var image = File(imagePath);
-      var buffer = image.readAsBytesSync();
-      var a = base64.encode(buffer);
-      List<LogoObject> logos = await vision.searchImageForLogo(a);
-      var output = '';
-      for (var logo in logos) {
-        output += "${logo.toJson()}\n";
-      }
-      // print(output);
-      // print("Exit ProcessImageForLogo");
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  void _processBarcode() async {
-    try {
-      print("Inside process barcode\n");
-      _barcodeScannerApi = BarcodeScannerApi();
-      // var fLoc = filePath;
-      // print(fLoc);
-      File? img = await _barcodeScannerApi?.getImageFileFromAssets(filePath);
-      _barcodeScannerApi!.setImageFromFile(img!);
-      List<CodeObject> codes = await _barcodeScannerApi!.processImage();
-      var output = '';
-      for (var code in codes) {
-        output += code.toJson().toString();
-      }
-      // print(output);
-      // print("Exit ProcessBarcode");
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<bool> saveImageFile(Uint8List imageBytes, String fileName) async {
     Directory? directory;
     try {
@@ -264,7 +217,7 @@ class DigestEmailParser {
         }
       }
       if (Platform.isIOS) {
-        if (imageBytes != null) {
+        if (imageBytes.isNotEmpty) {
           directory = await getApplicationDocumentsDirectory();
           imagePath = directory.path;
           print(directory.path);

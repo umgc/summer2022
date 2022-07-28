@@ -5,9 +5,6 @@ import 'models/Digest.dart';
 class OtherMailParser {
   String _userName = ''; // Add your credentials
   String _password = ''; // Add your credentials
-  String _imapServerHost = 'imap.gmail.com';
-  int _imapServerPort = 993;
-  bool _isImapServerSecure = true;
   DateTime? _targetDate;
   bool _isUnread = false;
   final int maxUnreadEmails = 30;
@@ -101,14 +98,6 @@ class OtherMailParser {
       if (client.isLoggedIn) {
         await client.logout();
       }
-    }
-  }
-
-  String _formatDateTime(DateTime? date) {
-    if (date != null) {
-      return "${date.year}-${date.month}-${date.day}";
-    } else {
-      return "";
     }
   }
 }

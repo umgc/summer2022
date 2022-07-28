@@ -6,14 +6,10 @@ import 'package:enough_mail/enough_mail.dart';
 import 'package:intl/intl.dart';
 
 class EmailContent extends StatefulWidget {
-  //final CallbackHandle? selectorHandler;
 
-  //late MimeMessage mineMessage;
   final int index;
   final List<MimeMessage> emails;
 
-  //EmailContent(this.mineMessage, this.selectorHandler);
-  // EmailContent();
   const EmailContent(this.emails, {Key? key, this.index = 0}) : super(key: key);
 
   @override
@@ -29,11 +25,7 @@ class _EmailContentState extends State<EmailContent> {
     super.initState();
     print("Attachment?  ${widget.emails[widget.index]
             .hasAttachmentsOrInlineNonTextualParts()}");
-    // var content = widget.emails[widget.index]
-    //     .findContentInfo(disposition: ContentDisposition.attachment);
-    // print("Content: " + content.length.toString());
-    // print(widget.emails[widget.index].toString());
-    // for (var attachment in widget.emails[widget.index].allPartsFlat)
+
     var s = widget.emails[widget.index].parts;
     if (s != null) {
       for (MimePart d in s) {
@@ -41,23 +33,12 @@ class _EmailContentState extends State<EmailContent> {
           _image = d.decodeContentBinary();
           if (_image != null) {
             imageList.add(_image!);
-            // var imgFile = storeImageToTempDirectory();
-            // print('The File Directory: ${imgFile.toString()}');
           }
         }
       }
     }
     setState(() {});
   }
-
-  // storeImageToTempDirectory() async {
-  //   final directory = await getTemporaryDirectory();
-  //   const fileName = "mailpiece.jpg";
-  //   imgFile = File("${directory.path}/${fileName}");
-  //   imgFile!.writeAsBytes(_image!);
-  //   print("${directory.path}/${fileName}");
-  //   return imgFile;
-  // }
 
   @override
   Widget build(BuildContext context) {

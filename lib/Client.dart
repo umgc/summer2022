@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:enough_mail/enough_mail.dart';
 
 class Client {

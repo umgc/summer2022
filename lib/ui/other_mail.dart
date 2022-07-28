@@ -117,7 +117,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     final String formatted = formatter.format(parsedDate);
     String timeAgo = convertToAgo(parsedDate);
     return Scaffold(
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: const BottomBar(),
       appBar: AppBar(
         centerTitle: true,
         title: Text(
