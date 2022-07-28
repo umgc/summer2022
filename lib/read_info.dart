@@ -70,36 +70,61 @@ class ReadDigestMail {
     }
   }
 
+  String getDigestSenderName() {
+    return "The sender is '${sender!.name}'";
+  }
+
   void readDigestSenderName() async {
     /* Get the name of the sender */
-    String text = "The sender is '${sender!.name}'";
+    String text = getDigestSenderName();
     var result = await speak(text);
+  }
+
+  String getDigestRecipientName() {
+    return "The recipient is '${recipient!.name}'";
   }
 
   void readDigestRecipientName() async {
     /* Get the name of the recipient */
-    String text = "The recipient is '${recipient!.name}'";
+    String text = getDigestRecipientName();
     var result = await speak(text);
+  }
+
+  String getDigestSenderAddress() {
+    return "The sender's address is '${sender!.address}'";
   }
 
   void readDigestSenderAddress() async {
     /* Get the sender's address */
-    String text = "The sender's address is '${sender!.address}'";
+    String text = getDigestSenderAddress();
     var result = await speak(text);
+  }
+
+  String getDigestRecipientAddress() {
+    return "The recipient's address is '${recipient!.address}'";
   }
 
   void readDigestRecipientAddress() async {
     /* Get the recipient's address */
-    String text = "The recipient's address is '${recipient!.address}'";
+    String text = getDigestRecipientAddress();
     var result = await speak(text);
+  }
+
+  String getDigestLogos() {
+    String text = "The logos are";
+    if (currentMail.logos.isEmpty) {
+      return "There are no logos.";
+    }
+    for (LogoObject logo in currentMail.logos) {
+      text = "$text ${logo.name}";
+    }
+    return text;
   }
 
   void readDigestLogos() async {
     /* Get the logos */
-    for (LogoObject logo in currentMail.logos) {
-      String text = "The logo says '${logo.name}'";
+      String text = getDigestLogos();
       var result = await speak(text);
-    }
   }
 
   void readDigestLinks() async {
@@ -145,52 +170,70 @@ class ReadMail {
 
   // Use this function if you want to read all the details. If you want a specific detail, use the other functions
   Future<bool> readEmailInfo() async {
+    String subject = '';
+    String text = '';
+    String sender = '';
+    String recipient = '';
     if (GlobalConfiguration().getValue("email_subject")) {
-      readEmailSubject();
+      subject = getEmailSubject();
     }
     if (GlobalConfiguration().getValue("email_text")) {
-      readEmailText();
+      text = getEmailText();
     }
     if (GlobalConfiguration().getValue("email_sender")) {
-      readEmailSender();
+      sender = getEmailSender();
     }
     if (GlobalConfiguration().getValue("email_recipients")) {
-      readEmailRecipients();
+      recipient = getEmailRecipients();
     }
+    String read = '$subject $text $sender $recipient';
+    var result = await speak(read);
     return true;
   }
 
-  void readEmailSubject() async {
+  String getEmailSubject() {
     var subject = currentMail.decodeSubject();
-    String text = "The email subject is $subject";
     if (subject != null) {
-      var result = await speak(text);
-    } else {
-      var result = await speak("There is no email subject.");
+      return "The email subject is $subject";
+    } else{
+      return "There is no email subject.";
+    }
+  }
+
+  void readEmailSubject() async {
+    var text = getEmailSubject();
+    var result = await speak(text);
+  }
+
+  String getEmailText() {
+    var emailText = currentMail.body;
+    if (emailText != null) {
+      return "The email text is $emailText";
+    } else{
+      return "There is no email text.";
     }
   }
 
   void readEmailText() async {
-    var emailText = currentMail.body;
-    String text = "The email text is $emailText";
-    if (emailText != null) {
-      var result = await speak(text);
-    } else {
-      var result = await speak("There is no email text.");
+    String text = getEmailText();
+    var result = await speak(text);
+  }
+
+  String getEmailSender() {
+    var sender = currentMail.decodeSender();
+    if (sender.isNotEmpty) {
+      return "The email sender is $sender";
+    } else{
+      return "There is no email sender.";
     }
   }
 
   void readEmailSender() async {
-    var sender = currentMail.decodeSender();
-    String text = "The email sender is $sender";
-    if (sender.isNotEmpty) {
-      var result = await speak(text);
-    } else {
-      var result = await speak("There is no email sender.");
-    }
+    String text = getEmailSender();
+    var result = await speak(text);
   }
 
-  Future<void> readEmailRecipients() async {
+  String getEmailRecipients() {
     List<String?> recipients = [];
     for (MailAddress recipient in currentMail.recipients) {
       if (recipient.hasPersonalName) {
@@ -205,11 +248,15 @@ class ReadMail {
     recipients.join(', ');
     if (recipients.isNotEmpty) {
       String? recipientsString = recipients[0];
-      String text = "The email recipients are $recipientsString";
-      var result = await speak(text);
+      return "The email recipients are $recipientsString";
     } else {
-      var result = await speak("There are no email recipients.");
+      return "There are no email recipients.";
     }
+  }
+
+  Future<void> readEmailRecipients() async {
+    String text = getEmailRecipients();
+    var result = await speak(text);
   }
 }
 

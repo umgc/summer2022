@@ -20,6 +20,7 @@ enum TtsState { playing, stopped, paused, continued }
 TtsState ttsState = TtsState.stopped;
 
 Future speak(String text) async {
+  print(text);
   try {
     //ttsState = TtsState.playing;
     await tts.awaitSpeakCompletion(true);
@@ -31,12 +32,17 @@ Future speak(String text) async {
       sleep(const Duration(seconds: 1));
     }
   } catch(e) {
-    print(e.toString());
+    print("TTS ERROR: ${e.toString()}");
   }
 }
 
 Future stop() async {
-  await tts.stop();
+  try {
+    await tts.stop();
+    setTtsState(TtsState.stopped);
+  } catch(e) {
+    print("TTS STOP ERROR: ${e.toString()}");
+  }
 }
 
 setTtsState(TtsState state) {
