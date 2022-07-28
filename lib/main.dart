@@ -23,6 +23,7 @@ void main() async {
       .ensureInitialized(); // needed to access Keychain prior to main finishing
   GlobalConfiguration cfg = GlobalConfiguration();
   await cfg.loadFromAsset("app_settings");
+  cfg.addValue('muteMic', false);
   var emailAuthenticated = false; // default false go to signin page
   String? username = await Keychain().getUsername();
   String? password = await Keychain().getPassword();
@@ -44,9 +45,16 @@ void main() async {
 }
 
 Widget buildScreen(bool emailAuthenticated) {
+  // String path = 'test';
+  // if (emailAuthenticated) {
+  //   path = 'main';
+  // } else {
+  //   path = 'signin';
+  // }
+
   return Scaffold(
     body:
         emailAuthenticated == true ? const MainWidget() : const SignInWidget(),
-    bottomNavigationBar: const BottomBar(),
+    bottomNavigationBar: BottomBar(emailAuthenticated ? 'main' : 'signin'),
   );
 }

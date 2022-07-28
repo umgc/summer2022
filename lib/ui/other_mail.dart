@@ -33,10 +33,10 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     super.initState();
     index = widget.emails.length - 1;
     stt.setCurrentPage("email", this);
-    if(widget.emails.isNotEmpty) {
-        reader = ReadMail();
-        reader!.setCurrentMail(widget.emails[index].message);
-        readMailPiece();
+    if (widget.emails.isNotEmpty) {
+      reader = ReadMail();
+      reader!.setCurrentMail(widget.emails[index].message);
+      readMailPiece();
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => otherMailAuto(context));
   }
@@ -104,7 +104,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     final String formatted = formatter.format(parsedDate);
     String timeAgo = convertToAgo(parsedDate);
     return Scaffold(
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: BottomBar('othermail'),
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -243,13 +243,12 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   }
 
   void readMailPiece() async {
-    try{
-      if(reader != null) {
+    try {
+      if (reader != null) {
         await reader!.readEmailInfo();
       }
     } catch (e) {
       print(e.toString());
     }
-
   }
 }

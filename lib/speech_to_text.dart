@@ -184,11 +184,12 @@ class Speech {
   command(String s) async {
     //General commands
     if (s == 'unmute') {
-      mute = false;
+      cfg.updateValue('muteMic', false);
+      // mute = false;
       return;
     }
 
-    if (mute == false) {
+    if (cfg.getValue('muteMic') == false) {
       switch (currentPage) {
         case 'mail':
           switch (s.toLowerCase()) {
@@ -522,7 +523,7 @@ class Speech {
       // General commands
       switch (s) {
         case 'mute':
-          mute = true;
+          cfg.updateValue('mic', true);
           break;
         case 'stop':
           tts.stop();

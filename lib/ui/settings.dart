@@ -26,7 +26,7 @@ class SettingWidgetState extends State<SettingsWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomBar(),
+      bottomNavigationBar: BottomBar('settings'),
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Settings"),

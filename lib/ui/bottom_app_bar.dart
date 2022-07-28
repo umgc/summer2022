@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:global_configuration/global_configuration.dart';
+
+import '../read_info.dart';
+import '../speech_to_text.dart';
 
 class BottomBar extends StatefulWidget {
-  const BottomBar({Key? key}) : super(key: key);
+  final String path;
+  BottomBar(this.path, {Key? key}) : super(key: key);
+  // const BottomBar({Key? key}) : super(key: key);
 
   @override
   BottomBarState createState() => BottomBarState();
@@ -11,9 +17,12 @@ class BottomBarState extends State<BottomBar> {
   bool micOn = true;
   bool speakerOn = true;
   double commonIconSize = 65;
+  String path = '';
+  GlobalConfiguration cfg = GlobalConfiguration();
 
   @override
   Widget build(BuildContext context) {
+    print(context.widget);
     return BottomAppBar(
       child: Padding(
         // MODE Dialog Box
@@ -31,6 +40,11 @@ class BottomBarState extends State<BottomBar> {
                 setState(
                   () {
                     speakerOn = !speakerOn;
+                    if (speakerOn) {
+                      tts.setVolume(1.0);
+                    } else {
+                      tts.setVolume(0.0);
+                    }
                   },
                 );
               },
@@ -38,13 +52,15 @@ class BottomBarState extends State<BottomBar> {
             const Spacer(),
             IconButton(
               icon: Icon(
-                (micOn == true) ? Icons.mic_none : Icons.mic_off,
+                (cfg.getValue('muteMic')) ? Icons.mic_off : Icons.mic_none,
                 size: commonIconSize,
               ),
               onPressed: () {
                 setState(
                   () {
-                    micOn = !micOn;
+                    bool mic = cfg.getValue('muteMic');
+                    cfg.updateValue('muteMic', !mic);
+                    print(cfg.getValue('muteMic'));
                   },
                 );
               },
@@ -53,7 +69,8 @@ class BottomBarState extends State<BottomBar> {
             IconButton(
                 icon: Icon(Icons.help_outline, size: commonIconSize),
                 onPressed: () {
-                  print("Say commands out loud");
+                  print(widget.toString());
+                  CommandTutorial().help((context.widget as BottomBar).path);
                 }),
           ],
         ),

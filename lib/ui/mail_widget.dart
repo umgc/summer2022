@@ -102,7 +102,7 @@ class MailWidgetState extends State<MailWidget> {
     // Figma Flutter Generator MailWidget - FRAME
 
     return Scaffold(
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: BottomBar('digest'),
       appBar: AppBar(
         centerTitle: true,
         title: Text("Digest"),
@@ -138,38 +138,48 @@ class MailWidgetState extends State<MailWidget> {
                 Expanded(
                   child: Center(
                       child: Container(
-                        //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
+                          //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
                           child: widget.digest.attachments.isNotEmpty
                               ? Image.memory(base64Decode(widget
-                              .digest
-                              .attachments[attachmentIndex]
-                              .attachmentNoFormatting))
+                                  .digest
+                                  .attachments[attachmentIndex]
+                                  .attachmentNoFormatting))
                               : Image.asset('assets/NoAttachments.png'))),
                 ),
               ],
             ),
-            Padding( // MODE Dialog Box
-              padding: EdgeInsets.only(top:0, left: 30, right: 30),
-              child: Row( // LATEST and UNREAD Buttons
+            Padding(
+              // MODE Dialog Box
+              padding: EdgeInsets.only(top: 0, left: 30, right: 30),
+              child: Row(
+                  // LATEST and UNREAD Buttons
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SizedBox(height: commonButtonHeight, // LATEST Button
+                    SizedBox(
+                      height: commonButtonHeight, // LATEST Button
                       child: OutlinedButton(
-                        onPressed: () { showLinkDialog(); },
-                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
+                        onPressed: () {
+                          showLinkDialog();
+                        },
+                        style: commonButtonStyleElevated(
+                            Colors.white, Colors.grey),
                         child: const Text("Links",
                             style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                    SizedBox(height: commonButtonHeight, // UNREAD Button
+                    SizedBox(
+                      height: commonButtonHeight, // UNREAD Button
                       child: OutlinedButton(
-                        onPressed: () { readMailPiece(); },
-                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
-                        child: const Text("All Details", style: TextStyle(color: Colors.black)),
+                        onPressed: () {
+                          readMailPiece();
+                        },
+                        style: commonButtonStyleElevated(
+                            Colors.white, Colors.grey),
+                        child: const Text("All Details",
+                            style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                  ]
-              ),
+                  ]),
             ),
             Container(
               padding: const EdgeInsets.only(bottom: 60),
@@ -180,17 +190,22 @@ class MailWidgetState extends State<MailWidget> {
                       backgroundColor: Colors.grey,
                       heroTag: "f1",
                       onPressed: () {
-                        setState(() { seekBack(); });
+                        setState(() {
+                          seekBack();
+                        });
                       },
                       child: Icon(Icons.skip_previous),
                     ),
                     Text(widget.digest.attachments.isNotEmpty
-                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
+                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}"
+                        : "0/0"),
                     FloatingActionButton(
                       backgroundColor: Colors.grey,
                       heroTag: "f2",
                       onPressed: () {
-                        setState(() { seekForward(); });
+                        setState(() {
+                          seekForward();
+                        });
                       },
                       child: Icon(Icons.skip_next),
                     ),
@@ -216,7 +231,8 @@ class MailWidgetState extends State<MailWidget> {
   }
 
   void seekForward([int length = 0]) {
-    if (attachmentIndex < (length != 0 ? length : widget.digest.attachments.length - 1)) {
+    if (attachmentIndex <
+        (length != 0 ? length : widget.digest.attachments.length - 1)) {
       attachmentIndex = attachmentIndex + 1;
       print(widget.digest.attachments[attachmentIndex].detailedInformation
           .toJson());

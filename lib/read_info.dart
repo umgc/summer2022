@@ -21,7 +21,7 @@ Future _stop() async {
 }
 
 void initTTS() async {
-  if(Platform.isAndroid) {
+  if (Platform.isAndroid) {
     await tts.setQueueMode(1);
   }
   await tts.setLanguage("en-US");
@@ -38,7 +38,7 @@ class ReadDigestMail {
   AddressObject? sender;
   AddressObject? recipient;
   List<Link> links = <Link>[];
-  
+
   ReadDigestMail() {
     initTTS();
   }
@@ -56,10 +56,10 @@ class ReadDigestMail {
   void setSenderAndRecipient(List<AddressObject> addresses) {
     sender = null;
     recipient = null;
-    for(int x = 0; x < addresses.length; x++) {
-      if(addresses[x].type == "sender" && sender == null) {
+    for (int x = 0; x < addresses.length; x++) {
+      if (addresses[x].type == "sender" && sender == null) {
         sender = addresses[x];
-      } else if(addresses[x].type == "recipient" && recipient == null) {
+      } else if (addresses[x].type == "recipient" && recipient == null) {
         recipient = addresses[x];
       }
     }
@@ -83,22 +83,23 @@ class ReadDigestMail {
     if (GlobalConfiguration().getValue("sender") == true && sender != null) {
       readDigestSenderName();
     }
-    if (GlobalConfiguration().getValue("recipient") == true && recipient != null) {
+    if (GlobalConfiguration().getValue("recipient") == true &&
+        recipient != null) {
       readDigestRecipientName();
     }
     if (GlobalConfiguration().getValue("validated") == true) {
-      if(sender != null) {
+      if (sender != null) {
         readDigestSenderAddressValidated();
       }
-      if(recipient != null) {
+      if (recipient != null) {
         readDigestRecipientAddressValidated();
       }
     }
     if (GlobalConfiguration().getValue("address") == true) {
-      if(sender != null) {
+      if (sender != null) {
         readDigestSenderAddress();
       }
-      if(recipient != null) {
+      if (recipient != null) {
         readDigestRecipientAddress();
       }
     }
@@ -114,7 +115,6 @@ class ReadDigestMail {
     /* Get the name of the sender */
     String text = "The sender is '${sender!.name}'";
     _speak(text);
-
   }
 
   void readDigestRecipientName() {
@@ -147,7 +147,8 @@ class ReadDigestMail {
     /* Get the links */
     for (Link code in links) {
 //      String text = "There is a link that is a '${code.type}'. The link is '${code.info}'. Would you like to go to the link?";
-      String text = "TThe link is '${code.link}'. Would you like to go to the link?";
+      String text =
+          "TThe link is '${code.link}'. Would you like to go to the link?";
       _speak(text);
       // TODO.. needs to listen for response and then display link
     }
@@ -248,8 +249,10 @@ class ReadMail {
         recipients.add(recipient.mailboxName);
       }
     }
-    if (recipients.length > 1) { // Fix for grammar
-      recipients[recipients.length-1] = "and ${recipients[recipients.length-1]}";
+    if (recipients.length > 1) {
+      // Fix for grammar
+      recipients[recipients.length - 1] =
+          "and ${recipients[recipients.length - 1]}";
     }
     recipients.join(', ');
     if (recipients.isNotEmpty) {
@@ -269,37 +272,32 @@ class CommandTutorial {
     initTTS();
   }
 
-  String tutorial =
-    '''
+  String tutorial = '''
     Welcome to the USPS Visual Assistance App.
     To skip the voice command tutorial this time, say skip.
     To turn off the voice command tutorial so it does not play at startup, say off.
     Currently you are on the main page. You can navigate to the Digest page, Email page, and settings through a series of commands.
     ''';
 
-  String main =
-    '''
+  String main = '''
     To sign out of your account, say sign out.
     To navigate to the settings page, say settings.
     ''';
 
-  String digest =
-    '''
+  String digest = '''
     To navigate to the digest page, there are two voice command options.
     Option 1 is to get the latest digest, by saying latest digest.
     Option 2 is to get a digest for a specific date, by saying digest date followed by the date.
     ''';
 
-  String email =
-    '''
+  String email = '''
     To navigate to the email page, there are three voice command options.
     Option 1 is to get emails for a specific date, by saying email date followed by the date.
     Option 2 is to get the latest email, by saying latest email.
     Option 3 is to get emails you have not listened to yet, by saying unread email.
     ''';
 
-  String digestAndEmail =
-    '''
+  String digestAndEmail = '''
     When requesting digests or emails for a specific date, the date formatting is month, day, year.
     An example is June 10th 2022.
     When listening to digests or emails, say next to go to the next item.
@@ -310,8 +308,7 @@ class CommandTutorial {
     On the digest and recipients pages, say help to receive more details on these options.
     ''';
 
-  String general = 
-    '''
+  String general = '''
     At any time, to stop the current audio, say stop.
     To turn the speakers off, say speakers off.
     To turn the speakers on, say speakers on.
@@ -323,15 +320,32 @@ class CommandTutorial {
 
   void runTutorial() async {
     if (!ranTutorial) {
-      String readTutorial = '$tutorial $main $digest $email $digestAndEmail $general';
+      String readTutorial =
+          '$tutorial $main $digest $email $digestAndEmail $general';
       await _speak(readTutorial);
       await _stop();
       ranTutorial = true;
     }
   }
 
-  String mainHelp =
-    '''
+  void help(String path) async {
+    switch (path) {
+      case 'main':
+        getMainHelp();
+        break;
+      case 'digest':
+        getDigestHelp();
+        break;
+      case 'othermail':
+        getEmailHelp();
+        break;
+      case 'settings':
+        getSettingsHelp();
+        break;
+    }
+  }
+
+  String mainHelp = '''
     To sign out of your account, say sign out.
     To navigate to the settings page, say settings.
     To navigate to the digest page, there are two voice command options.
@@ -349,8 +363,7 @@ class CommandTutorial {
     To hear these commands again, say help.
     ''';
 
-  String emailHelp =
-    '''
+  String emailHelp = '''
     To go to the next email, say next.
     To go to the previous email, say previous.
     To get the details for the current email, say details.
@@ -367,8 +380,7 @@ class CommandTutorial {
     To hear these commands again, say help.
     ''';
 
-  String digestHelp =
-    '''
+  String digestHelp = '''
     To go to the next digest, say next.
     To go to the previous digest, say previous.
     To get the details for the current digest, say details.
@@ -389,8 +401,7 @@ class CommandTutorial {
     To hear these commands again, say help.
     ''';
 
-  String settingsHelp =
-    '''
+  String settingsHelp = '''
     The following commands allow you to customize the details that you are told by default for digests and emails.
     To turn on the sender default, say sender on.
     To turn off the sender default, say sender off.
@@ -421,19 +432,19 @@ class CommandTutorial {
     To hear these commands again, say help.
     ''';
 
-    void getMainHelp() {
-      _speak(mainHelp);
-    }
+  void getMainHelp() {
+    _speak(mainHelp);
+  }
 
-    void getEmailHelp() {
-      _speak(emailHelp);
-    }
+  void getEmailHelp() {
+    _speak(emailHelp);
+  }
 
-    void getDigestHelp() {
-      _speak(digestHelp);
-    }
+  void getDigestHelp() {
+    _speak(digestHelp);
+  }
 
-    void getSettingsHelp() {
-      _speak(settingsHelp);
-    }
+  void getSettingsHelp() {
+    _speak(settingsHelp);
+  }
 }

@@ -57,7 +57,7 @@ class SignInWidgetState extends State<SignInWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: BottomBar('signin'),
       appBar: AppBar(
         centerTitle: true,
         title: Text("Sign-In"),
