@@ -30,6 +30,7 @@ class Speech {
   late MailWidgetState _mailWidgetState;
   late OtherMailWidgetState _otherMailWidgetState;
   late MainWidgetState _mainWidgetState;
+  late String requestedDate;
   bool links = false;
 
   void setCurrentPage(String page, [Object? obj]) {
@@ -108,27 +109,32 @@ class Speech {
     // Expected input example: June 8th 2022
 
     // Validate input
-    List months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
-    ];
+    var months = {
+      "January": "1",
+      "February": "2",
+      "March": "3",
+      "April": "4",
+      "May": "5",
+      "June": "6",
+      "July": "7",
+      "August": "8",
+      "September": "9",
+      "October": "10",
+      "November": "11",
+      "December": "12"
+    };
     bool foundMonth = false;
-    for (String month in months) {
-      if (theDate.contains(month)) {
+    for (var key in months.keys) {
+      if (theDate.contains(key)) {
         foundMonth = true;
+        String? val = months[key];
+        if (val != null) {
+          theDate = theDate.replaceFirst(key, val);
+        }
         break;
       }
     }
+
     if (!foundMonth) {
       return null;
     }
@@ -170,15 +176,20 @@ class Speech {
       if (theDate.contains(key)) {
         String? val = numberSuffixes[key];
         if (val != null) {
-          theDate.replaceFirst(key, val);
+          theDate = theDate.replaceFirst(key, val);
         }
       }
     }
 
     DateTime? dt;
     try {
-      dt = DateFormat('yyyy/MM/dd').parse(theDate);
-    } on FormatException {
+      // Current format "6 8 2022"
+      var splitDate = theDate.split(" ");
+      // DateTime expects year, month, day
+      dt = DateTime(int.parse(splitDate[2]), int.parse(splitDate[0]),
+          int.parse(splitDate[1]));
+    } catch (e) {
+      print(e.toString());
       return null;
     }
     return dt;
@@ -427,7 +438,13 @@ class Speech {
             default:
               // User asks for emails from specific date
               if (s.contains("email date")) {
-                String requestedDate = s.split("date ")[1];
+                try {
+                  requestedDate = s.split("date ")[1];
+                } catch (e) {
+                  tts.speak(
+                      'When utilizing the email date command please state the command followed by the chosen date');
+                  break;
+                }
                 DateTime? dt = processDate(requestedDate);
                 if (dt != null) {
                   try {
@@ -454,7 +471,13 @@ class Speech {
               }
               // User asks for digest from specific date
               if (s.contains("digest date")) {
-                String requestedDate = s.split("date ")[1];
+                try {
+                  requestedDate = s.split("date ")[1];
+                } catch (e) {
+                  tts.speak(
+                      'When utilizing the digest date command please state the command followed by the chosen date');
+                  break;
+                }
                 DateTime? dt = processDate(requestedDate);
                 if (dt != null) {
                   try {
