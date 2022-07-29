@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:summer2022/speech_commands/read_info.dart';
 import 'bottom_app_bar.dart';
 import 'package:summer2022/models/Digest.dart';
-import 'package:summer2022/ui/main.dart';
+import 'package:summer2022/main.dart';
 
 class OtherMailWidget extends StatefulWidget {
   final List<Digest> emails;

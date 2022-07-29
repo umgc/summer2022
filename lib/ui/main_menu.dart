@@ -11,7 +11,7 @@ import 'package:summer2022/email_processing/other_mail_parser.dart';
 import 'package:summer2022/speech_commands/read_info.dart';
 import 'package:summer2022/utility/Keychain.dart';
 import 'package:summer2022/image_processing/google_cloud_vision_api.dart';
-import 'package:summer2022/ui/main.dart';
+import 'package:summer2022/main.dart';
 import 'package:summer2022/models/Arguments.dart';
 import 'package:summer2022/models/EmailArguments.dart';
 import 'package:summer2022/models/Digest.dart';

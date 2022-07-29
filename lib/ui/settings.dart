@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:summer2022/ui/main.dart';
+import 'package:summer2022/main.dart';
 import 'bottom_app_bar.dart';
 
 class SettingsWidget extends StatefulWidget {

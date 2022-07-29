@@ -5,7 +5,7 @@ import 'package:summer2022/models/MailResponse.dart';
 import 'package:summer2022/models/Address.dart';
 import 'package:summer2022/models/Logo.dart';
 import 'package:summer2022/models/Digest.dart';
-import 'package:summer2022/ui/main.dart';
+import 'package:summer2022/main.dart';
 
 
 /*

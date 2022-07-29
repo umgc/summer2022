@@ -5,7 +5,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:summer2022/models/Address.dart';
 import 'package:summer2022/models/MailResponse.dart';
 import 'package:summer2022/speech_commands/read_info.dart';
-import 'package:summer2022/ui/main.dart';
+import 'package:summer2022/main.dart';
 import 'dart:io' as io;
 
 class FakeFlutterTts extends Fake implements FlutterTts {
