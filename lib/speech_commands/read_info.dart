@@ -334,9 +334,10 @@ class CommandTutorial {
     To get the list of commands for the page that you are currently on, say help.
     ''';
 
-  void runTutorial() async {
+  bool runTutorial() {
     String readTutorial = '$tutorial $main $digest $email $digestAndEmail $general';
     speak(readTutorial);
+    return true;
   }
 
   String mainHelp =

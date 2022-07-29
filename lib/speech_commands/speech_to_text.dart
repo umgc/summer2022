@@ -412,9 +412,11 @@ class Speech {
               break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
+              speak("You are on the settings page.");
               break;
             case 'sign out':
               navKey.currentState!.pushNamed('/sign_in');
+              speak("You have been signed out.");
               break;
             case 'tutorial off':
               cfg.updateValue("tutorial", false);
@@ -495,78 +497,101 @@ class Speech {
             case 'send her on':
             case 'sonder on':
               cfg.updateValue("sender", true);
+              speak("Sender on.");
               break;
             case 'center off':
             case 'sender off':
             case 'send her off':
             case 'sonder off':
               cfg.updateValue("sender", false);
+              speak("Sender off.");
               break;
             case 'recipient on':
               cfg.updateValue("recipient", true);
+              speak("Recipient on.");
               break;
             case 'recipient off':
               cfg.updateValue("recipient", false);
+              speak("Recipient off.");
               break;
             case 'logos on':
               cfg.updateValue("logos", true);
+              speak("Logos on.");
               break;
             case 'logos off':
               cfg.updateValue("logos", false);
+              speak("Logos off.");
               break;
             case 'hyperlinks on':
               cfg.updateValue("links", true);
+              speak("Links on.");
               break;
             case 'hyperlinks off':
               cfg.updateValue("links", false);
+              speak("Links off.");
               break;
             case 'address on':
               cfg.updateValue("address", true);
+              speak("Address on.");
               break;
             case 'address off':
               cfg.updateValue("address", false);
+              speak("Address off.");
               break;
             case 'email subject on':
               cfg.updateValue("email_subject", true);
+              speak("Email subject on.");
               break;
             case 'email subject off':
               cfg.updateValue("email_subject", false);
+              speak("Email subject off.");
               break;
             case 'email text on':
               cfg.updateValue("email_text", true);
+              speak("Email text on.");
               break;
             case 'email text off':
               cfg.updateValue("email_text", false);
+              speak("Email text off.");
               break;
             case 'email sender address on':
               cfg.updateValue("email_sender", true);
+              speak("Email sender on.");
               break;
             case 'email sender address off':
               cfg.updateValue("email_sender", false);
+              speak("Email sender off.");
               break;
             case 'email recipients on':
               cfg.updateValue("email_recipients", true);
+              speak("Email recipients on.");
               break;
             case 'email recipients off':
               cfg.updateValue("email_recipients", false);
+              speak("Email recipients off.");
               break;
             case 'autoplay on':
               cfg.updateValue("autoplay", true);
+              speak("Autoplay on.");
               break;
             case 'autoplay off':
               cfg.updateValue("autoplay", false);
+              speak("Autoplay off.");
               break;
             case 'tutorial on':
               cfg.updateValue("tutorial", true);
+              speak("Tutorial on.");
               break;
             case 'tutorial off':
               cfg.updateValue("tutorial", false);
+              speak("Tutorial off.");
               break;
             case 'help':
               tutorial.getSettingsHelp();
               break;
             case 'back':
               navKey.currentState!.pushNamed('/main');
+              speak("You are on the main page.");
               break;
             default:
               break;

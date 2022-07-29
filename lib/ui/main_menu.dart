@@ -27,6 +27,8 @@ class MainWidget extends StatefulWidget {
 
 CloudVisionApi? vision = CloudVisionApi();
 
+bool? _completed;
+
 class MainWidgetState extends State<MainWidget> {
   DateTime selectedDate = DateTime.now();
   String mailType = "Email";
@@ -46,19 +48,8 @@ class MainWidgetState extends State<MainWidget> {
   void initState() {
     super.initState();
     stt.setCurrentPage("main", this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => tutorial(context));
-  }
-
-  tutorial(context) async {
-    if (mounted) {
-      if (GlobalConfiguration().getValue("tutorial")) {
-        if (!ranTutorial) {
-          print("running tutorial");
-          //commandTutorial.runTutorial();
-          print("done tutorial");
-          ranTutorial = true;
-        }
-      }
+    if (GlobalConfiguration().getValue("tutorial")) {
+      _completed ??= commandTutorial.runTutorial();
     }
   }
 
@@ -290,11 +281,11 @@ class MainWidgetState extends State<MainWidget> {
                   ),
                   child: OutlinedButton.icon(
                     onPressed: () async {
-                      final PickedFile =
+                      final pickedFile =
                           await picker.getImage(source: ImageSource.camera);
-                      print(PickedFile!.path);
-                      if (PickedFile != null) {
-                        _image = File(PickedFile.path);
+                      print(pickedFile!.path);
+                      if (pickedFile != null) {
+                        _image = File(pickedFile.path);
                         _imageBytes = _image!.readAsBytesSync();
 
                         await deleteImageFiles();
