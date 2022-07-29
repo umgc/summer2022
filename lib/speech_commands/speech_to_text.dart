@@ -28,6 +28,7 @@ class Speech {
   late List<Digest> emails;
   late MailWidgetState _mailWidgetState;
   late OtherMailWidgetState _otherMailWidgetState;
+  late String requestedDate;
   bool links = false;
 
   void setCurrentPage(String page, [Object? obj]) {
@@ -102,9 +103,18 @@ class Speech {
 
     // Validate input
     var months = {
-      "January": "1", "February": "2", "March": "3", "April": "4",
-      "May": "5", "June": "6", "July": "7", "August": "8",
-      "September": "9", "October": "10", "November": "11", "December": "12"
+      "January": "1",
+      "February": "2",
+      "March": "3",
+      "April": "4",
+      "May": "5",
+      "June": "6",
+      "July": "7",
+      "August": "8",
+      "September": "9",
+      "October": "10",
+      "November": "11",
+      "December": "12"
     };
     bool foundMonth = false;
     for (var key in months.keys) {
@@ -123,12 +133,37 @@ class Speech {
     }
 
     var numberSuffixes = {
-      "1st": "1", "2nd": "2", "3rd": "3", "4th": "4", "5th": "5", "6th": "6", 
-      "7th": "7", "8th": "8", "9th": "9", "10th": "10", "11th": "11",
-      "12th": "12","13th": "13","14th": "14", "15th": "15", "16th": "16",
-      "17th": "17", "18th": "18", "19th": "19", "20th": "20", "21st": "21",
-      "22nd": "22", "23rd": "23", "24th": "24", "25th": "25", "26th": "26",
-      "27th": "27", "28th": "28", "29th": "29", "30th": "30", "31st": "31"
+      "1st": "1",
+      "2nd": "2",
+      "3rd": "3",
+      "4th": "4",
+      "5th": "5",
+      "6th": "6",
+      "7th": "7",
+      "8th": "8",
+      "9th": "9",
+      "10th": "10",
+      "11th": "11",
+      "12th": "12",
+      "13th": "13",
+      "14th": "14",
+      "15th": "15",
+      "16th": "16",
+      "17th": "17",
+      "18th": "18",
+      "19th": "19",
+      "20th": "20",
+      "21st": "21",
+      "22nd": "22",
+      "23rd": "23",
+      "24th": "24",
+      "25th": "25",
+      "26th": "26",
+      "27th": "27",
+      "28th": "28",
+      "29th": "29",
+      "30th": "30",
+      "31st": "31"
     };
     for (var key in numberSuffixes.keys) {
       if (theDate.contains(key)) {
@@ -144,8 +179,9 @@ class Speech {
       // Current format "6 8 2022"
       var splitDate = theDate.split(" ");
       // DateTime expects year, month, day
-      dt = DateTime(int.parse(splitDate[2]), int.parse(splitDate[0]), int.parse(splitDate[1]));
-    } catch(e) {
+      dt = DateTime(int.parse(splitDate[2]), int.parse(splitDate[0]),
+          int.parse(splitDate[1]));
+    } catch (e) {
       print(e.toString());
       return null;
     }
@@ -389,7 +425,13 @@ class Speech {
             default:
               // User asks for emails from specific date
               if (s.contains("email date")) {
-                String requestedDate = s.split("date ")[1];
+                try {
+                  requestedDate = s.split("date ")[1];
+                } catch (e) {
+                  tts.speak(
+                      'When utilizing the email date command please state the command followed by the chosen date');
+                  break;
+                }
                 DateTime? dt = processDate(requestedDate);
                 if (dt != null) {
                   try {
@@ -414,7 +456,13 @@ class Speech {
               }
               // User asks for digest from specific date
               if (s.contains("digest date")) {
-                String requestedDate = s.split("date ")[1];
+                try {
+                  requestedDate = s.split("date ")[1];
+                } catch (e) {
+                  tts.speak(
+                      'When utilizing the digest date command please state the command followed by the chosen date');
+                  break;
+                }
                 DateTime? dt = processDate(requestedDate);
                 if (dt != null) {
                   try {
