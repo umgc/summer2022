@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 
-import '../read_info.dart';
-import '../speech_to_text.dart';
+import 'package:summer2022/speech_commands/read_info.dart';
+import 'package:summer2022/main.dart';
 
 class BottomBar extends StatefulWidget {
   final String path;
-  BottomBar(this.path, {Key? key}) : super(key: key);
+  const BottomBar(this.path, {Key? key}) : super(key: key);
   // const BottomBar({Key? key}) : super(key: key);
 
   @override
@@ -26,7 +26,7 @@ class BottomBarState extends State<BottomBar> {
     return BottomAppBar(
       child: Padding(
         // MODE Dialog Box
-        padding: EdgeInsets.only(top: 5, bottom: 25, left: 15, right: 40),
+        padding: const EdgeInsets.only(top: 5, bottom: 25, left: 15, right: 40),
         child: Row(
           children: [
             IconButton(

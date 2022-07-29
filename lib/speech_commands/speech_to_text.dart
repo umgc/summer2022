@@ -1,15 +1,14 @@
 import 'package:intl/intl.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:summer2022/Keychain.dart';
-import 'package:summer2022/digest_email_parser.dart';
+import 'package:summer2022/utility/Keychain.dart';
+import 'package:summer2022/email_processing/digest_email_parser.dart';
 import 'package:summer2022/models/Arguments.dart';
 import 'package:summer2022/models/Digest.dart';
 import 'package:summer2022/models/EmailArguments.dart';
-import 'package:summer2022/other_mail_parser.dart';
-import 'package:summer2022/read_info.dart';
+import 'package:summer2022/email_processing/other_mail_parser.dart';
+import 'package:summer2022/speech_commands/read_info.dart';
 import 'package:summer2022/ui/mail_widget.dart';
-import 'package:summer2022/ui/main_menu.dart';
 import 'package:summer2022/main.dart';
 import 'package:summer2022/ui/other_mail.dart';
 import 'package:summer2022/ui/settings.dart';
@@ -29,7 +28,8 @@ class Speech {
   late List<Digest> emails;
   late MailWidgetState _mailWidgetState;
   late OtherMailWidgetState _otherMailWidgetState;
-  late MainWidgetState _mainWidgetState;
+  late String requestedDate;
+  bool links = false;
 
   void setCurrentPage(String page, [Object? obj]) {
     switch (page) {
@@ -41,11 +41,6 @@ class Speech {
       case 'email':
         if (obj != null) {
           _otherMailWidgetState = obj as OtherMailWidgetState;
-        }
-        break;
-      case 'main':
-        if (obj != null) {
-          _mainWidgetState = obj as MainWidgetState;
         }
         break;
       case 'settings':
@@ -65,8 +60,11 @@ class Speech {
 
   Future<List<Digest>> getEmail(bool unread) async {
     setAccountInfo();
-    List<Digest> digest = await OtherMailParser()
-        .createEmailList(unread, username, password, DateTime.now());
+    List<Digest> digest = await OtherMailParser().createEmailList(
+        unread,
+        await Keychain().getUsername(),
+        await Keychain().getPassword(),
+        DateTime.now());
     if (digest.isEmpty) {
       // If don't have one for today, try yesterday
       DateTime date = DateTime.now().subtract(const Duration(days: 1));
@@ -104,27 +102,32 @@ class Speech {
     // Expected input example: June 8th 2022
 
     // Validate input
-    List months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
-    ];
+    var months = {
+      "January": "1",
+      "February": "2",
+      "March": "3",
+      "April": "4",
+      "May": "5",
+      "June": "6",
+      "July": "7",
+      "August": "8",
+      "September": "9",
+      "October": "10",
+      "November": "11",
+      "December": "12"
+    };
     bool foundMonth = false;
-    for (String month in months) {
-      if (theDate.contains(month)) {
+    for (var key in months.keys) {
+      if (theDate.contains(key)) {
         foundMonth = true;
+        String? val = months[key];
+        if (val != null) {
+          theDate = theDate.replaceFirst(key, val);
+        }
         break;
       }
     }
+
     if (!foundMonth) {
       return null;
     }
@@ -166,15 +169,20 @@ class Speech {
       if (theDate.contains(key)) {
         String? val = numberSuffixes[key];
         if (val != null) {
-          theDate.replaceFirst(key, val);
+          theDate = theDate.replaceFirst(key, val);
         }
       }
     }
 
     DateTime? dt;
     try {
-      dt = DateFormat('yyyy/MM/dd').parse(theDate);
-    } on FormatException {
+      // Current format "6 8 2022"
+      var splitDate = theDate.split(" ");
+      // DateTime expects year, month, day
+      dt = DateTime(int.parse(splitDate[2]), int.parse(splitDate[0]),
+          int.parse(splitDate[1]));
+    } catch (e) {
+      print(e.toString());
       return null;
     }
     return dt;
@@ -207,26 +215,65 @@ class Speech {
             case 'details':
               _mailWidgetState.readMailPiece();
               break;
+            case 'center name':
             case 'sender name':
-              _mailWidgetState.reader!.readDigestSenderName();
+            case 'send her name':
+            case 'sonder name':
+              try {
+                _mailWidgetState.reader!.readDigestSenderName();
+              } catch (e) {
+                speak('There is no sender name');
+              }
               break;
             case 'recipient name':
-              _mailWidgetState.reader!.readDigestRecipientName();
+              try {
+                _mailWidgetState.reader!.readDigestRecipientName();
+              } catch (e) {
+                speak('There is no recipient name');
+              }
               break;
+            case 'center address':
             case 'sender address':
-              _mailWidgetState.reader!.readDigestSenderAddress();
+            case 'send her address':
+            case 'sonder address':
+              try {
+                _mailWidgetState.reader!.readDigestSenderAddress();
+              } catch (e) {
+                speak('There is no sender address');
+              }
+
               break;
             case 'recipient address':
-              _mailWidgetState.reader!.readDigestRecipientAddress();
+              try {
+                _mailWidgetState.reader!.readDigestRecipientAddress();
+              } catch (e) {
+                speak('There is no recipient address');
+              }
+
               break;
+            case 'center validated':
             case 'sender validated':
-              _mailWidgetState.reader!.readDigestSenderAddressValidated();
+            case 'send her validated':
+            case 'sonder validated':
+              try {
+                _mailWidgetState.reader!.readDigestSenderAddressValidated();
+              } catch (e) {
+                speak('There is no sender validation');
+              }
               break;
             case 'recipient validated':
-              _mailWidgetState.reader!.readDigestRecipientAddressValidated();
+              try {
+                _mailWidgetState.reader!.readDigestRecipientAddressValidated();
+              } catch (e) {
+                speak('There is no recipient validation');
+              }
               break;
             case 'logos':
-              _mailWidgetState.reader!.readDigestLogos();
+              try {
+                _mailWidgetState.reader!.readDigestLogos();
+              } catch (e) {
+                speak('There are no logos');
+              }
               break;
             case 'help':
               tutorial.getDigestHelp();
@@ -236,8 +283,14 @@ class Speech {
               break;
             default:
               if (s.contains("hyperlink")) {
-                if (s == 'hyperlinks') {
+                if (s == 'hyperlinks' && links == false) {
                   _mailWidgetState.reader!.readDigestLinks();
+                  _mailWidgetState.showLinkDialog();
+                  links = true;
+                }
+                if (s == 'close hyperlinks' && links == true) {
+                  navKey.currentState!.pop();
+                  links = false;
                 } else {
                   try {
                     var position = s.split(" ")[0];
@@ -246,8 +299,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[0].link);
                       } catch (e) {
-                        tts.speak(
-                            'There is not a valid hyperlink in that position');
+                        speak('There is not a valid hyperlink in the first position');
                       }
                     }
                     if (position == 'second' || position == '2nd') {
@@ -255,8 +307,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[1].link);
                       } catch (e) {
-                        tts.speak(
-                            'There is not a valid hyperlink in that position');
+                        speak('There is not a valid hyperlink in the second position');
                       }
                     }
                     if (position == 'third' || position == '3rd') {
@@ -264,8 +315,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[2].link);
                       } catch (e) {
-                        tts.speak(
-                            'There is not a valid hyperlink in that position');
+                        speak('There is not a valid hyperlink in the third position');
                       }
                     }
                     if (position == 'fourth' || position == '4th') {
@@ -273,8 +323,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[3].link);
                       } catch (e) {
-                        tts.speak(
-                            'There is not a valid hyperlink in that position');
+                        speak('There is not a valid hyperlink in the fourth position');
                       }
                     }
                     if (position == 'fifth' || position == '5th') {
@@ -282,8 +331,7 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[4].link);
                       } catch (e) {
-                        tts.speak(
-                            'There is not a valid hyperlink in that position');
+                        speak('There is not a valid hyperlink in the fifth position');
                       }
                     }
                   } catch (e) {
@@ -299,12 +347,12 @@ class Speech {
             // mail page commands
             case 'next':
               _otherMailWidgetState.setState(() {
-                _mailWidgetState.seekForward(1);
+                _otherMailWidgetState.seekForward();
               });
               break;
             case 'previous':
               _otherMailWidgetState.setState(() {
-                _mailWidgetState.seekBack();
+                _otherMailWidgetState.seekBack();
               });
               break;
             case 'details':
@@ -316,7 +364,10 @@ class Speech {
             case 'text':
               _otherMailWidgetState.reader!.readEmailText();
               break;
+            case 'center':
             case 'sender':
+            case 'send her':
+            case 'sonder':
               _otherMailWidgetState.reader!.readEmailSender();
               break;
             case 'recipients':
@@ -354,27 +405,25 @@ class Speech {
                   navKey.currentState!.pushNamed('/digest_mail',
                       arguments: MailWidgetArguments(digest));
                 } else {
-                  tts.speak('There are no digests available for today');
+                  speak('There are no digests available for today');
                 }
               } catch (e) {
-                tts.speak(
-                    'An error occurred while fetching your daily digest: $e');
+                speak('An error occurred while fetching your daily digest: $e');
               }
               break;
             case 'settings':
               navKey.currentState!.pushNamed('/settings');
+              speak("You are on the settings page.");
               break;
             case 'sign out':
               navKey.currentState!.pushNamed('/sign_in');
-              break;
-            case 'switch email':
-              _mainWidgetState.setMailType("Email");
-              break;
-            case 'switch Digest':
-              _mainWidgetState.setMailType("Digest");
+              speak("You have been signed out.");
               break;
             case 'tutorial off':
               cfg.updateValue("tutorial", false);
+              break;
+            case 'skip':
+              stop(); // stop any tts (purpose is for skipping tutorial)
               break;
             case 'help':
               tutorial.getMainHelp();
@@ -382,7 +431,13 @@ class Speech {
             default:
               // User asks for emails from specific date
               if (s.contains("email date")) {
-                String requestedDate = s.split("date ")[1];
+                try {
+                  requestedDate = s.split("date ")[1];
+                } catch (e) {
+                  tts.speak(
+                      'When utilizing the email date command please state the command followed by the chosen date');
+                  break;
+                }
                 DateTime? dt = processDate(requestedDate);
                 if (dt != null) {
                   try {
@@ -395,21 +450,25 @@ class Speech {
                       navKey.currentState!.pushNamed('/other_mail',
                           arguments: EmailWidgetArguments(emails));
                     } else {
-                      tts.speak(
-                          'There are no digest available for $requestedDate');
+                      speak('There are no digest available for $requestedDate');
                     }
                   } catch (e) {
-                    tts.speak(
-                        'An error occurred while fetching your emails: $e');
+                    speak('An error occurred while fetching your emails: $e');
                   }
                 } else {
-                  tts.speak(
+                  speak(
                       'The specified date is invalid. Please say the month, day of the month, and then the year.');
                 }
               }
               // User asks for digest from specific date
               if (s.contains("digest date")) {
-                String requestedDate = s.split("date ")[1];
+                try {
+                  requestedDate = s.split("date ")[1];
+                } catch (e) {
+                  tts.speak(
+                      'When utilizing the digest date command please state the command followed by the chosen date');
+                  break;
+                }
                 DateTime? dt = processDate(requestedDate);
                 if (dt != null) {
                   try {
@@ -421,15 +480,13 @@ class Speech {
                       navKey.currentState!.pushNamed('/digest_mail',
                           arguments: MailWidgetArguments(digest));
                     } else {
-                      tts.speak(
-                          'There are no digest available for $requestedDate');
+                      speak('There are no digest available for $requestedDate');
                     }
                   } catch (e) {
-                    tts.speak(
-                        'An error occurred while fetching your daily digest: $e');
+                    speak('An error occurred while fetching your daily digest: $e');
                   }
                 } else {
-                  tts.speak(
+                  speak(
                       'The specified date is invalid. Please say the month, day of the month, and then the year.');
                 }
               }
@@ -442,78 +499,103 @@ class Speech {
             case 'center on':
             case 'sender on':
             case 'send her on':
+            case 'sonder on':
               cfg.updateValue("sender", true);
+              speak("Sender on.");
               break;
             case 'center off':
             case 'sender off':
             case 'send her off':
+            case 'sonder off':
               cfg.updateValue("sender", false);
+              speak("Sender off.");
               break;
             case 'recipient on':
               cfg.updateValue("recipient", true);
+              speak("Recipient on.");
               break;
             case 'recipient off':
               cfg.updateValue("recipient", false);
+              speak("Recipient off.");
               break;
             case 'logos on':
               cfg.updateValue("logos", true);
+              speak("Logos on.");
               break;
             case 'logos off':
               cfg.updateValue("logos", false);
+              speak("Logos off.");
               break;
             case 'hyperlinks on':
               cfg.updateValue("links", true);
+              speak("Links on.");
               break;
             case 'hyperlinks off':
               cfg.updateValue("links", false);
+              speak("Links off.");
               break;
             case 'address on':
               cfg.updateValue("address", true);
+              speak("Address on.");
               break;
             case 'address off':
               cfg.updateValue("address", false);
+              speak("Address off.");
               break;
             case 'email subject on':
               cfg.updateValue("email_subject", true);
+              speak("Email subject on.");
               break;
             case 'email subject off':
               cfg.updateValue("email_subject", false);
+              speak("Email subject off.");
               break;
             case 'email text on':
               cfg.updateValue("email_text", true);
+              speak("Email text on.");
               break;
             case 'email text off':
               cfg.updateValue("email_text", false);
+              speak("Email text off.");
               break;
             case 'email sender address on':
               cfg.updateValue("email_sender", true);
+              speak("Email sender on.");
               break;
             case 'email sender address off':
               cfg.updateValue("email_sender", false);
+              speak("Email sender off.");
               break;
             case 'email recipients on':
               cfg.updateValue("email_recipients", true);
+              speak("Email recipients on.");
               break;
             case 'email recipients off':
               cfg.updateValue("email_recipients", false);
+              speak("Email recipients off.");
               break;
             case 'autoplay on':
               cfg.updateValue("autoplay", true);
+              speak("Autoplay on.");
               break;
             case 'autoplay off':
               cfg.updateValue("autoplay", false);
+              speak("Autoplay off.");
               break;
             case 'tutorial on':
               cfg.updateValue("tutorial", true);
+              speak("Tutorial on.");
               break;
             case 'tutorial off':
               cfg.updateValue("tutorial", false);
+              speak("Tutorial off.");
               break;
             case 'help':
               tutorial.getSettingsHelp();
               break;
             case 'back':
               navKey.currentState!.pushNamed('/main');
+              speak("You are on the main page.");
               break;
             default:
               break;
@@ -529,9 +611,11 @@ class Speech {
           tts.stop();
           break;
         case 'speakers off':
+          tts.stop();
           tts.setVolume(0);
           break;
         case 'speakers on':
+          tts.stop();
           tts.setVolume(1);
           break;
         default: // Invalid command

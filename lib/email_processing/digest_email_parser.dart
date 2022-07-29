@@ -2,19 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:enough_mail/enough_mail.dart';
-import 'package:googleapis/cloudsearch/v1.dart';
 import 'package:intl/intl.dart';
 import 'package:summer2022/models/MailResponse.dart';
-import './image_processing/google_cloud_vision_api.dart';
-import './models/Digest.dart';
-import './models/Code.dart';
-import './models/Logo.dart';
-import 'image_processing/barcode_scanner.dart';
+import 'package:summer2022/image_processing/google_cloud_vision_api.dart';
+import 'package:summer2022/models/Digest.dart';
+import 'package:summer2022/models/Code.dart';
+import 'package:summer2022/image_processing/barcode_scanner.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import './image_processing/usps_address_verification.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-// import './image_processing/imageProcessing.dart';
+import 'package:summer2022/image_processing/usps_address_verification.dart';
 
 class DigestEmailParser {
   String _userName = ''; // Add your credentials
@@ -28,9 +24,9 @@ class DigestEmailParser {
   Future<Digest> createDigest(String userName, String password,
       [DateTime? targetDate]) async {
     try {
-      this._userName = userName;
-      this._password = password;
-      this._targetDate = targetDate;
+      _userName = userName;
+      _password = password;
+      _targetDate = targetDate;
       Digest digest = Digest(await _getDigestEmail());
       if (!digest.isNull()) {
         digest.attachments = await _getAttachments(digest.message);
@@ -64,7 +60,7 @@ class DigestEmailParser {
               .replaceAll(
                   "\r\n", ""); //These are base64 encoded images with formatting
           await saveImageFile(base64Decode(attachment.attachmentNoFormatting),
-              "mailpiece" + x.toString() + ".jpg");
+              "mailpiece$x.jpg");
           attachment.detailedInformation = await processImage(filePath);
           list.add(attachment);
         }
@@ -164,14 +160,6 @@ class DigestEmailParser {
     }
   }
 
-  String _formatDateTime(DateTime? date) {
-    if (date != null) {
-      return "${date.year}-${date.month}-${date.day}";
-    } else {
-      return "";
-    }
-  }
-
   deleteImageFiles() async {
     Directory? directory;
 
@@ -191,57 +179,19 @@ class DigestEmailParser {
       for (int x = 0; x < files!.length; x++) {
         try {
           files[x].delete();
-          print("Delete in Extern: " + files[x].path);
+          print("Delete in Extern: ${files[x].path}");
         } catch (e) {
-          print("File" + x.toString() + " does not exist");
+          print("File$x does not exist");
         }
       }
       for (int x = 0; x < files2.length; x++) {
         try {
           files[x].delete();
-          print("Delete: " + files2[x].path);
+          print("Delete: ${files2[x].path}");
         } catch (e) {
-          print("File" + x.toString() + " does not exist");
+          print("File$x does not exist");
         }
       }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  void _processImageForLogo(String imagePath) async {
-    try {
-      // print("Inside processImageForLogo\n");
-      var image = File(imagePath);
-      var buffer = image.readAsBytesSync();
-      var a = base64.encode(buffer);
-      List<LogoObject> logos = await vision.searchImageForLogo(a);
-      var output = '';
-      for (var logo in logos) {
-        output += logo.toJson().toString() + "\n";
-      }
-      // print(output);
-      // print("Exit ProcessImageForLogo");
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  void _processBarcode() async {
-    try {
-      print("Inside process barcode\n");
-      _barcodeScannerApi = BarcodeScannerApi();
-      // var fLoc = filePath;
-      // print(fLoc);
-      File? img = await _barcodeScannerApi?.getImageFileFromAssets(filePath);
-      _barcodeScannerApi!.setImageFromFile(img!);
-      List<CodeObject> codes = await _barcodeScannerApi!.processImage();
-      var output = '';
-      for (var code in codes) {
-        output += code.toJson().toString();
-      }
-      // print(output);
-      // print("Exit ProcessBarcode");
     } catch (e) {
       rethrow;
     }
@@ -267,7 +217,7 @@ class DigestEmailParser {
         }
       }
       if (Platform.isIOS) {
-        if (imageBytes != null) {
+        if (imageBytes.isNotEmpty) {
           directory = await getApplicationDocumentsDirectory();
           imagePath = directory.path;
           print(directory.path);
@@ -277,11 +227,11 @@ class DigestEmailParser {
         await directory.create(recursive: true);
       }
       if (await directory.exists()) {
-        File saveFile = File(directory.path + "/$fileName");
+        File saveFile = File("${directory.path}/$fileName");
         saveFile.writeAsBytesSync(imageBytes);
 
         filePath = saveFile.path;
-        print("Directory" + directory.listSync().toString());
+        print("Directory${directory.listSync()}");
         return true;
       }
     } catch (e) {
@@ -310,9 +260,9 @@ class DigestEmailParser {
   Future<MailResponse> processImage(String imagePath) async {
     try {
       CloudVisionApi vision = CloudVisionApi();
-      print("processImage: " + imagePath);
+      print("processImage: $imagePath");
       var image = File(imagePath);
-      var imageByte;
+      Uint8List imageByte;
       imageByte = image.readAsBytesSync();
 
       var a = base64.encode(imageByte);

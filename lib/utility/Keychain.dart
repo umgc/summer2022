@@ -8,10 +8,10 @@ class Keychain {
   Future<void> readAll() async {
     final all = await _storage.readAll(
         iOptions: _getIOSOptions(), aOptions: _getAndroidOptions());
-    List<_SecItem> _items = all.entries
+    List<_SecItem> items = all.entries
         .map((entry) => _SecItem(entry.key, entry.value))
         .toList(growable: false);
-    for (_SecItem item in _items) {
+    for (_SecItem item in items) {
       print(item.key);
       print(item.value);
     }
@@ -53,7 +53,7 @@ class Keychain {
         aOptions: _getAndroidOptions());
   }
 
-  IOSOptions _getIOSOptions() => IOSOptions(
+  IOSOptions _getIOSOptions() => const IOSOptions(
       // accountName: _getAccountName(),
       );
 
