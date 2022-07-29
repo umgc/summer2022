@@ -17,7 +17,7 @@ class BottomBarState extends State<BottomBar> {
     return BottomAppBar(
       child: Padding(
         // MODE Dialog Box
-        padding: EdgeInsets.only(top: 5, bottom: 25, left: 15, right: 40),
+        padding: const EdgeInsets.only(top: 5, bottom: 25, left: 15, right: 40),
         child: Row(
           children: [
             IconButton(

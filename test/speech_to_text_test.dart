@@ -1,11 +1,5 @@
-import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_tts/flutter_tts.dart';
-import 'package:global_configuration/global_configuration.dart';
-import 'package:intl/intl.dart';
-import 'package:summer2022/models/Address.dart';
-import 'package:summer2022/models/MailResponse.dart';
-import 'package:summer2022/speech_to_text.dart';
+import 'package:summer2022/speech_commands/speech_to_text.dart';
 import 'dart:io' as io;
 
 void main() async {

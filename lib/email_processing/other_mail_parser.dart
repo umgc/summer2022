@@ -1,15 +1,10 @@
 import 'package:enough_mail/enough_mail.dart';
-import 'package:googleapis/cloudsearch/v1.dart';
 import 'package:intl/intl.dart';
-import 'image_processing/google_cloud_vision_api.dart';
-import 'models/Digest.dart';
+import 'package:summer2022/models/Digest.dart';
 
 class OtherMailParser {
   String _userName = ''; // Add your credentials
   String _password = ''; // Add your credentials
-  String _imapServerHost = 'imap.gmail.com';
-  int _imapServerPort = 993;
-  bool _isImapServerSecure = true;
   DateTime? _targetDate;
   bool _isUnread = false;
   final int maxUnreadEmails = 30;
@@ -78,19 +73,19 @@ class OtherMailParser {
           for (int i = seqListLength - 2;
               i > 0 && emailCount < maxUnreadEmails - 1;
               i--) {
-            seqIdStr += "," + seqIdList[i].toString();
+            seqIdStr += ",${seqIdList[i]}";
             emailCount++;
           }
 
           // fetch all emails from seqIds returned from search
-          print('?: searchCriteria: ' + seqIdStr);
+          print('?: searchCriteria: $seqIdStr');
           if (emailCount != 0) {
             // Search Criteria sequence ids can be entered '1:20' or '1,2,6,9,...'
             final fetchedMessage = await client
-                .fetchMessagesByCriteria(seqIdStr + ' (BODY.PEEK[])');
-            fetchedMessage.messages.forEach((message) {
+                .fetchMessagesByCriteria('$seqIdStr (BODY.PEEK[])');
+            for (var message in fetchedMessage.messages) {
               emails.add(Digest(message));
-            });
+            }
           } else {
             print("?:  No sequence Ids");
           }
@@ -103,14 +98,6 @@ class OtherMailParser {
       if (client.isLoggedIn) {
         await client.logout();
       }
-    }
-  }
-
-  String _formatDateTime(DateTime? date) {
-    if (date != null) {
-      return "${date.year}-${date.month}-${date.day}";
-    } else {
-      return "";
     }
   }
 }

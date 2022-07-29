@@ -4,7 +4,7 @@ import 'package:xml/xml.dart' as xml;
 //xml documentation: https://pub.dev/packages/xml
 
 class UspsAddressVerification {
-  String _strXmlVersion = '"version="1.0"';
+  final String _strXmlVersion = '"version="1.0"';
 
   UspsAddressVerification() {
     //Nothing to initialize but it makes me feel better having this here

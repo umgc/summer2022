@@ -3,14 +3,13 @@ import 'dart:io';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
 import 'package:summer2022/image_processing/imageProcessing.dart';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:summer2022/digest_email_parser.dart';
-import 'package:summer2022/other_mail_parser.dart';
-import 'package:summer2022/read_info.dart';
-import 'package:summer2022/Keychain.dart';
+import 'package:summer2022/email_processing/digest_email_parser.dart';
+import 'package:summer2022/email_processing/other_mail_parser.dart';
+import 'package:summer2022/speech_commands/read_info.dart';
+import 'package:summer2022/utility/Keychain.dart';
 import 'package:summer2022/image_processing/google_cloud_vision_api.dart';
 import 'package:summer2022/main.dart';
 import 'package:summer2022/models/Arguments.dart';
@@ -28,6 +27,8 @@ class MainWidget extends StatefulWidget {
 
 CloudVisionApi? vision = CloudVisionApi();
 
+bool? _completed;
+
 class MainWidgetState extends State<MainWidget> {
   DateTime selectedDate = DateTime.now();
   String mailType = "Email";
@@ -43,19 +44,13 @@ class MainWidgetState extends State<MainWidget> {
   bool ranTutorial = false;
   CommandTutorial commandTutorial = CommandTutorial();
 
-  MainWidgetState() {
-    if (GlobalConfiguration().getValue("tutorial")) {
-      if (!ranTutorial) {
-        commandTutorial.runTutorial();
-        ranTutorial = true;
-      }
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     stt.setCurrentPage("main", this);
+    if (GlobalConfiguration().getValue("tutorial")) {
+      _completed ??= commandTutorial.runTutorial();
+    }
   }
 
   void setMailType(String type) {
@@ -93,10 +88,11 @@ class MainWidgetState extends State<MainWidget> {
       height: commonButtonHeight, // LATEST Button
       child: OutlinedButton(
         onPressed: () async {
+          stop(); // stop tts
           if (mailType == "Email") {
             context.loaderOverlay.show();
             await getEmails(false, DateTime.now());
-            if ((emails.isNotEmpty)) {
+            if (emails.isNotEmpty) {
               Navigator.pushNamed(context, '/other_mail',
                   arguments: EmailWidgetArguments(emails));
             } else {
@@ -123,6 +119,7 @@ class MainWidgetState extends State<MainWidget> {
       height: commonButtonHeight, // UNREAD Button
       child: OutlinedButton(
         onPressed: () async {
+          stop(); // stop tts
           if (mailType == "Email") {
             context.loaderOverlay.show();
             await getEmails(true, DateTime.now());
@@ -184,7 +181,7 @@ class MainWidgetState extends State<MainWidget> {
                                 Icons.calendar_month_outlined,
                                 size: 35,
                               ),
-                              label: Text("$formattedSelectedDate", style: TextStyle(
+                              label: Text(formattedSelectedDate, style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: commonFontSize-3,)),
                               style:
@@ -286,17 +283,17 @@ class MainWidgetState extends State<MainWidget> {
                   ),
                   child: OutlinedButton.icon(
                     onPressed: () async {
-                      final PickedFile =
+                      final pickedFile =
                           await picker.getImage(source: ImageSource.camera);
-                      print(PickedFile!.path);
-                      if (PickedFile != null) {
-                        _image = File(PickedFile.path);
+                      print(pickedFile!.path);
+                      if (pickedFile != null) {
+                        _image = File(pickedFile.path);
                         _imageBytes = _image!.readAsBytesSync();
 
                         await deleteImageFiles();
                         await saveImageFile(_imageBytes!, "mailpiece.jpg");
                         MailResponse s =
-                            await processImage("${imagePath}/mailpiece.jpg");
+                            await processImage("$imagePath/mailpiece.jpg");
                         print(s.toJson());
                       } else {
                         return;
@@ -432,14 +429,14 @@ class MainWidgetState extends State<MainWidget> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
+        return const AlertDialog(
           title: Center(
             child: Text("Error Dialog"),
           ),
-          content: Container(
+          content: SizedBox(
             height: 100.0,
             width: 100.0,
-            child: const Center(
+            child: Center(
               child: Text(
                 "An Unexpected Error has occurred, please try again later.",
                 style: TextStyle(color: Colors.black),
@@ -460,7 +457,7 @@ class MainWidgetState extends State<MainWidget> {
     if ((picked != null) && (picked != selectedDate)) {
       context.loaderOverlay.show();
       await getEmails(false, picked);
-      if ((emails.isNotEmpty)) {
+      if (emails.isNotEmpty) {
         Navigator.pushNamed(context, '/other_mail',
             arguments: EmailWidgetArguments(emails));
       } else {
