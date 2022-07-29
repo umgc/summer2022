@@ -203,7 +203,7 @@ class Speech {
             // mail page commands
             case 'next':
               _mailWidgetState.setState(() {
-                _mailWidgetState.seekForward(1);
+                _mailWidgetState.seekForward();
               });
               break;
             case 'previous':
