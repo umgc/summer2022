@@ -83,7 +83,7 @@ class MailWidgetState extends State<MailWidget> {
         }
         print("done waiting");
         await Future.delayed(const Duration(seconds: 5));
-        seekForward();
+        setState((){ seekForward(); });
       }
     }
   }
@@ -221,14 +221,14 @@ class MailWidgetState extends State<MailWidget> {
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
+      try {
+        setTtsState(TtsState.playing);
+        readMailPiece();
+      } catch(e) {
+        print("ERROR: Seek forward: ${e.toString()}");
+      }
+      autoplay();
     }
-    try {
-      setTtsState(TtsState.playing);
-      readMailPiece();
-    } catch(e) {
-      print("ERROR: Seek forward: ${e.toString()}");
-    }
-    autoplay();
   }
 
   void showLinkDialog() {
