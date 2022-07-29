@@ -421,6 +421,9 @@ class Speech {
             case 'tutorial off':
               cfg.updateValue("tutorial", false);
               break;
+            case 'skip':
+              stop(); // stop any tts (purpose is for skipping tutorial)
+              break;
             case 'help':
               tutorial.getMainHelp();
               break;

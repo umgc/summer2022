@@ -88,6 +88,7 @@ class MainWidgetState extends State<MainWidget> {
       height: commonButtonHeight, // LATEST Button
       child: OutlinedButton(
         onPressed: () async {
+          stop(); // stop tts
           if (mailType == "Email") {
             context.loaderOverlay.show();
             await getEmails(false, DateTime.now());
@@ -118,6 +119,7 @@ class MainWidgetState extends State<MainWidget> {
       height: commonButtonHeight, // UNREAD Button
       child: OutlinedButton(
         onPressed: () async {
+          stop(); // stop tts
           if (mailType == "Email") {
             context.loaderOverlay.show();
             await getEmails(true, DateTime.now());
