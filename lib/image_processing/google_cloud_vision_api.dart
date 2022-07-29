@@ -241,20 +241,7 @@ class CloudVisionApi {
                   .elementAt(b.elementAt(x) - 1)
                   .getList()
                   .elementAt(size - 2))) {
-                address1 = blocks
-                        .elementAt(b.elementAt(x) - 1)
-                        .getList()
-                        .elementAt(size - 2) +
-                    " " +
-                    blocks
-                        .elementAt(b.elementAt(x) - 1)
-                        .getList()
-                        .elementAt(size - 1) +
-                    '; ' +
-                    blocks
-                        .elementAt(b.elementAt(x))
-                        .getList()
-                        .elementAt(cityStateZipIndex);
+                address1 = "${blocks.elementAt(b.elementAt(x) - 1).getList().elementAt(size - 2)} ${blocks.elementAt(b.elementAt(x) - 1).getList().elementAt(size - 1)}; ${blocks.elementAt(b.elementAt(x)).getList().elementAt(cityStateZipIndex)}";
                 if (_validateNameHasNoSpecialSymbols(blocks
                     .elementAt(b.elementAt(x) - 1)
                     .getList()

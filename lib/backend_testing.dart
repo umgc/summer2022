@@ -121,7 +121,7 @@ class _BackendPageState extends State<BackendPage> {
     for (var address in objAddressList) {
       address.validated =
           await UspsAddressVerification().verifyAddressString(address.address);
-      output += address.toJson().toString() + "\n";
+      output += "${address.toJson()}\n";
     }
     print(output);
     setState(() {
@@ -139,7 +139,7 @@ class _BackendPageState extends State<BackendPage> {
     List<LogoObject> logos = await vision!.searchImageForLogo(a);
     var output = '';
     for (var logo in logos) {
-      output += logo.toJson().toString() + "\n";
+      output += "${logo.toJson()}\n";
     }
     print(output);
     setState(() {
@@ -206,98 +206,90 @@ class _BackendPageState extends State<BackendPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/');
-                      },
-                      icon: Icon(
-                        Icons.arrow_back,
-                        size: 30,
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Container(
-                          child: Text(
-                            style: TextStyle(fontSize: 20),
-                            "Backend Testing",
-                          ),
-                        ),
-                      ),
-                    ),
-                    Icon(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/');
+                    },
+                    icon: const Icon(
                       Icons.arrow_back,
-                      size: 50,
-                      color: Color.fromARGB(0, 255, 255, 1),
+                      size: 30,
                     ),
-                  ],
-                ),
+                  ),
+                  const Expanded(
+                    child: Center(
+                      child: Text(
+                        style: TextStyle(fontSize: 20),
+                        "Backend Testing",
+                      ),
+                    ),
+                  ),
+                  const Icon(
+                    Icons.arrow_back,
+                    size: 50,
+                    color: Color.fromARGB(0, 255, 255, 1),
+                  ),
+                ],
               ),
               Center(
                 child: Column(
                   children: <Widget>[
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Select Image File: ",
-                            style: TextStyle(
-                                color: Colors.black,
-                                // backgroundColor: Colors.grey,
-                                fontSize: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Select Image File: ",
+                          style: TextStyle(
+                              color: Colors.black,
+                              // backgroundColor: Colors.grey,
+                              fontSize: 16),
+                        ),
+                        Container(
+                          color: Colors.grey,
+                          child: DropdownButton(
+                            alignment: Alignment.center,
+                            focusColor: Colors.black,
+                            dropdownColor: Colors.grey,
+                            iconSize: 10,
+                            value: fileName,
+                            items: mailAssetsFiles.map((String items) {
+                              return DropdownMenuItem(
+                                  value: items, child: Text(items));
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                if (newValue!.isNotEmpty) fileName = newValue;
+                              });
+                            },
                           ),
-                          Container(
-                            color: Colors.grey,
-                            child: DropdownButton(
-                              alignment: Alignment.center,
-                              focusColor: Colors.black,
-                              dropdownColor: Colors.grey,
-                              iconSize: 10,
-                              value: fileName,
-                              items: mailAssetsFiles.map((String items) {
-                                return DropdownMenuItem(
-                                    value: items, child: Text(items));
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  if (newValue! != null) fileName = newValue;
-                                });
-                              },
-                            ),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
                     Container(
                       width: double.infinity,
-                      color: Color.fromRGBO(228, 228, 228, 0.6),
+                      color: const Color.fromRGBO(228, 228, 228, 0.6),
                       child: ElevatedButton(
                         onPressed: _processImageWithOCR,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        ),
                         child: const Text(
                           "Vision OCR Text Search",
                           style: TextStyle(color: Colors.black),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.grey,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                        ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: _processImageForLogo,
-                        child: const Text("Vision Logo Search",
-                            style: TextStyle(color: Colors.black)),
                         style: ElevatedButton.styleFrom(
                           primary: Colors.grey,
                           shadowColor: Colors.grey,
@@ -305,46 +297,46 @@ class _BackendPageState extends State<BackendPage> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5))),
                         ),
+                        child: const Text("Vision Logo Search",
+                            style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: _processBarcode,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        ),
                         child: const Text(
                             "ML Kit  QR Codes/Barcodes Image Scan",
                             style: TextStyle(color: Colors.black)),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.grey,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                        ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: _processImage,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.grey,
+                          shadowColor: Colors.grey,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        ),
                         child: const Text(
                             "All (OCR, Logo, & QR/Bar Codes) Image Processing",
                             style: TextStyle(color: Colors.black)),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.grey,
-                          shadowColor: Colors.grey,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                        ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: _getImage,
-                        child: const Text("Process Mail Image using Camera",
-                            style: TextStyle(color: Colors.black)),
                         style: ElevatedButton.styleFrom(
                           primary: Colors.grey,
                           shadowColor: Colors.grey,
@@ -352,18 +344,20 @@ class _BackendPageState extends State<BackendPage> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5))),
                         ),
+                        child: const Text("Process Mail Image using Camera",
+                            style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                    Center(
-                      child: const Text(
+                    const Center(
+                      child: Text(
                         "Output",
                         style: TextStyle(fontSize: 20, color: Colors.black),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: double.infinity,
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(minWidth: 48),
+                        constraints: const BoxConstraints(minWidth: 48),
                         child: IntrinsicWidth(
                           child: TextField(
                             maxLines: null,
@@ -371,8 +365,8 @@ class _BackendPageState extends State<BackendPage> {
                             showCursor: false,
                             readOnly: true,
                             cursorColor: Colors.black,
-                            style: TextStyle(color: Colors.black, fontSize: 12),
-                            decoration: InputDecoration(
+                            style: const TextStyle(color: Colors.black, fontSize: 12),
+                            decoration: const InputDecoration(
                               filled: true,
                               fillColor: Colors.grey,
                             ),
@@ -391,8 +385,8 @@ class _BackendPageState extends State<BackendPage> {
                           )
                         : Container(
                             width: double.infinity,
-                            child: Text("No Image available"),
                             alignment: Alignment.topCenter,
+                            child: const Text("No Image available"),
                           ),
                   ],
                 ),

@@ -6,10 +6,10 @@ import 'package:summer2022/image_processing/imageProcessing.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:summer2022/digest_email_parser.dart';
-import 'package:summer2022/other_mail_parser.dart';
-import 'package:summer2022/read_info.dart';
-import 'package:summer2022/Keychain.dart';
+import 'package:summer2022/email_processing/digest_email_parser.dart';
+import 'package:summer2022/email_processing/other_mail_parser.dart';
+import 'package:summer2022/speech_commands/read_info.dart';
+import 'package:summer2022/utility/Keychain.dart';
 import 'package:summer2022/image_processing/google_cloud_vision_api.dart';
 import 'package:summer2022/main.dart';
 import 'package:summer2022/models/Arguments.dart';
@@ -26,6 +26,8 @@ class MainWidget extends StatefulWidget {
 }
 
 CloudVisionApi? vision = CloudVisionApi();
+
+bool? _completed;
 
 class MainWidgetState extends State<MainWidget> {
   DateTime selectedDate = DateTime.now();
@@ -46,19 +48,8 @@ class MainWidgetState extends State<MainWidget> {
   void initState() {
     super.initState();
     stt.setCurrentPage("main", this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => tutorial(context));
-  }
-
-  tutorial(context) async {
-    if (mounted) {
-      if (GlobalConfiguration().getValue("tutorial")) {
-        if (!ranTutorial) {
-          print("running tutorial");
-          //commandTutorial.runTutorial();
-          print("done tutorial");
-          ranTutorial = true;
-        }
-      }
+    if (GlobalConfiguration().getValue("tutorial")) {
+      _completed ??= commandTutorial.runTutorial();
     }
   }
 
@@ -97,6 +88,7 @@ class MainWidgetState extends State<MainWidget> {
       height: commonButtonHeight, // LATEST Button
       child: OutlinedButton(
         onPressed: () async {
+          stop(); // stop tts
           if (mailType == "Email") {
             context.loaderOverlay.show();
             await getEmails(false, DateTime.now());
@@ -127,6 +119,7 @@ class MainWidgetState extends State<MainWidget> {
       height: commonButtonHeight, // UNREAD Button
       child: OutlinedButton(
         onPressed: () async {
+          stop(); // stop tts
           if (mailType == "Email") {
             context.loaderOverlay.show();
             await getEmails(true, DateTime.now());
@@ -290,11 +283,11 @@ class MainWidgetState extends State<MainWidget> {
                   ),
                   child: OutlinedButton.icon(
                     onPressed: () async {
-                      final PickedFile =
+                      final pickedFile =
                           await picker.getImage(source: ImageSource.camera);
-                      print(PickedFile!.path);
-                      if (PickedFile != null) {
-                        _image = File(PickedFile.path);
+                      print(pickedFile!.path);
+                      if (pickedFile != null) {
+                        _image = File(pickedFile.path);
                         _imageBytes = _image!.readAsBytesSync();
 
                         await deleteImageFiles();

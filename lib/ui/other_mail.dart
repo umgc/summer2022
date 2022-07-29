@@ -2,7 +2,7 @@ import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
-import 'package:summer2022/read_info.dart';
+import 'package:summer2022/speech_commands/read_info.dart';
 import 'bottom_app_bar.dart';
 import 'package:summer2022/models/Digest.dart';
 import 'package:summer2022/main.dart';
