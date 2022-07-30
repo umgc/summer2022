@@ -56,7 +56,7 @@ class MainWidgetState extends State<MainWidget> {
   void setMailType(String type) {
     mailType = type;
   }
-    
+
   ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow) {
     return ElevatedButton.styleFrom(
       textStyle:
@@ -147,7 +147,6 @@ class MainWidgetState extends State<MainWidget> {
       ),
     );
     return Scaffold(
-
         bottomNavigationBar: const BottomBar(),
         appBar: AppBar(
           centerTitle: true,
@@ -159,173 +158,192 @@ class MainWidgetState extends State<MainWidget> {
           automaticallyImplyLeading: false,
           backgroundColor: Colors.grey,
         ),
-
         body: SafeArea(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: SizedBox(
-              height: 630,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Row(
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SizedBox(
+                    height: 630,
+                    child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          SizedBox(
-                            height: commonButtonHeight,
-                            child: OutlinedButton.icon(
-                              onPressed: () => selectDate(context),
-                              icon: const Icon(
-                                Icons.calendar_month_outlined,
-                                size: 35,
-                              ),
-                              label: Text(formattedSelectedDate, style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: commonFontSize-3,)),
-                              style:
-                              commonButtonStyleText(Colors.black, Colors.grey),
-                            ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  SizedBox(
+                                    height: commonButtonHeight,
+                                    child: OutlinedButton.icon(
+                                      onPressed: () => selectDate(context),
+                                      icon: const Icon(
+                                        Icons.calendar_month_outlined,
+                                        size: 35,
+                                      ),
+                                      label: Text(formattedSelectedDate,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: commonFontSize - 3,
+                                          )),
+                                      style: commonButtonStyleText(
+                                          Colors.black, Colors.grey),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: commonButtonHeight,
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey
+                                            .shade300, //background color of dropdown button
+                                        borderRadius: BorderRadius.circular(
+                                            commonCornerRadius), //border raiuds of dropdown button
+                                      ),
+                                      child: OutlinedButton.icon(
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                              context, '/settings');
+                                        },
+                                        icon: const Icon(
+                                          Icons.settings,
+                                          size: 45,
+                                        ),
+                                        label: const Text(""),
+                                        style: commonButtonStyleText(
+                                            Colors.black, Colors.grey),
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: SizedBox(
+                                        height: commonButtonHeight,
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey
+                                                .shade200, //background color of dropdown button
+                                            border: Border.all(
+                                                color: Colors.black,
+                                                width:
+                                                    commonBorderWidth), //border of dropdown button
+                                            borderRadius: BorderRadius.circular(
+                                                commonCornerRadius), //border raiuds of dropdown button
+                                          ),
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 20),
+                                            child: DropdownButtonHideUnderline(
+                                                child: DropdownButton(
+                                                    value: mailType,
+                                                    items: [
+                                                      DropdownMenuItem<String>(
+                                                        value: "Email",
+                                                        child: Text(
+                                                            "Email Mode",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    commonFontWt,
+                                                                fontSize:
+                                                                    commonFontSize)),
+                                                      ),
+                                                      DropdownMenuItem<String>(
+                                                        value: "Digest",
+                                                        child: Text(
+                                                            "Digest Mode",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    commonFontWt,
+                                                                fontSize:
+                                                                    commonFontSize)),
+                                                      ),
+                                                    ],
+                                                    onChanged: (String?
+                                                        valueSelected) {
+                                                      setState(() {
+                                                        mailType =
+                                                            valueSelected!;
+                                                      });
+                                                    })),
+                                          ),
+                                        )),
+                                  ),
+                                ),
+                              ]),
+                          Center(
+                            child: Row(
+                                // LATEST and UNREAD Buttons
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  latestButton,
+                                  if (mailType == "Email") unreadButton,
+                                ]),
                           ),
                           SizedBox(
-                            height: commonButtonHeight,
+                            height: commonButtonHeight, // SCAN MAIL Button
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 color: Colors.grey
-                                    .shade300, //background color of dropdown button
+                                    .shade400, //background color of dropdown button
                                 borderRadius: BorderRadius.circular(
                                     commonCornerRadius), //border raiuds of dropdown button
                               ),
                               child: OutlinedButton.icon(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/settings');
+                                onPressed: () async {
+                                  final pickedFile = await picker.getImage(
+                                      source: ImageSource.camera);
+                                  print(pickedFile!.path);
+                                  if (pickedFile != null) {
+                                    _image = File(pickedFile.path);
+                                    _imageBytes = _image!.readAsBytesSync();
+
+                                    await deleteImageFiles();
+                                    await saveImageFile(
+                                        _imageBytes!, "mailpiece.jpg");
+                                    MailResponse s = await processImage(
+                                        "$imagePath/mailpiece.jpg");
+                                    print(s.toJson());
+                                    ReadDigestMail readMail =
+                                        new ReadDigestMail();
+                                    readMail.setCurrentMail(s);
+                                    await readMail.readDigestInfo();
+                                  } else {
+                                    return;
+                                  }
                                 },
                                 icon: const Icon(
-                                  Icons.settings,
-                                  size: 45,
+                                  Icons.camera_alt_outlined,
+                                  size: 40,
                                 ),
-                                label: const Text(""),
+                                label: const Text("Scan Mail"),
                                 style: commonButtonStyleText(
                                     Colors.black, Colors.grey),
                               ),
                             ),
                           ),
-                        ]),
-                  ),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Expanded(
-                          child: Center(
+                          Padding(
+                            // MODE Dialog Box
+                            padding: const EdgeInsets.only(top: 0, bottom: 20),
                             child: SizedBox(
-                                height: commonButtonHeight,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey
-                                        .shade200, //background color of dropdown button
-                                    border: Border.all(
-                                        color: Colors.black,
-                                        width:
-                                        commonBorderWidth), //border of dropdown button
-                                    borderRadius: BorderRadius.circular(
-                                        commonCornerRadius), //border raiuds of dropdown button
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 20),
-                                    child: DropdownButtonHideUnderline(
-                                        child: DropdownButton(
-                                            value: mailType,
-                                            items: [
-                                              DropdownMenuItem<String>(
-                                                value: "Email",
-                                                child: Text("Email Mode",
-                                                    style: TextStyle(
-                                                        fontWeight: commonFontWt,
-                                                        fontSize: commonFontSize)),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: "Digest",
-                                                child: Text("Digest Mode",
-                                                    style: TextStyle(
-                                                        fontWeight: commonFontWt,
-                                                        fontSize: commonFontSize)),
-                                              ),
-                                            ],
-                                            onChanged: (String? valueSelected) {
-                                              setState(() {
-                                                mailType = valueSelected!;
-                                              });
-                                            })),
-                                  ),
-                                )),
+                              height: commonButtonHeight,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/sign_in');
+                                },
+                                style: commonButtonStyleElevated(
+                                    Colors.black, Colors.grey),
+                                child: const Text(
+                                  "  Sign Out  ",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ]
-                  ),
-              Center(
-                child: Row(
-                    // LATEST and UNREAD Buttons
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      latestButton,
-                      if (mailType == "Email") unreadButton,
-                    ]),
-              ),
-              SizedBox(
-                height: commonButtonHeight, // SCAN MAIL Button
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors
-                        .grey.shade400, //background color of dropdown button
-                    borderRadius: BorderRadius.circular(
-                        commonCornerRadius), //border raiuds of dropdown button
-                  ),
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      final pickedFile =
-                          await picker.getImage(source: ImageSource.camera);
-                      print(pickedFile!.path);
-                      if (pickedFile != null) {
-                        _image = File(pickedFile.path);
-                        _imageBytes = _image!.readAsBytesSync();
-
-                        await deleteImageFiles();
-                        await saveImageFile(_imageBytes!, "mailpiece.jpg");
-                        MailResponse s =
-                            await processImage("$imagePath/mailpiece.jpg");
-                        print(s.toJson());
-                      } else {
-                        return;
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.camera_alt_outlined,
-                      size: 40,
-                    ),
-                    label: const Text("Scan Mail"),
-                    style: commonButtonStyleText(Colors.black, Colors.grey),
-                  ),
-                ),
-              ),
-              Padding(
-                // MODE Dialog Box
-                padding: const EdgeInsets.only(top: 0, bottom: 20),
-                child: SizedBox(
-                  height: commonButtonHeight,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/sign_in');
-                    },
-                    style: commonButtonStyleElevated(Colors.black, Colors.grey),
-                    child: const Text(
-                      "  Sign Out  ",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-              /*SizedBox(height: commonButtonHeight,
+                          /*SizedBox(height: commonButtonHeight,
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/backend_testing');
@@ -341,7 +359,7 @@ class MainWidgetState extends State<MainWidget> {
                           style: TextStyle(color: Colors.black)),
                     ),
                   ),*/
-            ])))));
+                        ])))));
   }
 
   Future<void> selectDate(BuildContext context) async {
@@ -477,9 +495,9 @@ class MainWidgetState extends State<MainWidget> {
     try {
       await DigestEmailParser()
           .createDigest(await Keychain().getUsername(),
-          await Keychain().getPassword(), pickedDate ?? selectedDate)
+              await Keychain().getPassword(), pickedDate ?? selectedDate)
           .then((value) => digest = value);
-    } catch(e) {
+    } catch (e) {
       showErrorDialog();
       context.loaderOverlay.hide();
     }
@@ -489,9 +507,9 @@ class MainWidgetState extends State<MainWidget> {
     try {
       await OtherMailParser()
           .createEmailList(isUnread, await Keychain().getUsername(),
-          await Keychain().getPassword(), pickedDate ?? selectedDate)
+              await Keychain().getPassword(), pickedDate ?? selectedDate)
           .then((value) => emails = value);
-    } catch(e) {
+    } catch (e) {
       showErrorDialog();
       context.loaderOverlay.hide();
     }
