@@ -27,10 +27,6 @@ Future speak(String text) async {
     int result = await tts.speak(text);
     print("result $result");
     setTtsState(TtsState.stopped);
-    //while (ttsState == TtsState.playing){
-    //  print("playing");
-    //  sleep(const Duration(seconds: 1));
-    //}
   } catch(e) {
     print("TTS ERROR: ${e.toString()}");
   }
@@ -89,12 +85,6 @@ void main() async {
 }
 
 Widget buildScreen(bool emailAuthenticated) {
-  // String path = 'test';
-  // if (emailAuthenticated) {
-  //   path = 'main';
-  // } else {
-  //   path = 'signin';
-  // }
 
   return Scaffold(
     body:

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:global_configuration/global_configuration.dart';
 
 import 'package:summer2022/speech_commands/read_info.dart';
 import 'package:summer2022/main.dart';
@@ -18,7 +17,6 @@ class BottomBarState extends State<BottomBar> {
   bool speakerOn = true;
   double commonIconSize = 65;
   String path = '';
-  GlobalConfiguration cfg = GlobalConfiguration();
 
   @override
   Widget build(BuildContext context) {
@@ -52,15 +50,18 @@ class BottomBarState extends State<BottomBar> {
             const Spacer(),
             IconButton(
               icon: Icon(
-                (cfg.getValue('muteMic')) ? Icons.mic_off : Icons.mic_none,
+                (micOn) ? Icons.mic_off : Icons.mic_none,
                 size: commonIconSize,
               ),
               onPressed: () {
                 setState(
                   () {
-                    bool mic = cfg.getValue('muteMic');
-                    cfg.updateValue('muteMic', !mic);
-                    print(cfg.getValue('muteMic'));
+                    bool currentMic = micOn;
+                    if (currentMic){
+                      micOn = false;
+                    } else {
+                      micOn = true;
+                    }
                   },
                 );
               },

@@ -20,7 +20,6 @@ class Speech {
   String words = '';
   String input = '';
   bool speechEnabled = false;
-  bool mute = false;
   var formatter = DateFormat('yyy-MM-dd');
   dynamic username;
   dynamic password;
@@ -212,15 +211,13 @@ class Speech {
   command(String s) async {
     //General commands
     if (s == 'unmute') {
-      cfg.updateValue('muteMic', false);
       _bottomBarState.setState(() {
-            _bottomBarState.micOn = false; 
+            _bottomBarState.micOn = true; 
       });
-      // mute = false;
       return;
     }
 
-    if (cfg.getValue('muteMic') == false) {
+    if (_bottomBarState.micOn) {
       switch (currentPage) {
         case 'mail':
           switch (s.toLowerCase()) {
@@ -651,9 +648,8 @@ class Speech {
       // General commands
       switch (s) {
         case 'mute':
-          cfg.updateValue('mic', true);
           _bottomBarState.setState(() {
-            _bottomBarState.micOn = true; 
+            _bottomBarState.micOn = false; 
           });
           break;
         case 'stop':
