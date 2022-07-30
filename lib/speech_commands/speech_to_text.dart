@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:summer2022/ui/bottom_app_bar.dart';
 import 'package:summer2022/utility/Keychain.dart';
 import 'package:summer2022/email_processing/digest_email_parser.dart';
 import 'package:summer2022/models/Arguments.dart';
@@ -28,22 +29,37 @@ class Speech {
   late List<Digest> emails;
   late MailWidgetState _mailWidgetState;
   late OtherMailWidgetState _otherMailWidgetState;
+  late BottomBarState _bottomBarState;
   late String requestedDate;
   bool links = false;
 
-  void setCurrentPage(String page, [Object? obj]) {
+  void setCurrentPage(String page, [Object? obj, Object? bar]) {
     switch (page) {
       case 'mail':
         if (obj != null) {
           _mailWidgetState = obj as MailWidgetState;
+        }
+        if (bar != null){
+          _bottomBarState = bar as BottomBarState;
         }
         break;
       case 'email':
         if (obj != null) {
           _otherMailWidgetState = obj as OtherMailWidgetState;
         }
+        if (bar != null){
+          _bottomBarState = bar as BottomBarState;
+        }
         break;
       case 'settings':
+        if (bar != null){
+          _bottomBarState = bar as BottomBarState;
+        }
+        break;
+      case 'main':
+        if (bar != null){
+          _bottomBarState = bar as BottomBarState;
+        }
         break;
       case 'login':
         break;
@@ -193,6 +209,9 @@ class Speech {
     //General commands
     if (s == 'unmute') {
       cfg.updateValue('muteMic', false);
+      _bottomBarState.setState(() {
+            _bottomBarState.micOn = false; 
+      });
       // mute = false;
       return;
     }
@@ -606,6 +625,9 @@ class Speech {
       switch (s) {
         case 'mute':
           cfg.updateValue('mic', true);
+          _bottomBarState.setState(() {
+            _bottomBarState.micOn = true; 
+          });
           break;
         case 'stop':
           tts.stop();
@@ -613,10 +635,16 @@ class Speech {
         case 'speakers off':
           tts.stop();
           tts.setVolume(0);
+          _bottomBarState.setState(() {
+            _bottomBarState.speakerOn = false; 
+          });
           break;
         case 'speakers on':
           tts.stop();
           tts.setVolume(1);
+          _bottomBarState.setState(() {
+            _bottomBarState.speakerOn = true; 
+          });
           break;
         default: // Invalid command
           break;

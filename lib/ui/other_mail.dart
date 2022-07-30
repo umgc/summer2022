@@ -23,13 +23,14 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   late int index;
   FontWeight commonFontWt = FontWeight.w500;
   double commonFontSize = 28;
+  BottomBar bar = const BottomBar('othermail');
 
   @override
   void initState() {
     // index must be initialed before build or emails won't iterate
     super.initState();
     index = widget.emails.length - 1;
-    stt.setCurrentPage("email", this);
+    stt.setCurrentPage("email", this, bar);
     if(widget.emails.isNotEmpty) {
         reader = ReadMail();
         reader!.setCurrentMail(widget.emails[index].message);
@@ -117,7 +118,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     final String formatted = formatter.format(parsedDate);
     String timeAgo = convertToAgo(parsedDate);
     return Scaffold(
-      bottomNavigationBar: BottomBar('othermail'),
+      bottomNavigationBar: bar,
       appBar: AppBar(
         centerTitle: true,
         title: Text(

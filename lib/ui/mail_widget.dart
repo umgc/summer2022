@@ -29,6 +29,7 @@ class MailWidgetState extends State<MailWidget> {
   double commonBorderWidth = 2;
   double commonButtonHeight = 60;
   double commonCornerRadius = 8;
+  BottomBar bar = const BottomBar('digest');
 
   ButtonStyle commonButtonStyleElevated(Color? primary, Color? shadow) {
     return ElevatedButton.styleFrom(
@@ -56,7 +57,7 @@ class MailWidgetState extends State<MailWidget> {
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks(); 
     }
-    stt.setCurrentPage("mail", this);
+    stt.setCurrentPage("mail", this, bar);
     WidgetsBinding.instance.addPostFrameCallback((_) => digestAuto(context));
   }
 
@@ -103,7 +104,7 @@ class MailWidgetState extends State<MailWidget> {
     // Figma Flutter Generator MailWidget - FRAME
 
     return Scaffold(
-      bottomNavigationBar: const BottomBar('digest'),
+      bottomNavigationBar: bar,
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Digest"),

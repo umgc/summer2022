@@ -43,11 +43,12 @@ class MainWidgetState extends State<MainWidget> {
   bool selectDigest = false;
   bool ranTutorial = false;
   CommandTutorial commandTutorial = CommandTutorial();
+  BottomBar bar = const BottomBar('main');
 
   @override
   void initState() {
     super.initState();
-    stt.setCurrentPage("main", this);
+    stt.setCurrentPage("main", this, bar);
     if (GlobalConfiguration().getValue("tutorial")) {
       _completed ??= commandTutorial.runTutorial();
     }
@@ -147,7 +148,7 @@ class MainWidgetState extends State<MainWidget> {
       ),
     );
     return Scaffold(
-        bottomNavigationBar: BottomBar('main'),
+        bottomNavigationBar: bar,
         appBar: AppBar(
           centerTitle: true,
           title: Text(

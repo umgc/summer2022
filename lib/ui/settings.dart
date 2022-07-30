@@ -14,17 +14,18 @@ GlobalConfiguration cfg = GlobalConfiguration();
 
 class SettingWidgetState extends State<SettingsWidget> {
   GlobalConfiguration cfg = GlobalConfiguration();
+  BottomBar bar = const BottomBar('settings');
 
   @override
   void initState() {
     super.initState();
-    stt.setCurrentPage("settings");
+    stt.setCurrentPage("settings", bar);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomBar('settings'),
+      bottomNavigationBar: bar,
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Settings"),
