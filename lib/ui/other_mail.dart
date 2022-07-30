@@ -30,7 +30,8 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     // index must be initialed before build or emails won't iterate
     super.initState();
     index = widget.emails.length - 1;
-    stt.setCurrentPage("email", this, bar);
+    BottomBarState barState = bar.createState();
+    stt.setCurrentPage("email", this, barState);
     if(widget.emails.isNotEmpty) {
         reader = ReadMail();
         reader!.setCurrentMail(widget.emails[index].message);
