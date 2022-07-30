@@ -57,8 +57,7 @@ class MailWidgetState extends State<MailWidget> {
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks(); 
     }
-    BottomBarState barState = bar.createState();
-    stt.setCurrentPage("mail", this, barState);
+    stt.setCurrentPage("mail", this, bar);
     WidgetsBinding.instance.addPostFrameCallback((_) => digestAuto(context));
   }
 

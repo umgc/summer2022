@@ -48,8 +48,7 @@ class MainWidgetState extends State<MainWidget> {
   @override
   void initState() {
     super.initState();
-    BottomBarState barState = bar.createState();
-    stt.setCurrentPage("main", this, barState);
+    stt.setCurrentPage("main", this, bar);
     if (GlobalConfiguration().getValue("tutorial")) {
       _completed ??= commandTutorial.runTutorial();
     }

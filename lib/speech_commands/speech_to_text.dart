@@ -33,14 +33,14 @@ class Speech {
   late String requestedDate;
   bool links = false;
 
-  void setCurrentPage(String page, [Object? obj, Object? bar]) {
+  void setCurrentPage(String page, [Object? obj, BottomBar? bar]) {
     switch (page) {
       case 'mail':
         if (obj != null) {
           _mailWidgetState = obj as MailWidgetState;
         }
         if (bar != null){
-          _bottomBarState = bar as BottomBarState;
+          _bottomBarState = bar.createState();
         }
         break;
       case 'email':
@@ -48,7 +48,7 @@ class Speech {
           _otherMailWidgetState = obj as OtherMailWidgetState;
         }
         if (bar != null){
-          _bottomBarState = bar as BottomBarState;
+          _bottomBarState = bar.createState();
         }
         break;
       case 'settings':
@@ -56,12 +56,12 @@ class Speech {
           _settingWidgetState = obj as SettingWidgetState;
         }
         if (bar != null){
-          _bottomBarState = bar as BottomBarState;
+          _bottomBarState = bar.createState();
         }
         break;
       case 'main':
         if (bar != null){
-          _bottomBarState = bar as BottomBarState;
+          _bottomBarState = bar.createState();
         }
         break;
       case 'login':
