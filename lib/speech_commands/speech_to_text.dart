@@ -464,7 +464,7 @@ class Speech {
                 }
               }
               // User asks for digest from specific date
-              if (s.contains("digest date") || s.contains("digestdate")) {
+              if (s.contains("digest date") || s.contains("digestate")) {
                 try {
                   requestedDate = s.split("date ")[1];
                 } catch (e) {
