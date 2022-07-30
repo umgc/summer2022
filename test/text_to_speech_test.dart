@@ -17,7 +17,7 @@ class FakeFlutterTts extends Fake implements FlutterTts {
   @override
   Future<dynamic> speak(String? text) {
     print(text);
-    return Future.value(true);
+    return Future.value(1);
   }
 
   @override
