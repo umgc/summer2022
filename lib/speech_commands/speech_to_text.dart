@@ -28,6 +28,7 @@ class Speech {
   late List<Digest> emails;
   late MailWidgetState _mailWidgetState;
   late OtherMailWidgetState _otherMailWidgetState;
+  late SettingWidgetState _settingWidgetState;
   late String requestedDate;
   bool links = false;
 
@@ -44,6 +45,9 @@ class Speech {
         }
         break;
       case 'settings':
+      if (obj != null) {
+          _settingWidgetState = obj as SettingWidgetState;
+        }
         break;
       case 'login':
         break;
@@ -75,7 +79,7 @@ class Speech {
   }
 
   String recording() {
-    speech.listen(listenFor: const Duration(seconds: 5), onResult: result);
+    speech.listen(listenFor: const Duration(seconds: 6), onResult: result);
     return (words);
   }
 
@@ -94,7 +98,7 @@ class Speech {
       }
       input = '';
       words = '';
-      await Future.delayed(const Duration(seconds: 6));
+      await Future.delayed(const Duration(seconds: 7));
     }
   }
 
@@ -203,7 +207,7 @@ class Speech {
             // mail page commands
             case 'next':
               _mailWidgetState.setState(() {
-                _mailWidgetState.seekForward(1);
+                _mailWidgetState.seekForward();
               });
               break;
             case 'previous':
@@ -500,93 +504,116 @@ class Speech {
             case 'send her on':
             case 'sonder on':
               cfg.updateValue("sender", true);
+              _settingWidgetState.setState(() {});
               speak("Sender on.");
               break;
             case 'center off':
             case 'sender off':
+            case 'senderoff':
             case 'send her off':
             case 'sonder off':
               cfg.updateValue("sender", false);
+              _settingWidgetState.setState(() {});
               speak("Sender off.");
               break;
             case 'recipient on':
               cfg.updateValue("recipient", true);
+              _settingWidgetState.setState(() {});
               speak("Recipient on.");
               break;
             case 'recipient off':
               cfg.updateValue("recipient", false);
+              _settingWidgetState.setState(() {});
               speak("Recipient off.");
               break;
             case 'logos on':
               cfg.updateValue("logos", true);
+              _settingWidgetState.setState(() {});
               speak("Logos on.");
               break;
             case 'logos off':
               cfg.updateValue("logos", false);
+              _settingWidgetState.setState(() {});
               speak("Logos off.");
               break;
             case 'hyperlinks on':
               cfg.updateValue("links", true);
+              _settingWidgetState.setState(() {});
               speak("Links on.");
               break;
             case 'hyperlinks off':
               cfg.updateValue("links", false);
+              _settingWidgetState.setState(() {});
               speak("Links off.");
               break;
             case 'address on':
               cfg.updateValue("address", true);
+              _settingWidgetState.setState(() {});
               speak("Address on.");
               break;
             case 'address off':
               cfg.updateValue("address", false);
+              _settingWidgetState.setState(() {});
               speak("Address off.");
               break;
             case 'email subject on':
               cfg.updateValue("email_subject", true);
+              _settingWidgetState.setState(() {});
               speak("Email subject on.");
               break;
             case 'email subject off':
               cfg.updateValue("email_subject", false);
+              _settingWidgetState.setState(() {});
               speak("Email subject off.");
               break;
             case 'email text on':
               cfg.updateValue("email_text", true);
+              _settingWidgetState.setState(() {});
               speak("Email text on.");
               break;
             case 'email text off':
               cfg.updateValue("email_text", false);
+              _settingWidgetState.setState(() {});
               speak("Email text off.");
               break;
             case 'email sender address on':
               cfg.updateValue("email_sender", true);
+              _settingWidgetState.setState(() {});
               speak("Email sender on.");
               break;
             case 'email sender address off':
               cfg.updateValue("email_sender", false);
+              _settingWidgetState.setState(() {});
               speak("Email sender off.");
               break;
             case 'email recipients on':
               cfg.updateValue("email_recipients", true);
+              _settingWidgetState.setState(() {});
               speak("Email recipients on.");
               break;
             case 'email recipients off':
               cfg.updateValue("email_recipients", false);
+              _settingWidgetState.setState(() {});
               speak("Email recipients off.");
               break;
             case 'autoplay on':
               cfg.updateValue("autoplay", true);
+              _settingWidgetState.setState(() {});
               speak("Autoplay on.");
               break;
             case 'autoplay off':
               cfg.updateValue("autoplay", false);
+              _settingWidgetState.setState(() {});
               speak("Autoplay off.");
               break;
             case 'tutorial on':
               cfg.updateValue("tutorial", true);
+              _settingWidgetState.setState(() {});
               speak("Tutorial on.");
               break;
             case 'tutorial off':
               cfg.updateValue("tutorial", false);
+              _settingWidgetState.setState(() {});
               speak("Tutorial off.");
               break;
             case 'help':

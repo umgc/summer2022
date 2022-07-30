@@ -18,7 +18,7 @@ class SettingWidgetState extends State<SettingsWidget> {
   @override
   void initState() {
     super.initState();
-    stt.setCurrentPage("settings");
+    stt.setCurrentPage("settings", this);
   }
 
   @override
