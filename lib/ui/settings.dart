@@ -20,7 +20,7 @@ class SettingWidgetState extends State<SettingsWidget> {
   void initState() {
     super.initState();
     BottomBarState barState = bar.createState();
-    stt.setCurrentPage("settings", barState);
+    stt.setCurrentPage("settings", this, barState);
   }
 
   @override

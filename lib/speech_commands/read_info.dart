@@ -316,7 +316,7 @@ class CommandTutorial {
     An example is June 10th 2022.
     When listening to digests or emails, say next to go to the next item and previous to go to the previous item.
     While on the digest or email page, to get all of the details for the current email or digest, say details.
-    On the digest page, you can ask for the specific details: sender name, recipient name, sender address, recipient address, sender validated, recipient validated, logos, and links.
+    On the digest page, you can ask for the specific details: sender name, recipient name, sender address, recipient address, sender validated, recipient validated, logos, and hyperlinks.
     On the email page, you can ask for the specific email details: subject, text, sender, and recipients.
     On the digest and recipients pages, say help to receive more details on these options.
     ''';
@@ -400,7 +400,7 @@ class CommandTutorial {
     To get if the sender's address for the current digest was validated, say sender validated.
     To get if the recipient's address for the current digest was validated, say recipient validated.
     To get the logos for the current digest, say logos.
-    To get the links for the current digest, say links.
+    To get the hyperlinks for the current digest, say hyperlinks.
     To go back to the main page, say back.
     To stop any current audio, say stop.
     To turn the speakers off, say speakers off.
