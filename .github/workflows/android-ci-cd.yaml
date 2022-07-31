@@ -20,6 +20,10 @@ jobs:
       - name: Get run number
         run: |
           echo ${{ github.run_number }}
+      - name: Update keystore password
+        run: sed -i 's/#{KEYSTORE_PASS}#/{{secrets.KEYSTORE_PAS}}/g' android/key.properties
+      - name: Update keystore key password  
+        run: sed -i 's/#{KEYSTORE_KEY_PASS}}#/{{secrets.KETSTORE_KEY_PAS}}/g' android/key.properties
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
@@ -30,6 +34,8 @@ jobs:
           channel: "stable"
       - name: Install Flutter dependencies
         run: flutter pub get
+      - name: Build APK
+        run: flutter build apk --release --split-per-abi
       - name: Build App Bundle
         run: flutter build appbundle
       - name: Run Unit Tests
