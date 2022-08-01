@@ -77,7 +77,7 @@ class MailWidgetState extends State<MailWidget> {
     setTtsState(TtsState.playing);
     if (GlobalConfiguration().getValue("autoplay")) {
       if (mounted) {
-        while (ttsState == TtsState.playing){
+        while (ttsState != TtsState.stopped){
           print("waiting");
           await Future.delayed(const Duration(seconds: 1));
         }
@@ -177,7 +177,10 @@ class MailWidgetState extends State<MailWidget> {
                       backgroundColor: Colors.grey,
                       heroTag: "f1",
                       onPressed: () {
-                        setState(() { seekBack(); });
+                        setState(() {
+                          stop(); //stop tts
+                          seekBack();
+                        });
                       },
                       child: const Icon(Icons.skip_previous),
                     ),
@@ -187,7 +190,10 @@ class MailWidgetState extends State<MailWidget> {
                       backgroundColor: Colors.grey,
                       heroTag: "f2",
                       onPressed: () {
-                        setState(() { seekForward(); });
+                        setState(() {
+                          stop(); //stop tts
+                          seekForward();
+                        });
                       },
                       child: const Icon(Icons.skip_next),
                     ),
@@ -204,7 +210,6 @@ class MailWidgetState extends State<MailWidget> {
       attachmentIndex = attachmentIndex - 1;
       print(widget.digest.attachments[attachmentIndex].detailedInformation
           .toJson());
-      stop();
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
@@ -217,7 +222,6 @@ class MailWidgetState extends State<MailWidget> {
       attachmentIndex = attachmentIndex + 1;
       print(widget.digest.attachments[attachmentIndex].detailedInformation
           .toJson());
-      stop();
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
