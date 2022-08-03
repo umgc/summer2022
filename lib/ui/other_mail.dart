@@ -62,7 +62,9 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
         debugPrint("tts stopped");
         await Future.delayed(const Duration(seconds: 5));
         if (index != 0) {
-          seekForward();
+          setState(() {
+            seekForward();
+          });
         }
       }
     }

@@ -53,7 +53,7 @@ class MailWidgetState extends State<MailWidget> {
       reader = ReadDigestMail();
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
-      buildLinks(); 
+      buildLinks();
     }
     stt.setCurrentPage("mail", this);
     WidgetsBinding.instance.addPostFrameCallback((_) => digestAuto(context));
@@ -61,11 +61,11 @@ class MailWidgetState extends State<MailWidget> {
 
   digestAuto(context) async {
     try {
-        setTtsState(TtsState.playing);
-        readMailPiece();
-        //await Future.delayed(const Duration(seconds: 5));
+      setTtsState(TtsState.playing);
+      readMailPiece();
+      //await Future.delayed(const Duration(seconds: 5));
     } catch(e) {
-        debugPrint("ERROR: Read mail piece in init: ${e.toString()}");
+      debugPrint("ERROR: Read mail piece in init: ${e.toString()}");
     }
     autoplay();
   }
@@ -83,124 +83,153 @@ class MailWidgetState extends State<MailWidget> {
         debugPrint("tts stopped");
         await Future.delayed(const Duration(seconds: 5));
         if (attachmentIndex < (widget.digest.attachments.length - 1)) {
-          seekForward();
+          setState(() {
+            seekForward();
+          });
         }
       }
     }
+  }
+
+  void swipeLeftRight(DragEndDetails details) {
+    if (details.primaryVelocity! > 0) {
+      // User swiped Left
+      debugPrint("Swap Left to Right");
+      setState(() {
+        stop();
+        seekBack();
+      });
+    } else if (details.primaryVelocity! < 0) {
+      // User swiped Right
+      debugPrint("Swap Right to Left");
+      setState(() {
+        stop();
+        seekForward();
+      });
+    }
+    debugPrint("test2");
   }
 
   MailResponse getCurrentDigestDetails() {
     return widget.digest.attachments[attachmentIndex].detailedInformation;
   }
 
-  /*static Route _buildRoute(BuildContext context, Object? params) {
-    return MaterialPageRoute<void>(
-      builder: (BuildContext context) => const MainWidget(),
-    );
-  }*/
-
   @override
   Widget build(BuildContext context) {
     // Figma Flutter Generator MailWidget - FRAME
 
-    return Scaffold(
-      bottomNavigationBar: const BottomBar(),
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Digest"),
-        backgroundColor: Colors.grey,
-      ),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: const [
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      style: TextStyle(fontSize: 20),
-                      "",
+    return GestureDetector(
+      onHorizontalDragEnd: swipeLeftRight,
+      child: Scaffold(
+        bottomNavigationBar: const BottomBar(),
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text("Digest"),
+          backgroundColor: Colors.grey,
+        ),
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: const [
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        style: TextStyle(fontSize: 20),
+                        "",
+                      ),
                     ),
                   ),
-                ),
-                Icon(
-                  Icons.arrow_back,
-                  size: 50,
-                  color: Color.fromARGB(0, 255, 255, 1),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Center(
-                      child: Container(
-                        //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
-                          child: widget.digest.attachments.isNotEmpty
-                              ? Image.memory(base64Decode(widget
-                              .digest
-                              .attachments[attachmentIndex]
-                              .attachmentNoFormatting))
-                              : Image.asset('assets/NoAttachments.png'))),
-                ),
-              ],
-            ),
-            Padding( // MODE Dialog Box
-              padding: const EdgeInsets.only(top:0, left: 30, right: 30),
-              child: Row( // LATEST and UNREAD Buttons
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(height: commonButtonHeight, // LATEST Button
-                      child: OutlinedButton(
-                        onPressed: () { showLinkDialog(); },
-                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
-                        child: const Text("Links",
-                            style: TextStyle(color: Colors.black)),
-                      ),
-                    ),
-                    SizedBox(height: commonButtonHeight, // UNREAD Button
-                      child: OutlinedButton(
-                        onPressed: () { readMailPiece(); },
-                        style: commonButtonStyleElevated(Colors.white, Colors.grey),
-                        child: const Text("All Details", style: TextStyle(color: Colors.black)),
-                      ),
-                    ),
-                  ]
+                  Icon(
+                    Icons.arrow_back,
+                    size: 50,
+                    color: Color.fromARGB(0, 255, 255, 1),
+                  ),
+                ],
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(bottom: 60),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    FloatingActionButton(
-                      backgroundColor: Colors.grey,
-                      heroTag: "f1",
-                      onPressed: () {
-                        setState(() {
-                          stop(); //stop tts
-                          seekBack();
-                        });
-                      },
-                      child: const Icon(Icons.skip_previous),
-                    ),
-                    Text(widget.digest.attachments.isNotEmpty
-                        ? "${attachmentIndex + 1}/${widget.digest.attachments.length}" : "0/0"),
-                    FloatingActionButton(
-                      backgroundColor: Colors.grey,
-                      heroTag: "f2",
-                      onPressed: () {
-                        setState(() {
-                          stop(); //stop tts
-                          seekForward();
-                        });
-                      },
-                      child: const Icon(Icons.skip_next),
-                    ),
-                  ]),
-            )
-          ],
+              Row(
+                children: [
+                  Expanded(
+                    child: Center(
+                        child: Container(
+                            //child: Image.asset(widget.digest.attachments[attachmentIndex].attachment)), //This will eventually be populated with the downloaded image from the digest
+                            child: widget.digest.attachments.isNotEmpty
+                                ? Image.memory(base64Decode(widget
+                                    .digest
+                                    .attachments[attachmentIndex]
+                                    .attachmentNoFormatting))
+                                : Image.asset('assets/NoAttachments.png'))),
+                  ),
+                ],
+              ),
+              Padding(
+                // MODE Dialog Box
+                padding: const EdgeInsets.only(top: 0, left: 30, right: 30),
+                child: Row(
+                    // LATEST and UNREAD Buttons
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        height: commonButtonHeight, // LATEST Button
+                        child: OutlinedButton(
+                          onPressed: () {
+                            showLinkDialog();
+                          },
+                          style: commonButtonStyleElevated(
+                              Colors.white, Colors.grey),
+                          child: const Text("Links",
+                              style: TextStyle(color: Colors.black)),
+                        ),
+                      ),
+                      SizedBox(
+                        height: commonButtonHeight, // UNREAD Button
+                        child: OutlinedButton(
+                          onPressed: () {
+                            readMailPiece();
+                          },
+                          style: commonButtonStyleElevated(
+                              Colors.white, Colors.grey),
+                          child: const Text("All Details",
+                              style: TextStyle(color: Colors.black)),
+                        ),
+                      ),
+                    ]),
+              ),
+              Container(
+                padding: const EdgeInsets.only(bottom: 60),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FloatingActionButton(
+                        backgroundColor: Colors.grey,
+                        heroTag: "f1",
+                        onPressed: () {
+                          setState(() {
+                            stop();
+                            seekBack();
+                          });
+                        },
+                        child: const Icon(Icons.skip_previous),
+                      ),
+                      Text(widget.digest.attachments.isNotEmpty
+                          ? "${attachmentIndex + 1}/${widget.digest.attachments.length}"
+                          : "0/0"),
+                      FloatingActionButton(
+                        backgroundColor: Colors.grey,
+                        heroTag: "f2",
+                        onPressed: () {
+                          setState(() {
+                            stop();
+                            seekForward();
+                          });
+                        },
+                        child: const Icon(Icons.skip_next),
+                      ),
+                    ]),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -214,29 +243,23 @@ class MailWidgetState extends State<MailWidget> {
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
-      try {
-        setTtsState(TtsState.playing);
-        readMailPiece();
-      } catch(e) {
-        debugPrint("ERROR: Seek back: ${e.toString()}");
-      }
+      readMailPiece();
     }
   }
 
   void seekForward([int length = 0]) {
-    if (attachmentIndex < (length != 0 ? length : widget.digest.attachments.length - 1)) {
-      setState(() {
-        attachmentIndex = attachmentIndex + 1;
-        debugPrint(widget.digest.attachments[attachmentIndex].detailedInformation
-            .toJson().toString());
-        reader!.setCurrentMail(
-            widget.digest.attachments[attachmentIndex].detailedInformation);
-      });
+    if (attachmentIndex <
+        (length != 0 ? length : widget.digest.attachments.length - 1)) {
+      attachmentIndex = attachmentIndex + 1;
+      debugPrint(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson().toString());
+      reader!.setCurrentMail(
+          widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
       try {
         setTtsState(TtsState.playing);
         readMailPiece();
-      } catch(e) {
+      } catch (e) {
         debugPrint("ERROR: Seek forward: ${e.toString()}");
       }
       autoplay();
@@ -290,7 +313,8 @@ class MailWidgetState extends State<MailWidget> {
       newLinks.add(link);
     }
     if (widget.digest.attachments.isNotEmpty) {
-      for (var code in widget.digest.attachments[attachmentIndex].detailedInformation.codes) {
+      for (var code in widget
+          .digest.attachments[attachmentIndex].detailedInformation.codes) {
         Link newLink = Link();
         newLink.info = "";
         newLink.link = code.info;

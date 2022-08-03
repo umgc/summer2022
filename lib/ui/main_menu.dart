@@ -283,47 +283,96 @@ class MainWidgetState extends State<MainWidget> {
                                   if (mailType == "Email") unreadButton,
                                 ]),
                           ),
-                          SizedBox(
-                            height: commonButtonHeight, // SCAN MAIL Button
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: Colors.grey
-                                    .shade400, //background color of dropdown button
-                                borderRadius: BorderRadius.circular(
-                                    commonCornerRadius), //border raiuds of dropdown button
-                              ),
-                              child: OutlinedButton.icon(
-                                onPressed: () async {
-                                  final pickedFile = await picker.getImage(
-                                      source: ImageSource.camera);
-                                  print(pickedFile!.path);
-                                  if (pickedFile != null) {
-                                    _image = File(pickedFile.path);
-                                    _imageBytes = _image!.readAsBytesSync();
+                          Row(
+                            children: [
+                              Spacer(),
+                              SizedBox(
+                                height: commonButtonHeight, // SCAN MAIL Button
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey
+                                        .shade400, //background color of dropdown button
+                                    borderRadius: BorderRadius.circular(
+                                        commonCornerRadius), //border raiuds of dropdown button
+                                  ),
+                                  child: OutlinedButton.icon(
+                                    onPressed: () async {
+                                      final pickedFile = await picker.getImage(
+                                          source: ImageSource.camera);
+                                      print(pickedFile!.path);
+                                      if (pickedFile != null) {
+                                        _image = File(pickedFile.path);
+                                        _imageBytes = _image!.readAsBytesSync();
 
-                                    await deleteImageFiles();
-                                    await saveImageFile(
-                                        _imageBytes!, "mailpiece.jpg");
-                                    MailResponse s = await processImage(
-                                        "$imagePath/mailpiece.jpg");
-                                    print(s.toJson());
-                                    ReadDigestMail readMail =
-                                        new ReadDigestMail();
-                                    readMail.setCurrentMail(s);
-                                    await readMail.readDigestInfo();
-                                  } else {
-                                    return;
-                                  }
-                                },
-                                icon: const Icon(
-                                  Icons.camera_alt_outlined,
-                                  size: 40,
+                                        await deleteImageFiles();
+                                        await saveImageFile(
+                                            _imageBytes!, "mailpiece.jpg");
+                                        MailResponse s = await processImage(
+                                            "$imagePath/mailpiece.jpg");
+                                        ReadDigestMail readMail =
+                                            ReadDigestMail();
+                                        print(s.toJson());
+                                        readMail.setCurrentMail(s);
+                                        await readMail.readDigestInfo();
+                                      } else {
+                                        return;
+                                      }
+                                    },
+                                    icon: const Icon(
+                                      Icons.camera_alt_outlined,
+                                      size: 40,
+                                    ),
+                                    label: const Text("Scan Mail"),
+                                    style: commonButtonStyleText(
+                                        Colors.black, Colors.grey),
+                                  ),
                                 ),
-                                label: const Text("Scan Mail"),
-                                style: commonButtonStyleText(
-                                    Colors.black, Colors.grey),
                               ),
-                            ),
+                              SizedBox(
+                                height: commonButtonHeight,
+                                width: 80, // SCAN MAIL Button
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey
+                                        .shade400, //background color of dropdown button
+                                    borderRadius: BorderRadius.circular(
+                                        commonCornerRadius), //border raiuds of dropdown button
+                                  ),
+                                  child: OutlinedButton.icon(
+                                    onPressed: () async {
+                                      final pickedFile = await picker.getImage(
+                                          source: ImageSource.gallery);
+                                      print(pickedFile!.path);
+                                      if (pickedFile != null) {
+                                        _image = File(pickedFile.path);
+                                        _imageBytes = _image!.readAsBytesSync();
+
+                                        await deleteImageFiles();
+                                        await saveImageFile(
+                                            _imageBytes!, "mailpiece.jpg");
+                                        MailResponse s = await processImage(
+                                            "$imagePath/mailpiece.jpg");
+                                        ReadDigestMail readMail =
+                                            ReadDigestMail();
+                                        print(s.toJson());
+                                        readMail.setCurrentMail(s);
+                                        await readMail.readDigestInfo();
+                                      } else {
+                                        return;
+                                      }
+                                    },
+                                    icon: const Icon(
+                                      Icons.image_search,
+                                      size: 40,
+                                    ),
+                                    label: const Text(""),
+                                    style: commonButtonStyleText(
+                                        Colors.black, Colors.grey),
+                                  ),
+                                ),
+                              ),
+                              Spacer(),
+                            ],
                           ),
                           Padding(
                             // MODE Dialog Box
