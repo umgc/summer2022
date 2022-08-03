@@ -33,7 +33,10 @@ jobs:
         with:
           channel: "stable"
       - name: Testing pwd
-        run: pwd
+        run : | 
+              pwd
+              ls
+
       # - name: Install Flutter dependencies
       #   run: flutter pub get
       # - name: Build App Bundle
