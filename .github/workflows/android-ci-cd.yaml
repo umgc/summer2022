@@ -32,17 +32,19 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - name: Install Flutter dependencies
-        run: flutter pub get
-      - name: Build App Bundle
-        run: flutter build appbundle --release
-      - name: Run Unit Tests
-        run: flutter test
-      - name: Release app to internal track
-        uses: r0adkll/upload-google-play@v1
-        with:
-          packageName: com.example.summer2022
-          releaseFile: build/app/outputs/bundle/release/app-release.aab
-          track: internal
-          serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT_JSON}}
-          whatsNewDirectory: distribution/whatsnew
+      - name: Testing pwd
+        run: pwd
+      # - name: Install Flutter dependencies
+      #   run: flutter pub get
+      # - name: Build App Bundle
+      #   run: flutter build appbundle --release
+      # - name: Run Unit Tests
+      #   run: flutter test
+      # - name: Release app to internal track
+      #   uses: r0adkll/upload-google-play@v1
+      #   with:
+      #     packageName: com.example.summer2022
+      #     releaseFile: build/app/outputs/bundle/release/app-release.aab
+      #     track: internal
+      #     serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT_JSON}}
+      #     whatsNewDirectory: distribution/whatsnew
