@@ -61,7 +61,9 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
         }
         debugPrint("tts stopped");
         await Future.delayed(const Duration(seconds: 5));
-        seekForward();
+        if (index != 0) {
+          seekForward();
+        }
       }
     }
   }
@@ -246,7 +248,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
       setTtsState(TtsState.playing);
       readMailPiece();
     } catch(e) {
-      print("ERROR: Seek back: ${e.toString()}");
+      debugPrint("ERROR: Seek back: ${e.toString()}");
     }
   }
 
@@ -262,7 +264,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
         setTtsState(TtsState.playing);
         readMailPiece();
       } catch(e) {
-        print("ERROR: Seek forward: ${e.toString()}");
+        debugPrint("ERROR: Seek forward: ${e.toString()}");
       }
       autoplay();
     }
@@ -274,7 +276,7 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
         await reader!.readEmailInfo();
       }
     } catch (e) {
-      print("ERROR: Read mail piece: ${e.toString()}");
+      debugPrint("ERROR: Read mail piece: ${e.toString()}");
     }
     return true;
   }

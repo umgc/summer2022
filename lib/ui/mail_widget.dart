@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:summer2022/main.dart';
 import 'package:summer2022/speech_commands/read_info.dart';
-import 'package:summer2022/ui/main_menu.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:summer2022/models/MailResponse.dart';
 import 'package:summer2022/models/Digest.dart';
@@ -66,7 +65,7 @@ class MailWidgetState extends State<MailWidget> {
         readMailPiece();
         //await Future.delayed(const Duration(seconds: 5));
     } catch(e) {
-        print("ERROR: Read mail piece in init: ${e.toString()}");
+        debugPrint("ERROR: Read mail piece in init: ${e.toString()}");
     }
     autoplay();
   }
@@ -78,12 +77,14 @@ class MailWidgetState extends State<MailWidget> {
     if (GlobalConfiguration().getValue("autoplay")) {
       if (mounted) {
         while (ttsState != TtsState.stopped){
-          print("waiting");
+          debugPrint("waiting for tts to stop");
           await Future.delayed(const Duration(seconds: 1));
         }
-        print("done waiting");
+        debugPrint("tts stopped");
         await Future.delayed(const Duration(seconds: 5));
-        setState((){ seekForward(); });
+        if (attachmentIndex < (widget.digest.attachments.length - 1)) {
+          seekForward();
+        }
       }
     }
   }
@@ -92,11 +93,11 @@ class MailWidgetState extends State<MailWidget> {
     return widget.digest.attachments[attachmentIndex].detailedInformation;
   }
 
-  static Route _buildRoute(BuildContext context, Object? params) {
+  /*static Route _buildRoute(BuildContext context, Object? params) {
     return MaterialPageRoute<void>(
       builder: (BuildContext context) => const MainWidget(),
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -208,20 +209,8 @@ class MailWidgetState extends State<MailWidget> {
   void seekBack() {
     if (attachmentIndex != 0) {
       attachmentIndex = attachmentIndex - 1;
-      print(widget.digest.attachments[attachmentIndex].detailedInformation
-          .toJson());
-      reader!.setCurrentMail(
-          widget.digest.attachments[attachmentIndex].detailedInformation);
-      buildLinks();
-      readMailPiece();
-    }
-  }
-
-  void seekForward([int length = 0]) {
-    if (attachmentIndex < (length != 0 ? length : widget.digest.attachments.length - 1)) {
-      attachmentIndex = attachmentIndex + 1;
-      print(widget.digest.attachments[attachmentIndex].detailedInformation
-          .toJson());
+      debugPrint(widget.digest.attachments[attachmentIndex].detailedInformation
+          .toJson().toString());
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
@@ -229,7 +218,26 @@ class MailWidgetState extends State<MailWidget> {
         setTtsState(TtsState.playing);
         readMailPiece();
       } catch(e) {
-        print("ERROR: Seek forward: ${e.toString()}");
+        debugPrint("ERROR: Seek back: ${e.toString()}");
+      }
+    }
+  }
+
+  void seekForward([int length = 0]) {
+    if (attachmentIndex < (length != 0 ? length : widget.digest.attachments.length - 1)) {
+      setState(() {
+        attachmentIndex = attachmentIndex + 1;
+        debugPrint(widget.digest.attachments[attachmentIndex].detailedInformation
+            .toJson().toString());
+        reader!.setCurrentMail(
+            widget.digest.attachments[attachmentIndex].detailedInformation);
+      });
+      buildLinks();
+      try {
+        setTtsState(TtsState.playing);
+        readMailPiece();
+      } catch(e) {
+        debugPrint("ERROR: Seek forward: ${e.toString()}");
       }
       autoplay();
     }
@@ -296,10 +304,11 @@ class MailWidgetState extends State<MailWidget> {
   Future<void> readMailPiece() async {
     try {
       if (reader != null) {
-        Future.wait([reader!.readDigestInfo()]);
+        await reader!.readDigestInfo();
+        //Future.wait([reader!.readDigestInfo()]);
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint("ERROR: Read digest piece: ${e.toString()}");
     }
   }
 }
