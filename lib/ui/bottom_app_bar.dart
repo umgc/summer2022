@@ -10,16 +10,18 @@ class BottomBar extends StatefulWidget {
 class BottomBarState extends State<BottomBar> {
   bool micOn = true;
   bool speakerOn = true;
-  double commonIconSize = 65;
+  double commonIconSize = 110;
 
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
       child: Padding(
         // MODE Dialog Box
-        padding: const EdgeInsets.only(top: 5, bottom: 25, left: 15, right: 40),
+        padding: const EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            /*
             IconButton(
               icon: Icon(
                 (speakerOn == true)
@@ -49,15 +51,35 @@ class BottomBarState extends State<BottomBar> {
                 );
               },
             ),
+            */
+            Padding(
+              // MODE Dialog Box
+              padding: const EdgeInsets.only(top: 0, bottom: 80, left: 25, right: 0),
+              child: IconButton(
+                  icon: Icon(Icons.help_outline, size: commonIconSize),
+                  onPressed: () {
+                    print("Say commands out loud");
+                  }),
+            ),
             const Spacer(),
-            IconButton(
-                icon: Icon(Icons.help_outline, size: commonIconSize),
-                onPressed: () {
-                  print("Say commands out loud");
-                }),
+            recordButton()
           ],
         ),
       ),
+    );
+  }
+
+  GestureDetector recordButton() {
+    return GestureDetector(
+      onTapDown: (_) => print("Button pressed, Begin Recording"),// Begin Recording
+      onTapUp: (_) {
+        print("Button Un-pressed, Stop Recording");// stop recording
+      },
+      child: Padding(
+    // MODE Dialog Box
+        padding: const EdgeInsets.only(top: 5, bottom: 10, left: 0, right: 30),
+        child: Icon(Icons.fiber_manual_record_rounded, size: commonIconSize + 10, color: Colors.red),
+      )
     );
   }
 }
