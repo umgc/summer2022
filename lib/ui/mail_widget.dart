@@ -63,7 +63,6 @@ class MailWidgetState extends State<MailWidget> {
     try {
       setTtsState(TtsState.playing);
       readMailPiece();
-      //await Future.delayed(const Duration(seconds: 5));
     } catch(e) {
       debugPrint("ERROR: Read mail piece in init: ${e.toString()}");
     }
@@ -243,6 +242,7 @@ class MailWidgetState extends State<MailWidget> {
       reader!.setCurrentMail(
           widget.digest.attachments[attachmentIndex].detailedInformation);
       buildLinks();
+      setTtsState(TtsState.playing);
       readMailPiece();
     }
   }
