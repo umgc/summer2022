@@ -47,6 +47,7 @@ class ReadDigestMail {
     String senderAddress = '';
     String recipientAddress = '';
     String logos = '';
+    String digestLinks = '';
     if (GlobalConfiguration().getValue("sender") && sender != null) {
       senderString = getDigestSenderName();
     }
@@ -72,12 +73,12 @@ class ReadDigestMail {
     if (GlobalConfiguration().getValue("logos")) {
       logos = getDigestLogos();
     }
-    String read = '$senderString $senderAddress $validatedSender $recipientString $recipientAddress $validatedRecipient $logos';
-    var result = await speak(read);
-    
     if (GlobalConfiguration().getValue("links")) {
-      readDigestLinks();
+      digestLinks = getDigestLinks();
     }
+    String read = '$senderString $senderAddress $validatedSender $recipientString $recipientAddress $validatedRecipient $logos $digestLinks';
+    var result = await speak(read);
+
     return true;  
   }
 
@@ -138,13 +139,21 @@ class ReadDigestMail {
       var result = await speak(text);
   }
 
+  String getDigestLinks() {
+    String text = "The links are";
+    if (links.isEmpty) {
+      return "There are no links.";
+    }
+    for (Link code in links) {
+      text = '$text ${code.info != "" ? code.info : code.link}';
+    }
+    return text;
+  }
+
   void readDigestLinks() async {
     /* Get the links */
-    for (Link code in links) {
-      String text = "The link is '${code.info != "" ? code.info : code.link}'. Would you like to go to the link?";
-      var result = await speak(text);
-      sleep(const Duration(seconds:3));
-    }
+    String text = getDigestLinks();
+    var result = await speak(text);
   }
 
   String getDigestSenderAddressValidated() {

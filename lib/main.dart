@@ -20,19 +20,15 @@ enum TtsState { playing, stopped, paused, continued }
 TtsState ttsState = TtsState.stopped;
 
 Future speak(String text) async {
-  print(text);
+  debugPrint(text);
   try {
     setTtsState(TtsState.playing);
     await tts.awaitSpeakCompletion(true);
     int result = await tts.speak(text);
-    print("result $result");
+    debugPrint("result $result");
     setTtsState(TtsState.stopped);
-    //while (ttsState == TtsState.playing){
-    //  print("playing");
-    //  sleep(const Duration(seconds: 1));
-    //}
   } catch(e) {
-    print("TTS ERROR: ${e.toString()}");
+    debugPrint("TTS ERROR: ${e.toString()}");
   }
 }
 
@@ -41,12 +37,12 @@ Future stop() async {
     await tts.stop();
     setTtsState(TtsState.stopped);
   } catch(e) {
-    print("TTS STOP ERROR: ${e.toString()}");
+    debugPrint("TTS STOP ERROR: ${e.toString()}");
   }
 }
 
 setTtsState(TtsState state) {
-  print("set tts state $state");
+  debugPrint("set tts state $state");
   ttsState = state;
 }
 
@@ -67,6 +63,7 @@ void main() async {
     if(Platform.isAndroid) {
       await tts.setQueueMode(1);
     }
+    tts.setCompletionHandler(() {setTtsState(TtsState.stopped);});
     await tts.setLanguage("en-US");
     await tts.setSpeechRate(.4);
     await tts.setVolume(1.0);
