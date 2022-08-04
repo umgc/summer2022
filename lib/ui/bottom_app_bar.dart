@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../main.dart';
+
 class BottomBar extends StatefulWidget {
   const BottomBar({Key? key}) : super(key: key);
 
@@ -54,7 +56,8 @@ class BottomBarState extends State<BottomBar> {
             */
             Padding(
               // MODE Dialog Box
-              padding: const EdgeInsets.only(top: 0, bottom: 80, left: 25, right: 0),
+              padding:
+                  const EdgeInsets.only(top: 0, bottom: 80, left: 25, right: 0),
               child: IconButton(
                   icon: Icon(Icons.help_outline, size: commonIconSize),
                   onPressed: () {
@@ -71,15 +74,25 @@ class BottomBarState extends State<BottomBar> {
 
   GestureDetector recordButton() {
     return GestureDetector(
-      onTapDown: (_) => print("Button pressed, Begin Recording"),// Begin Recording
-      onTapUp: (_) {
-        print("Button Un-pressed, Stop Recording");// stop recording
-      },
-      child: Padding(
-    // MODE Dialog Box
-        padding: const EdgeInsets.only(top: 5, bottom: 10, left: 0, right: 30),
-        child: Icon(Icons.fiber_manual_record_rounded, size: commonIconSize + 10, color: Colors.red),
-      )
-    );
+        onLongPress: () {
+          stt.loopTrue = false;
+          stt.speech.cancel();
+          stt.pressRecord();
+        },
+        onLongPressUp: () {
+          stt.command(stt.words);
+          stt.loopTrue = true;
+          stt.speechToText();
+        },
+        onDoubleTap: () {
+          stop();
+        },
+        child: Padding(
+          // MODE Dialog Box
+          padding:
+              const EdgeInsets.only(top: 5, bottom: 10, left: 0, right: 30),
+          child: Icon(Icons.fiber_manual_record_rounded,
+              size: commonIconSize + 10, color: Colors.red),
+        ));
   }
 }

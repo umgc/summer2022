@@ -31,6 +31,7 @@ class Speech {
   late SettingWidgetState _settingWidgetState;
   late String requestedDate;
   bool links = false;
+  bool loopTrue = true;
 
   void setCurrentPage(String page, [Object? obj]) {
     switch (page) {
@@ -45,7 +46,7 @@ class Speech {
         }
         break;
       case 'settings':
-      if (obj != null) {
+        if (obj != null) {
           _settingWidgetState = obj as SettingWidgetState;
         }
         break;
@@ -83,6 +84,11 @@ class Speech {
     return (words);
   }
 
+  String pressRecord() {
+    speech.listen(onResult: result);
+    return (words);
+  }
+
   void result(SpeechRecognitionResult result) {
     words = result.recognizedWords;
   }
@@ -90,7 +96,7 @@ class Speech {
   // The loop that allows for constant speech recognition
   Future<void> speechToText() async {
     speechEnabled = await speech.initialize();
-    while (true) {
+    while (loopTrue == true) {
       input = recording();
       if (input.isNotEmpty) {
         print(input);
@@ -302,7 +308,8 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[0].link);
                       } catch (e) {
-                        speak('There is not a valid hyperlink in the first position');
+                        speak(
+                            'There is not a valid hyperlink in the first position');
                       }
                     }
                     if (position == 'second' || position == '2nd') {
@@ -310,7 +317,8 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[1].link);
                       } catch (e) {
-                        speak('There is not a valid hyperlink in the second position');
+                        speak(
+                            'There is not a valid hyperlink in the second position');
                       }
                     }
                     if (position == 'third' || position == '3rd') {
@@ -318,7 +326,8 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[2].link);
                       } catch (e) {
-                        speak('There is not a valid hyperlink in the third position');
+                        speak(
+                            'There is not a valid hyperlink in the third position');
                       }
                     }
                     if (position == 'fourth' || position == '4th') {
@@ -326,7 +335,8 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[3].link);
                       } catch (e) {
-                        speak('There is not a valid hyperlink in the fourth position');
+                        speak(
+                            'There is not a valid hyperlink in the fourth position');
                       }
                     }
                     if (position == 'fifth' || position == '5th') {
@@ -334,7 +344,8 @@ class Speech {
                         _mailWidgetState
                             .openLink(_mailWidgetState.links[4].link);
                       } catch (e) {
-                        speak('There is not a valid hyperlink in the fifth position');
+                        speak(
+                            'There is not a valid hyperlink in the fifth position');
                       }
                     }
                   } catch (e) {
@@ -486,7 +497,8 @@ class Speech {
                       speak('There are no digest available for $requestedDate');
                     }
                   } catch (e) {
-                    speak('An error occurred while fetching your daily digest: $e');
+                    speak(
+                        'An error occurred while fetching your daily digest: $e');
                   }
                 } else {
                   speak(
