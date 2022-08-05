@@ -54,18 +54,19 @@ class BottomBarState extends State<BottomBar> {
               },
             ),
             */
-            Padding(
-              // MODE Dialog Box
-              padding:
-                  const EdgeInsets.only(top: 0, bottom: 80, left: 25, right: 0),
-              child: IconButton(
-                  icon: Icon(Icons.help_outline, size: commonIconSize),
-                  onPressed: () {
-                    print("Say commands out loud");
-                  }),
-            ),
+            // Padding(
+            //   // MODE Dialog Box
+            //   padding:
+            //       const EdgeInsets.only(top: 0, bottom: 80, left: 25, right: 0),
+            //   child: IconButton(
+            //       icon: Icon(Icons.help_outline, size: commonIconSize),
+            //       onPressed: () {
+            //         print("Say commands out loud");
+            //       }),
+            // ),
             const Spacer(),
-            recordButton()
+            recordButton(),
+            const Spacer(),
           ],
         ),
       ),
