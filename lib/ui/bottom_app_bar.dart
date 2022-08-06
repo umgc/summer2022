@@ -89,18 +89,13 @@ class BottomBarState extends State<BottomBar> {
 
     return GestureDetector(
         onLongPress: () {
-          stt.loopTrue = false;
-          stt.speech.cancel();
-
           stt.pressRecord();
           setState(() {
             micStatus = true;
           });
         },
         onLongPressUp: () {
-          stt.command(stt.words);
-          stt.loopTrue = true;
-          stt.speechToText();
+          stt.command(stt.words); 
           setState(() {
             micStatus = false;
           });

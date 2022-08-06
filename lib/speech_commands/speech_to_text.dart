@@ -79,11 +79,6 @@ class Speech {
     return digest;
   }
 
-  String recording() {
-    speech.listen(listenFor: const Duration(seconds: 6), onResult: result);
-    return (words);
-  }
-
   String pressRecord() {
     speech.listen(onResult: result);
     return (words);
@@ -93,19 +88,8 @@ class Speech {
     words = result.recognizedWords;
   }
 
-  // The loop that allows for constant speech recognition
   Future<void> speechToText() async {
     speechEnabled = await speech.initialize();
-    while (loopTrue == true) {
-      input = recording();
-      if (input.isNotEmpty) {
-        print(input);
-        await command(input);
-      }
-      input = '';
-      words = '';
-      await Future.delayed(const Duration(seconds: 7));
-    }
   }
 
   DateTime? processDate(String theDate) {
