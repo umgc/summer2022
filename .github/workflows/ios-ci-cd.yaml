@@ -17,7 +17,7 @@ jobs:
     runs-on: macOS-latest
     steps:
       - name: Testing password
-        run: echo ${{secrets.MATCH_PASSWORD}}
+        run: echo '${{secrets.MATCH_PASSWORD}}'
       - name: Get run number
         run: |
           echo '${{ github.run_number }}'
