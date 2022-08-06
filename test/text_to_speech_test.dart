@@ -1,9 +1,11 @@
+import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:global_configuration/global_configuration.dart';
-import '../lib/models/Address.dart';
-import '../lib/models/MailResponse.dart';
-import '../lib/read_info.dart';
+import 'package:summer2022/models/Address.dart';
+import 'package:summer2022/models/MailResponse.dart';
+import 'package:summer2022/speech_commands/read_info.dart';
+import 'package:summer2022/main.dart';
 import 'dart:io' as io;
 
 class FakeFlutterTts extends Fake implements FlutterTts {
@@ -15,7 +17,7 @@ class FakeFlutterTts extends Fake implements FlutterTts {
   @override
   Future<dynamic> speak(String? text) {
     print(text);
-    return Future.value(true);
+    return Future.value(1);
   }
 
   @override
@@ -78,10 +80,25 @@ void main() async {
     ]
   });
 
+  late MimeMessage email;
+
+  MimeMessage buildMessage() {
+    final builder = MessageBuilder.prepareMultipartAlternativeMessage(
+      plainText: 'hello world.',
+      htmlText: '<p>hello <b>world</b></p>',
+    )
+      ..from = [MailAddress('My name', 'sender@domain.com')]
+      ..to = [MailAddress('Your name', 'recipient@domain.com')]
+      ..subject = 'My first message'
+      ..text = 'Hi how are you';
+    return builder.buildMimeMessage();
+  }
+
   setUp(() async {
     GlobalConfiguration cfg = GlobalConfiguration();
     await cfg.loadFromAsset("app_settings");
     tts = FakeFlutterTts();
+    email = buildMessage();
   });
 
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -222,6 +239,7 @@ void main() async {
     test("Read All Email Info", () {
       String error = '';
       ReadMail readMail = ReadMail();
+      readMail.setCurrentMail(email);
       try {
         readMail.readEmailInfo();
       } catch (e) {
@@ -233,6 +251,7 @@ void main() async {
     test("Read Sender", () {
       String error = '';
       ReadMail readMail = ReadMail();
+      readMail.setCurrentMail(email);
       try {
         readMail.readEmailSender();
       } catch (e) {
@@ -244,6 +263,7 @@ void main() async {
     test("Read Subject", () {
       String error = '';
       ReadMail readMail = ReadMail();
+      readMail.setCurrentMail(email);
       try {
         readMail.readEmailSubject();
       } catch (e) {
@@ -255,6 +275,7 @@ void main() async {
     test("Read Text", () {
       String error = '';
       ReadMail readMail = ReadMail();
+      readMail.setCurrentMail(email);
       try {
         readMail.readEmailText();
       } catch (e) {
@@ -266,6 +287,7 @@ void main() async {
     test("Read Recipients", () {
       String error = '';
       ReadMail readMail = ReadMail();
+      readMail.setCurrentMail(email);
       try {
         readMail.readEmailRecipients();
       } catch (e) {

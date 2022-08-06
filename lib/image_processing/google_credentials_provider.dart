@@ -6,13 +6,13 @@ class CredentialsProvider {
   CredentialsProvider();
 
   Future<ServiceAccountCredentials> get _credentials async {
-    String _file = await rootBundle.loadString('assets/credentials.json');
-    return ServiceAccountCredentials.fromJson(_file);
+    String file = await rootBundle.loadString('assets/credentials.json');
+    return ServiceAccountCredentials.fromJson(file);
   }
 
   Future<AutoRefreshingAuthClient> get client async {
-    AutoRefreshingAuthClient _client = await clientViaServiceAccount(
+    AutoRefreshingAuthClient client = await clientViaServiceAccount(
         await _credentials, [VisionApi.cloudVisionScope]);
-    return _client;
+    return client;
   }
 }

@@ -1,12 +1,11 @@
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
+import 'package:summer2022/speech_commands/read_info.dart';
 import 'bottom_app_bar.dart';
-import './main_menu.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../models/Arguments.dart';
-import '../models/Digest.dart';
-import '../main.dart';
+import 'package:summer2022/models/Digest.dart';
+import 'package:summer2022/main.dart';
 
 class OtherMailWidget extends StatefulWidget {
   final List<Digest> emails;
@@ -20,6 +19,7 @@ class OtherMailWidget extends StatefulWidget {
 }
 
 class OtherMailWidgetState extends State<OtherMailWidget> {
+  ReadMail? reader;
   late int index;
   FontWeight commonFontWt = FontWeight.w500;
   double commonFontSize = 28;
@@ -29,7 +29,44 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     // index must be initialed before build or emails won't iterate
     super.initState();
     index = widget.emails.length - 1;
-    stt.setCurrentPage("email");
+    stt.setCurrentPage("email", this);
+    if(widget.emails.isNotEmpty) {
+        reader = ReadMail();
+        reader!.setCurrentMail(widget.emails[index].message);
+           
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => otherMailAuto(context));
+  }
+
+  otherMailAuto(context) async {
+    try {
+        setTtsState(TtsState.playing);
+        readMailPiece();
+    } catch(e) {
+        debugPrint("ERROR: Read mail piece in init: ${e.toString()}");
+    }
+    autoplay();
+  }
+
+  Future<void> autoplay() async {
+    // Wait a few seconds before starting to check if speaking is done
+    await Future.delayed(const Duration(seconds: 3));
+    setTtsState(TtsState.playing);
+    if (GlobalConfiguration().getValue("autoplay")) {
+      if (mounted) {
+        while (ttsState != TtsState.stopped){
+          debugPrint("waiting for tts to stop");
+          await Future.delayed(const Duration(seconds: 1));
+        }
+        debugPrint("tts stopped");
+        await Future.delayed(const Duration(seconds: 5));
+        if (index != 0) {
+          setState(() {
+            seekForward();
+          });
+        }
+      }
+    }
   }
 
   MimeMessage getCurrentEmailMessage() {
@@ -37,7 +74,6 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
   }
 
   String removeLinks(Digest d) {
-    String bodyText = '';
     RegExp linkExp = RegExp(
         r"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])");
     RegExp carotsExpn = RegExp(r"\<https.+?\>");
@@ -75,6 +111,22 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     }
   }
 
+  void swipeLeftRight(DragEndDetails details) {
+    if (details.primaryVelocity! > 0) {
+      // User swiped Left
+      print("Swep Left to Right");
+      setState(() {
+        seekBack();
+      });
+    } else if (details.primaryVelocity! < 0) {
+      // User swiped Right
+      print("Swap Right to Left");
+      setState(() {
+        seekForward();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     int emailsLen = widget.emails.length;
@@ -83,118 +135,124 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
     final DateFormat formatter = DateFormat('yyyy-MM-dd h:mm:ss');
     final String formatted = formatter.format(parsedDate);
     String timeAgo = convertToAgo(parsedDate);
-    return Scaffold(
-      bottomNavigationBar: BottomBar(),
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          formatted,
-          style: TextStyle(fontWeight: commonFontWt, fontSize: commonFontSize),
-        ),
-        backgroundColor: Colors.grey,
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 10,
-              width: double.infinity,
+    return GestureDetector(
+      onHorizontalDragEnd: swipeLeftRight,
+       child: Scaffold(
+          bottomNavigationBar: const BottomBar(),
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(
+              formatted,
+              style: TextStyle(fontWeight: commonFontWt, fontSize: commonFontSize),
             ),
-            new Expanded(
-              flex: 1,
-              child: new SingleChildScrollView(
-                scrollDirection: Axis.vertical, //.horizontal
-                child: RichText(
-                  text: TextSpan(children: <TextSpan>[
-                    TextSpan(
-                        text: 'SUBJECT: ',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            height: 2)),
-                    TextSpan(
-                        text: widget.emails[index].message
-                            .decodeSubject()
-                            .toString(),
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16)),
-                    TextSpan(
-                        text: '\nSENDER: ',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            height: 2)),
-                    TextSpan(
-                        text: widget.emails[index].message
-                            .decodeSender()
-                            .toString(),
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16)),
-                    TextSpan(
-                        text: '\nSENT: ',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            height: 2)),
-                    TextSpan(
-                        text: timeAgo + '\n\n',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16)),
-                    TextSpan(
-                        text: removeLinks(widget.emails[index]),
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16)),
-                  ]),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 15,
-              width: double.infinity,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            backgroundColor: Colors.grey,
+          ),
+          body: SafeArea(
+            child: Column(
               children: [
-                FloatingActionButton(
-                  backgroundColor: Colors.grey,
-                  heroTag: "f1",
-                  onPressed: () {
-                    seekBack();
-                  },
-                  child: Icon(Icons.skip_previous),
+                const SizedBox(
+                  height: 10,
+                  width: double.infinity,
                 ),
-                Text(
-                  (emailsLen - (index)).toString() + '/' + emailsLen.toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                Expanded(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: RichText(
+                      text: TextSpan(children: <TextSpan>[
+                        const TextSpan(
+                            text: 'SUBJECT: ',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                height: 2)),
+                        TextSpan(
+                            text: widget.emails[index].message
+                                .decodeSubject()
+                                .toString(),
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16)),
+                        const TextSpan(
+                            text: '\nSENDER: ',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                height: 2)),
+                        TextSpan(
+                            text: widget.emails[index].message
+                                .decodeSender()
+                                .toString(),
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16)),
+                        const TextSpan(
+                            text: '\nSENT: ',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                height: 2)),
+                        TextSpan(
+                            text: '$timeAgo\n\n',
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16)),
+                        TextSpan(
+                            text: removeLinks(widget.emails[index]),
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16)),
+                      ]),
+                    ),
+                    //.horizontal
+                  ),
                 ),
-                FloatingActionButton(
-                  backgroundColor: Colors.grey,
-                  heroTag: "f2",
-                  onPressed: () {
-                    seekForward();
-                  },
-                  child: Icon(Icons.skip_next),
+                const SizedBox(
+                  height: 15,
+                  width: double.infinity,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    FloatingActionButton(
+                      backgroundColor: Colors.grey,
+                      heroTag: "f1",
+                      onPressed: () {
+                        stop();
+                        seekBack();
+                      },
+                      child: const Icon(Icons.skip_previous),
+                    ),
+                    Text(
+                      '${emailsLen - (index)}/$emailsLen',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    FloatingActionButton(
+                      backgroundColor: Colors.grey,
+                      heroTag: "f2",
+                      onPressed: () {
+                        stop();
+                        seekForward();
+                      },
+                      child: const Icon(Icons.skip_next),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 15,
+                  width: double.infinity,
                 ),
               ],
             ),
-            SizedBox(
-              height: 15,
-              width: double.infinity,
-            ),
-          ],
+          ),
         ),
-      ),
     );
   }
 
@@ -203,14 +261,43 @@ class OtherMailWidgetState extends State<OtherMailWidget> {
       if (index != widget.emails.length - 1) {
         index++;
       }
+      reader!.setCurrentMail(widget.emails[index].message);
+      
     });
+    try {
+      setTtsState(TtsState.playing);
+      readMailPiece();
+    } catch(e) {
+      debugPrint("ERROR: Seek back: ${e.toString()}");
+    }
   }
 
   void seekForward() {
-    setState(() {
-      if (index != 0) {
-        index--;
+    if (mounted) {
+      setState(() {
+        if (index != 0) {
+          index--;
+        }
+        reader!.setCurrentMail(widget.emails[index].message);
+      });
+      try {
+        setTtsState(TtsState.playing);
+        readMailPiece();
+      } catch(e) {
+        debugPrint("ERROR: Seek forward: ${e.toString()}");
       }
-    });
+      autoplay();
+    }
+  }
+
+  Future<bool> readMailPiece() async {
+    try{
+      if(reader != null) {
+        await reader!.readEmailInfo();
+      }
+    } catch (e) {
+      debugPrint("ERROR: Read mail piece: ${e.toString()}");
+    }
+    return true;
   }
 }

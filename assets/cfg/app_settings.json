@@ -9,5 +9,6 @@
     "email_subject": true,
     "email_text": true,
     "email_sender": true,
-    "email_recipients": true
+    "email_recipients": true,
+    "tutorial": true
 }
