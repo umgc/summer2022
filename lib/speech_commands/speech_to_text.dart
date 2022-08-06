@@ -88,7 +88,6 @@ class Speech {
     words = result.recognizedWords;
   }
 
-  // The loop that allows for constant speech recognition
   Future<void> speechToText() async {
     speechEnabled = await speech.initialize();
   }
