@@ -17,7 +17,7 @@ jobs:
     runs-on: macOS-latest
     steps:
       - name: Testing password
-        run: echo '${{secrets.MATCH_PASSWORD}}'
+        run: echo '${{secrets.MATCH_KEYCHAIN_PASSWORD}}'
       - name: Get run number
         run: |
           echo '${{ github.run_number }}'
@@ -55,7 +55,7 @@ jobs:
           DEVELOPER_PORTAL_TEAM_ID: '${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'
           FASTLANE_APPLE_ID: '${{ secrets.FASTLANE_APPLE_ID }}'
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: '${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}'
-          MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
+          MATCH_PASSWORD: '${{ secrets.MATCH_KEYCHAIN_PASSWORD }}'
           GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
           PROVISIONING_PROFILE_SPECIFIER: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}'
           TEMP_KEYCHAIN_PASSWORD: '${{ secrets.TEMP_KEYCHAIN_PASSWORD }}'
