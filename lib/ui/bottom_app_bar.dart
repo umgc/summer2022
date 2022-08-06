@@ -13,7 +13,7 @@ class BottomBarState extends State<BottomBar> {
   bool micOn = true;
   bool speakerOn = true;
   double commonIconSize = 110;
-
+  bool micStatus = false;
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
@@ -54,18 +54,19 @@ class BottomBarState extends State<BottomBar> {
               },
             ),
             */
-            Padding(
-              // MODE Dialog Box
-              padding:
-                  const EdgeInsets.only(top: 0, bottom: 80, left: 25, right: 0),
-              child: IconButton(
-                  icon: Icon(Icons.help_outline, size: commonIconSize),
-                  onPressed: () {
-                    print("Say commands out loud");
-                  }),
-            ),
+            // Padding(
+            //   // MODE Dialog Box
+            //   padding:
+            //       const EdgeInsets.only(top: 0, bottom: 80, left: 25, right: 0),
+            //   child: IconButton(
+            //       icon: Icon(Icons.help_outline, size: commonIconSize),
+            //       onPressed: () {
+            //         print("Say commands out loud");
+            //       }),
+            // ),
             const Spacer(),
-            recordButton()
+            recordButton(),
+            const Spacer(),
           ],
         ),
       ),
@@ -73,26 +74,43 @@ class BottomBarState extends State<BottomBar> {
   }
 
   GestureDetector recordButton() {
+    var micNotActive = Padding(
+      // MODE Dialog Box
+      padding: const EdgeInsets.only(top: 5, bottom: 10, left: 0, right: 30),
+      child:
+          Icon(Icons.mic_sharp, size: commonIconSize + 10, color: Colors.black),
+    );
+    var micActive = Padding(
+      // MODE Dialog Box
+      padding: const EdgeInsets.only(top: 5, bottom: 10, left: 0, right: 30),
+      child:
+          Icon(Icons.mic_sharp, size: commonIconSize + 10, color: Colors.red),
+    );
+
     return GestureDetector(
         onLongPress: () {
           stt.loopTrue = false;
           stt.speech.cancel();
+
           stt.pressRecord();
+          setState(() {
+            micStatus = true;
+          });
         },
         onLongPressUp: () {
           stt.command(stt.words);
           stt.loopTrue = true;
           stt.speechToText();
+          setState(() {
+            micStatus = false;
+          });
         },
         onDoubleTap: () {
           stop();
+          setState(() {
+            micStatus = false;
+          });
         },
-        child: Padding(
-          // MODE Dialog Box
-          padding:
-              const EdgeInsets.only(top: 5, bottom: 10, left: 0, right: 30),
-          child: Icon(Icons.fiber_manual_record_rounded,
-              size: commonIconSize + 10, color: Colors.red),
-        ));
+        child: micStatus ? micActive : micNotActive);
   }
 }
