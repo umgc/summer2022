@@ -40,23 +40,5 @@ jobs:
           cd ..
       - name: Flutter build
         run: flutter build ios --release --no-codesign
-      #- name: Run Unit Tests
-      #  run: flutter test
-      
-      - name: Deploy iOS Beta to TestFlight via Fastlane
-        uses: maierj/fastlane-action@v1.4.0
-        with:
-          lane: closed_beta
-          subdirectory: ios
-        env:
-          ITC_TEAM_ID: '${{ secrets.ITC_TEAM_ID }}'
-          APPLICATON_ID: '${{ secrets.APPLICATON_ID }}'
-          BUNDLE_IDENTIFIER: '${{ secrets.BUNDLE_IDENTIFIER }}'
-          DEVELOPER_PORTAL_TEAM_ID: '${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'
-          FASTLANE_APPLE_ID: '${{ secrets.FASTLANE_APPLE_ID }}'
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: '${{ secrets.APP_SPECIFIC_PASSWORD }}'
-          MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
-          GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
-          PROVISIONING_PROFILE_SPECIFIER: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}'
-          TEMP_KEYCHAIN_PASSWORD: '${{ secrets.TEMP_KEYCHAIN_PASSWORD }}'
-          TEMP_KEYCHAIN_USER: '${{ secrets.TEMP_KEYCHAIN_USER }}'
+      - name: Run Unit Tests
+        run: flutter test
